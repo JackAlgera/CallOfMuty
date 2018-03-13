@@ -16,7 +16,7 @@ public class Player {
         this.image=image;
         this.playerWidth=playerWidth;
         this.playerHeight=playerHeight;
-        speed = 0.5; //in pixel per ms
+        speed = 0.2; //in pixel per ms
     }
     
     public void move(int xDirection, int yDirection, long dT){

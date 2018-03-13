@@ -7,6 +7,8 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -19,6 +21,7 @@ public class GamePanel extends JPanel{
     private Player moi;
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight;
     private ArrayList buttonsPressed;
+    private boolean isHost;
     
     private static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW; //usefull for the KeyBindings
     
@@ -92,7 +95,6 @@ public void paint(Graphics g) {
             public void keyTyped(KeyEvent e) {
                 if(!buttonsPressed.contains(e.getKeyCode())){
                     buttonsPressed.add(e.getKeyCode());
-                    System.out.println("typed");
                 }
             }
 
@@ -100,17 +102,33 @@ public void paint(Graphics g) {
             public void keyPressed(KeyEvent e) {
                 if(!buttonsPressed.contains(e.getKeyCode())){
                     buttonsPressed.add(e.getKeyCode());
-                    System.out.println("pressed");
                 }
             }
             
             @Override
             public void keyReleased(KeyEvent e) {
                 buttonsPressed.remove((Integer)e.getKeyCode()); // (Integer) is necessary to remove the object instead of the index
-                    System.out.println("released");
             }
         };
         addKeyListener(listener);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("Clicked on " + e.getX() + " ; " + e.getY());
+            }@Override
+            public void mouseEntered(MouseEvent e) {
+                System.out.println("Entered on " + e.getX() + " ; " + e.getY());
+            }@Override
+            public void mouseExited(MouseEvent e) {
+                System.out.println("Exited on " + e.getX() + " ; " + e.getY());
+            }@Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println("Pressed on " + e.getX() + " ; " + e.getY());
+            }@Override
+            public void mouseReleased(MouseEvent e) {
+                System.out.println("Released on " + e.getX() + " ; " + e.getY());
+            }
+        });
 	setFocusable(true);
     }
     
