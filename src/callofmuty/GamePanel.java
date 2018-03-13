@@ -40,7 +40,7 @@ public class GamePanel extends JPanel{
         if (buttonsPressed.contains(KeyEvent.VK_RIGHT)){
             xDirection +=1;
         }
-        moi.move(xDirection, yDirection, dT);
+        moi.update(xDirection, yDirection, dT);
         
     }
     
