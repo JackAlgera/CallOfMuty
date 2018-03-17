@@ -5,15 +5,16 @@ import java.awt.Image;
 
 public class Player {
     
+    private int playerId;
     private int playerWidth,playerHeight;
-    private float x,y;
+    private float posX,posY;
     private Image image;
     private double maxSpeed;
     private double[] speed;
     
     public Player(int x,int y, int playerWidth, int playerHeight,Image image){
-        this.x=x;
-        this.y=y;
+        this.posX=x;
+        this.posY=y;
         this.image=image;
         this.playerWidth=playerWidth;
         this.playerHeight=playerHeight;
@@ -25,12 +26,12 @@ public class Player {
     }
     
     public void move(long dT){
-        x += speed[0]*dT;
-        y += speed[1]*dT;
+        posX += speed[0]*dT;
+        posY += speed[1]*dT;
     }
     
     public void draw(Graphics2D g){
-        g.drawImage(image,(int) x,(int) y, playerWidth, playerHeight, null);
+        g.drawImage(image,(int) posX,(int) posY, playerWidth, playerHeight, null);
     }
     
     public void update(int xDirection, int yDirection, long dT){
@@ -45,4 +46,21 @@ public class Player {
         // check if able to move in given direction
         move(dT);
     }
+    
+    void setPosition(float[] newPos)
+    {
+        posX = newPos[1];
+        posY = newPos[2];
+    }
+    
+    void setPlayerId(int playerId)
+    {
+        this.playerId = playerId;
+    }
+    
+    int getPlayerId()
+    {
+        return this.playerId;
+    }
+    
 }

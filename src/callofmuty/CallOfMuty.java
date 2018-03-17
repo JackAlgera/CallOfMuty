@@ -5,21 +5,33 @@ import javax.swing.JFrame;
 public class CallOfMuty {
     
     public static void main(String[] args) throws InterruptedException {
-        GameTimer timer = new GameTimer();
         
         int textureSize, mapWidth, mapHeight, maxFPS;
         long dT, minUpdateTime;
         
+        // Game variables   
+        maxFPS = 60; 
+        boolean isHost = true;
+        
+        // Map dimensions
         textureSize=64;
         mapWidth= 16;
         mapHeight= 9;
         String frameTitle = "Call of µty";
-        maxFPS = 60;
-        
+                
+        // Game initialisation
+        GameTimer timer = new GameTimer();
+        GamePanel game = new GamePanel(textureSize, mapWidth, mapHeight, isHost);
+        JFrame frame = createJFrame(frameTitle, game);
         minUpdateTime =(long) 1000/maxFPS;
         
-        GamePanel game = new GamePanel(textureSize, mapWidth, mapHeight);
-        JFrame frame = createJFrame(frameTitle, game);
+        game.initialiseGame();
+                
+        // Wait till all players join - > wait for input
+        
+        // Once everyone has joined -> we initialise the player list
+        game.initialisePlayerList();
+        
         
         timer.update();
         

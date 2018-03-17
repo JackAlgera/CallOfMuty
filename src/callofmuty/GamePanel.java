@@ -18,10 +18,13 @@ import javax.swing.KeyStroke;
 public class GamePanel extends JPanel{
     
     private Map map; 
-    private Player moi;
+    private Player player;
+    ArrayList <Player> listPlayers = new ArrayList();
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight;
     private ArrayList buttonsPressed;
     private boolean isHost;
+    private SQLManager sql; 
+    
     
     private static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW; //usefull for the KeyBindings
     
@@ -40,8 +43,8 @@ public class GamePanel extends JPanel{
         if (buttonsPressed.contains(KeyEvent.VK_RIGHT)){
             xDirection +=1;
         }
-        moi.update(xDirection, yDirection, dT);
-        
+        player.update(xDirection, yDirection, dT); // need to place the player into the list of players
+        updatePositionPlayerList();
     }
     
     /* // Use of KeyBindings
@@ -72,13 +75,22 @@ public void paint(Graphics g) {
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
     RenderingHints.VALUE_ANTIALIAS_ON);
     map.draw(g2d);
-    moi.draw(g2d);
+    player.draw(g2d); // Need to put this player into the playerList then draw using the for loop 
+    
+    for(Player p : listPlayers)
+    {
+        if(p.getPlayerId() != player.getPlayerId())
+        {
+            p.draw(g2d);
+        }
+    }
 }
     
 
     
-    public GamePanel(int textureSize, int mapWidth, int mapHeight){
+    public GamePanel(int textureSize, int mapWidth, int mapHeight, boolean isHost){
         super();
+        this.isHost = isHost;
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
@@ -86,7 +98,7 @@ public void paint(Graphics g) {
         panelHeight = textureSize*mapHeight;
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         map = new Map(mapWidth, mapHeight, textureSize);
-        moi = new Player(100,100,textureSize,textureSize,new ImageIcon("images/sans.png").getImage());
+        player = new Player(100,100,textureSize,textureSize,new ImageIcon("images/sans.png").getImage());
         buttonsPressed = new ArrayList();
         //mapKeys();
         // Key listener : dooesn't work all the time. Use KeyBindings instead
@@ -110,6 +122,7 @@ public void paint(Graphics g) {
                 buttonsPressed.remove((Integer)e.getKeyCode()); // (Integer) is necessary to remove the object instead of the index
             }
         };
+        
         addKeyListener(listener);
         addMouseListener(new MouseAdapter() {
             @Override
@@ -166,4 +179,61 @@ public void paint(Graphics g) {
         }
     }
     */
+    
+    
+    
+    
+    
+    
+    void updatePositionPlayerList()
+    {
+//        for (int i=0; i++; i<listPlayers.size())
+//        {
+//            if (i != player.getPlayerId())
+//            {
+//            float[] pos = sql.getPosition(i); // Get position of player with id=i
+//            listPlayers.get(i).setPosition(pos); 
+//            }
+//        }
+    }
+    
+    void initialiseGame()
+    {
+        if (isHost)
+        {
+            int playerId;
+//            sql.restart(); //Clear previous game on SQL server
+//            sql.addPlayer();
+//            playerId = sql.getNumberOfPlayers(); //If host -> playerId = 0
+//            player.setPlayerId(playerId);
+        }
+        else
+        {
+            int playerId;
+//            sql.addPlayer();
+//            playerId = sql.getNumberOfPlayers();
+//            player.setPlayerId(playerId);
+        }
+    }
+    
+    void initialisePlayerList()
+    {
+//        int numberOfPlayers = sql.getNumberOfPlayers();
+//        for (int i=0; i++; i<numberOfPlayers)
+//        {
+//            if (i != player.getPlayerId())
+//            {
+//                Player newPlayer = new Player(100,100,textureSize,textureSize,new ImageIcon("images/sans.png").getImage());
+//                newPlayer.setPlayerId(i);
+//                listPlayers.add(newPlayer);
+//            } 
+//            else
+//            {
+//                listPlayers.add(player);
+//            }
+//            
+//        }
+        
+    }
+    
 }
