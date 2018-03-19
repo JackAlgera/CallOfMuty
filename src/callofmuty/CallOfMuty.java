@@ -23,6 +23,8 @@ public class CallOfMuty {
         GameTimer timer = new GameTimer();
         GamePanel game = new GamePanel(textureSize, mapWidth, mapHeight, isHost);
         JFrame frame = createJFrame(frameTitle, game);
+        game.requestFocusInWindow();
+        
         minUpdateTime =(long) 1000/maxFPS;
         
         game.initialiseGame();

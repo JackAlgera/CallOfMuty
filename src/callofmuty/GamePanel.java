@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class GamePanel extends JPanel{
     private Player player;
     ArrayList <Player> listPlayers = new ArrayList();
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight;
-    private ArrayList buttonsPressed;
+    private ArrayList pressedButtons;
     private boolean isHost;
     private SQLManager sql; 
     
@@ -31,23 +30,23 @@ public class GamePanel extends JPanel{
     public void updateGame(long dT){
         
         int xDirection = 0, yDirection = 0;
-        if (buttonsPressed.contains(KeyEvent.VK_DOWN)){
+        if (pressedButtons.contains(KeyEvent.VK_DOWN)){
             yDirection +=1;
         }
-        if (buttonsPressed.contains(KeyEvent.VK_LEFT)){
+        if (pressedButtons.contains(KeyEvent.VK_LEFT)){
             xDirection +=-1;
         }
-        if (buttonsPressed.contains(KeyEvent.VK_UP)){
+        if (pressedButtons.contains(KeyEvent.VK_UP)){
             yDirection +=-1;
         }
-        if (buttonsPressed.contains(KeyEvent.VK_RIGHT)){
+        if (pressedButtons.contains(KeyEvent.VK_RIGHT)){
             xDirection +=1;
         }
         player.update(xDirection, yDirection, dT); // need to place the player into the list of players
         updatePositionPlayerList();
     }
     
-    /* // Use of KeyBindings
+    // Use of KeyBindings
     public void mapKeys(){
         this.getInputMap().put(KeyStroke.getKeyStroke("UP"), "upPressed");
         this.getInputMap().put(KeyStroke.getKeyStroke("released UP"), "upReleased");
@@ -66,8 +65,7 @@ public class GamePanel extends JPanel{
         this.getActionMap().put("rightPressed", new KeyPressed(KeyEvent.VK_RIGHT));
         this.getActionMap().put("rightReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
     }
-    */
-
+    
 @Override
 public void paint(Graphics g) {
     super.paint(g);
@@ -99,31 +97,9 @@ public void paint(Graphics g) {
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         map = new Map(mapWidth, mapHeight, textureSize);
         player = new Player(100,100,textureSize,textureSize,new ImageIcon("images/sans.png").getImage());
-        buttonsPressed = new ArrayList();
-        //mapKeys();
-        // Key listener : dooesn't work all the time. Use KeyBindings instead
-        KeyListener listener = new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if(!buttonsPressed.contains(e.getKeyCode())){
-                    buttonsPressed.add(e.getKeyCode());
-                }
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(!buttonsPressed.contains(e.getKeyCode())){
-                    buttonsPressed.add(e.getKeyCode());
-                }
-            }
-            
-            @Override
-            public void keyReleased(KeyEvent e) {
-                buttonsPressed.remove((Integer)e.getKeyCode()); // (Integer) is necessary to remove the object instead of the index
-            }
-        };
+        pressedButtons = new ArrayList();
+        mapKeys();
         
-        addKeyListener(listener);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -145,7 +121,7 @@ public void paint(Graphics g) {
 	setFocusable(true);
     }
     
-    /* //Use of KeyBindings
+    //Use of KeyBindings
     private class KeyPressed extends AbstractAction{
         
         private int key;
@@ -157,8 +133,8 @@ public void paint(Graphics g) {
         @Override
         public void actionPerformed( ActionEvent tf ){
             System.out.println("pressed");
-            if(!buttonsPressed.contains(key)){
-                buttonsPressed.add(key);
+            if(!pressedButtons.contains(key)){
+                pressedButtons.add(key);
             }
         }
     }
@@ -173,17 +149,11 @@ public void paint(Graphics g) {
         @Override
         public void actionPerformed( ActionEvent tf ){
             System.out.println("released");
-            if(buttonsPressed.contains(key)){
-                buttonsPressed.remove((Integer)key);
+            if(pressedButtons.contains(key)){
+                pressedButtons.remove((Integer)key);
             }
         }
     }
-    */
-    
-    
-    
-    
-    
     
     void updatePositionPlayerList()
     {
