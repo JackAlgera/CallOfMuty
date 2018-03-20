@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -96,7 +97,7 @@ public void paint(Graphics g) {
         panelHeight = textureSize*mapHeight;
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         map = new Map(mapWidth, mapHeight, textureSize);
-        player = new Player(100,100,textureSize,textureSize,new ImageIcon("images/sans.png").getImage());
+        player = new Player(100,100,textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
         pressedButtons = new ArrayList();
         mapKeys();
         
