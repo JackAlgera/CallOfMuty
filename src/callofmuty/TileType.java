@@ -17,25 +17,13 @@ public class TileType {
         this.crossable = isCrossable;
         this.colone=column;
         this.line=row;
-        loadAndSelectaTile(tileset, column, row);
+        image = Tools.loadAndSelectaTile(new File("images/Tileset.png"), column, row);
     }
 
     public boolean isCrossable() {
         return crossable;
     }
 
-    public void loadAndSelectaTile(File tilesetfile, int column, int row){
-        try {
-            BufferedImage imageFull;
-            imageFull = ImageIO.read(tilesetfile);      
-            int y =32*(column-1);
-            int x =32*(row-1);
-            this.image = imageFull.getSubimage(x, y, 32, 32);
-        } catch (IOException error) {
-            System.out.println("Error: cannot read tileset image.");  
-        }
-    }
-    
     public BufferedImage getImage() {
        return this.image;
     }

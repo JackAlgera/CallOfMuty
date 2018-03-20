@@ -25,6 +25,7 @@ public class Player {
         acceleration = new double[2];
         acceleration[0] = 0.0;
         acceleration[1] = 0.0;
+
     }
     
     public void move(long dT){

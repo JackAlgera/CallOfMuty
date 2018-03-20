@@ -5,6 +5,11 @@ git clone https://github.com/JackAlgera/CallOfMuty.git
 cd CallOfMuty
 ```
 
+If you are on Windows please execute this (say no to Vim!)
+```
+git config core.editor notepad
+```
+
 ## After modification
 
 Before any modifications, do not forget to download the last version of the game using
