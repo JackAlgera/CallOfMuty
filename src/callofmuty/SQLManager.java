@@ -76,7 +76,7 @@ public class SQLManager {
     
     public void addPlayer(Player player){
         int idPlayer = player.getPlayerId(); 
-        
+        System.out.println(1);
         PreparedStatement requete;
         try {
             requete = connexion.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?)");
@@ -138,24 +138,4 @@ public class SQLManager {
         
         return stockagePosition;    
     }
-    
-//    public Player getPlayer(int playerId){
-//        Player player;
-//        PreparedStatement requete;
-//        
-//        try {
-//            requete = connexion.prepareStatement("SELECT x,y FROM players WHERE id="+idPlayer);
-//            ResultSet resultat = requete.executeQuery();
-//            while (resultat.next()) {
-//                stockagePosition[0] = resultat.getDouble("x");
-//                stockagePosition[1] = resultat.getDouble("y");
-//            }
-//        requete.close();
-//              
-//        } catch (SQLException ex) {
-//            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        
-//        return stockagePosition;    
-//    }
 }

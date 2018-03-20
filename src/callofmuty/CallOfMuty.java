@@ -34,14 +34,12 @@ public class CallOfMuty {
         while(!game.isGameDone()){
             dT = timer.update();
             game.updateGame(dT);
-            dT =timer.getDT();
             if (dT<minUpdateTime){
                 Thread.sleep(minUpdateTime-dT);
             }
             game.updatePlayerList(dT);
             game.repaint();
         }
-        
         game.endGame();
     }
     

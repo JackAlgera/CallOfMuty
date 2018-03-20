@@ -84,8 +84,9 @@ public class GamePanel extends JPanel{
         if (pressedButtons.contains(KeyEvent.VK_RIGHT)){
             xDirection +=1;
         }
-        player.update(xDirection, yDirection, dT, map); // need to place the player into the list of players
+        player.update(xDirection, yDirection, dT, map); // To do : need to place the player into the list of players
         updatePositionPlayerList();
+        sql.setPosition(player.getPosX(), player.getPosY(), player);
     }
     
     // Use of KeyBindings
@@ -115,7 +116,7 @@ public void paint(Graphics g) {
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
     RenderingHints.VALUE_ANTIALIAS_ON);
     map.draw(g2d);
-    player.draw(g2d); // Need to put this player into the playerList then draw using the for loop 
+    player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
     
     for(Player p : listPlayers)
     {
@@ -179,6 +180,7 @@ public void paint(Graphics g) {
             int playerId;
             sql.clearTable(); //Clear previous game on SQL server
             playerId = sql.getNumberOfPlayers(); //If host -> playerId = 0
+            System.out.println(playerId);
             player.setPlayerId(playerId);
             sql.addPlayer(player);
         }
@@ -221,33 +223,32 @@ public void paint(Graphics g) {
     
     public void updatePlayerList(long dT)
     {
-//        playerListUpdateTime += dT;
-////        System.out.println(playerListUpdateTime);
-//        if (playerListUpdateTime > 1000)
-//        {
-//            playerListUpdateTime -= 1000;
-////            System.out.println("Here");
-//        }
-//        else
-//        {
-//            playerListUpdateTime += dT;
-//        }
-        int numberOfPlayers = sql.getNumberOfPlayers();
-        listPlayers.clear();;
-        for(int i=0;i<numberOfPlayers;i++)
+        playerListUpdateTime += dT;
+        if (playerListUpdateTime > 1000)
         {
-            if (i != player.getPlayerId())
+            playerListUpdateTime -= 1000;
+            int numberOfPlayers = sql.getNumberOfPlayers();
+            listPlayers.clear();;
+            for(int i=0;i<numberOfPlayers;i++)
             {
-                double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
-                newPlayer.setPlayerId(i);
-                listPlayers.add(newPlayer);
-            } 
-            else
-            {
-                listPlayers.add(player);
+                if (i != player.getPlayerId())
+                {
+                    double[] posNewPlayer = sql.getPositionWithPlayerId(i);
+                    Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
+                    newPlayer.setPlayerId(i);
+                    listPlayers.add(newPlayer);
+                } 
+                else
+                {
+                    listPlayers.add(player);
+                }
             }
         }
+        else
+        {
+            playerListUpdateTime += dT;
+        }
+        
     }
     
     public boolean isGameDone()
