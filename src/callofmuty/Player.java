@@ -21,7 +21,6 @@ public class Player {
         speed = new double[2];
         speed[0] = 0.0; //x speed
         speed[1] = 0.0; // y speed
-        
     }
     
     public void move(long dT){

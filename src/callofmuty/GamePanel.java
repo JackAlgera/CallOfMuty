@@ -9,6 +9,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -24,8 +26,43 @@ public class GamePanel extends JPanel{
     private boolean isHost;
     private SQLManager sql; 
     
-    
     private static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW; //usefull for the KeyBindings
+    
+    public GamePanel(int textureSize, int mapWidth, int mapHeight, boolean isHost){
+        super();
+        this.isHost = isHost;
+        this.textureSize = textureSize;
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
+//        this.sql = SQLManager();
+        panelWidth = textureSize*mapWidth;
+        panelHeight = textureSize*mapHeight;
+        setPreferredSize(new Dimension(panelWidth, panelHeight));
+        map = new Map(mapWidth, mapHeight, textureSize);
+        player = new Player(100,100,textureSize,textureSize,new ImageIcon("images/sans.png").getImage());
+        pressedButtons = new ArrayList();
+        mapKeys();
+        
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("Clicked on " + e.getX() + " ; " + e.getY());
+            }@Override
+            public void mouseEntered(MouseEvent e) {
+                System.out.println("Entered on " + e.getX() + " ; " + e.getY());
+            }@Override
+            public void mouseExited(MouseEvent e) {
+                System.out.println("Exited on " + e.getX() + " ; " + e.getY());
+            }@Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println("Pressed on " + e.getX() + " ; " + e.getY());
+            }@Override
+            public void mouseReleased(MouseEvent e) {
+                System.out.println("Released on " + e.getX() + " ; " + e.getY());
+            }
+        });
+	setFocusable(true);
+    }
     
     public void updateGame(long dT){
         
@@ -84,42 +121,7 @@ public void paint(Graphics g) {
     }
 }
     
-
     
-    public GamePanel(int textureSize, int mapWidth, int mapHeight, boolean isHost){
-        super();
-        this.isHost = isHost;
-        this.textureSize = textureSize;
-        this.mapWidth = mapWidth;
-        this.mapHeight = mapHeight;
-        panelWidth = textureSize*mapWidth;
-        panelHeight = textureSize*mapHeight;
-        setPreferredSize(new Dimension(panelWidth, panelHeight));
-        map = new Map(mapWidth, mapHeight, textureSize);
-        player = new Player(100,100,textureSize,textureSize,new ImageIcon("images/sans.png").getImage());
-        pressedButtons = new ArrayList();
-        mapKeys();
-        
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Clicked on " + e.getX() + " ; " + e.getY());
-            }@Override
-            public void mouseEntered(MouseEvent e) {
-                System.out.println("Entered on " + e.getX() + " ; " + e.getY());
-            }@Override
-            public void mouseExited(MouseEvent e) {
-                System.out.println("Exited on " + e.getX() + " ; " + e.getY());
-            }@Override
-            public void mousePressed(MouseEvent e) {
-                System.out.println("Pressed on " + e.getX() + " ; " + e.getY());
-            }@Override
-            public void mouseReleased(MouseEvent e) {
-                System.out.println("Released on " + e.getX() + " ; " + e.getY());
-            }
-        });
-	setFocusable(true);
-    }
     
     //Use of KeyBindings
     private class KeyPressed extends AbstractAction{
@@ -203,7 +205,22 @@ public void paint(Graphics g) {
 //            }
 //            
 //        }
-        
+    }
+    
+    void startGame()
+    {
+        boolean start = false;
+        while(!start)
+        {
+            if (pressedButtons.contains(KeyEvent.VK_ENTER)){
+                start = true;
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
 }
