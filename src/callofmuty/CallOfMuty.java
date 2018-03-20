@@ -31,16 +31,18 @@ public class CallOfMuty {
         game.initialisePlayerList();
         timer.update();
         
-        while(true){
+        while(!game.isGameDone()){
             dT = timer.update();
             game.updateGame(dT);
             dT =timer.getDT();
             if (dT<minUpdateTime){
                 Thread.sleep(minUpdateTime-dT);
             }
-//            game.updatePlayerList(dT);
+            game.updatePlayerList(dT);
             game.repaint();
         }
+        
+        game.endGame();
     }
     
         private static JFrame createJFrame(String frameTitle, GamePanel game){

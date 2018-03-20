@@ -22,20 +22,16 @@ public class SQLManager {
     }
     
     public double[] getPosition(Player player){
-        int idPlayer;
-        idPlayer= player.getPlayerId(); 
+        int idPlayer = player.getPlayerId(); 
         double[] stockagePosition = {0,0};
         
         PreparedStatement requete;
         try {
-            double positionAbscisse, positionOrdonnee;
             requete = connexion.prepareStatement("SELECT x,y FROM players WHERE id="+idPlayer);
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
-                positionAbscisse = resultat.getDouble("x");
-                positionOrdonnee = resultat.getDouble("y");
-                stockagePosition[0] = positionAbscisse ;
-                stockagePosition[1] = positionOrdonnee;
+                stockagePosition[0] = resultat.getDouble("x");
+                stockagePosition[1] = resultat.getDouble("y");
             }
         requete.close();
               
@@ -54,7 +50,6 @@ public class SQLManager {
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
                 numberOfPlayers = resultat.getInt("COUNT(id)");
-                
             }
         requete.close();
               
@@ -80,26 +75,24 @@ public class SQLManager {
     }
     
     public void addPlayer(Player player){
-        int idPlayer;
-        idPlayer= player.getPlayerId(); 
-        float abscissePlayer=player.getAbscisse();
-        float ordonnePlayer=player.getOrdonnee(); 
+        int idPlayer = player.getPlayerId(); 
         
         PreparedStatement requete;
         try {
             requete = connexion.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?)");
             requete.setInt(1,idPlayer);
-            requete.setString(2, "player" +idPlayer);
-            requete.setFloat(3, 5);
-            requete.setFloat(4, abscissePlayer);
-            requete.setFloat(5, ordonnePlayer);
+            requete.setString(2, "player" + idPlayer);
+            requete.setDouble(3, 5);
+            requete.setDouble(4, player.getPosX());
+            requete.setDouble(5, player.getPosY());
             requete.executeUpdate();
 
             requete.close();  
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-}
+    }
+    
     public void clearTable(){
         PreparedStatement requete;
         
@@ -125,4 +118,44 @@ public class SQLManager {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public double[] getPositionWithPlayerId(int idPlayer){
+        double[] stockagePosition = {0,0};
+        
+        PreparedStatement requete;
+        try {
+            requete = connexion.prepareStatement("SELECT x,y FROM players WHERE id="+idPlayer);
+            ResultSet resultat = requete.executeQuery();
+            while (resultat.next()) {
+                stockagePosition[0] = resultat.getDouble("x");
+                stockagePosition[1] = resultat.getDouble("y");
+            }
+        requete.close();
+              
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return stockagePosition;    
+    }
+    
+//    public Player getPlayer(int playerId){
+//        Player player;
+//        PreparedStatement requete;
+//        
+//        try {
+//            requete = connexion.prepareStatement("SELECT x,y FROM players WHERE id="+idPlayer);
+//            ResultSet resultat = requete.executeQuery();
+//            while (resultat.next()) {
+//                stockagePosition[0] = resultat.getDouble("x");
+//                stockagePosition[1] = resultat.getDouble("y");
+//            }
+//        requete.close();
+//              
+//        } catch (SQLException ex) {
+//            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        
+//        return stockagePosition;    
+//    }
 }

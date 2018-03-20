@@ -12,7 +12,7 @@ public class Player {
     private double[] speed;
     private double[] acceleration;
     
-    public Player(int x,int y, int playerWidth, int playerHeight,Image image){
+    public Player(double x,double y, int playerWidth, int playerHeight,Image image){
         this.posX=x;
         this.posY=y;
         this.image=image;
@@ -130,7 +130,7 @@ public class Player {
     }*/
     
     
-    void setPosition(float[] newPos)
+    void setPosition(double[] newPos)
     {
         posX = newPos[1];
         posY = newPos[2];
@@ -145,13 +145,10 @@ public class Player {
     {
         return this.playerId;
     }
-    float getAbscisse(){
+    double getPosX(){
         return this.posX ;
     }
-    float getOrdonnee(){
+    double getPosY(){
         return this.posY;
     }
-    
-            
-    
 }

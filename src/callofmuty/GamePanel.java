@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ public class GamePanel extends JPanel{
     private boolean isHost;
     private long playerListUpdateTime;
     private SQLManager sql; 
+    private boolean endGame = false;
     
     private static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW; //usefull for the KeyBindings
     
@@ -37,7 +39,7 @@ public class GamePanel extends JPanel{
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-//        this.sql = SQLManager();
+        this.sql = new SQLManager();
         panelWidth = textureSize*mapWidth;
         panelHeight = textureSize*mapHeight;
         setPreferredSize(new Dimension(panelWidth, panelHeight));
@@ -49,19 +51,19 @@ public class GamePanel extends JPanel{
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("Clicked on " + e.getX() + " ; " + e.getY());
+//                System.out.println("Clicked on " + e.getX() + " ; " + e.getY());
             }@Override
             public void mouseEntered(MouseEvent e) {
-                System.out.println("Entered on " + e.getX() + " ; " + e.getY());
+//                System.out.println("Entered on " + e.getX() + " ; " + e.getY());
             }@Override
             public void mouseExited(MouseEvent e) {
-                System.out.println("Exited on " + e.getX() + " ; " + e.getY());
+//                System.out.println("Exited on " + e.getX() + " ; " + e.getY());
             }@Override
             public void mousePressed(MouseEvent e) {
-                System.out.println("Pressed on " + e.getX() + " ; " + e.getY());
+//                System.out.println("Pressed on " + e.getX() + " ; " + e.getY());
             }@Override
             public void mouseReleased(MouseEvent e) {
-                System.out.println("Released on " + e.getX() + " ; " + e.getY());
+//                System.out.println("Released on " + e.getX() + " ; " + e.getY());
             }
         });
 	setFocusable(true);
@@ -135,7 +137,7 @@ public void paint(Graphics g) {
         
         @Override
         public void actionPerformed( ActionEvent tf ){
-            System.out.println("pressed");
+//            System.out.println("pressed");
             if(!pressedButtons.contains(key)){
                 pressedButtons.add(key);
             }
@@ -151,65 +153,74 @@ public void paint(Graphics g) {
         
         @Override
         public void actionPerformed( ActionEvent tf ){
-            System.out.println("released");
+//            System.out.println("released");
             if(pressedButtons.contains(key)){
                 pressedButtons.remove((Integer)key);
             }
         }
     }
     
-    void updatePositionPlayerList()
+    public void updatePositionPlayerList()
     {
-//        for (int i=0; i++; i<listPlayers.size())
-//        {
-//            if (i != player.getPlayerId())
-//            {
-//            float[] pos = sql.getPosition(i); // Get position of player with id=i
-//            listPlayers.get(i).setPosition(pos); 
-//            }
-//        }
+        for (int i=0; i<listPlayers.size() ;i++ )
+        {
+            if (i != player.getPlayerId())
+            {
+            double[] pos = sql.getPositionWithPlayerId(i); // Get position of player with id=i
+            listPlayers.get(i).setPosition(pos); 
+            }
+        }
     }
     
-    void initialiseGame()
+    public void initialiseGame()
     {
         if (isHost)
         {
             int playerId;
-//            sql.restart(); //Clear previous game on SQL server
-//            sql.addPlayer();
-//            playerId = sql.getNumberOfPlayers(); //If host -> playerId = 0
-//            player.setPlayerId(playerId);
+            sql.clearTable(); //Clear previous game on SQL server
+            playerId = sql.getNumberOfPlayers(); //If host -> playerId = 0
+            player.setPlayerId(playerId);
+            sql.addPlayer(player);
         }
         else
         {
             int playerId;
-//            sql.addPlayer();
-//            playerId = sql.getNumberOfPlayers();
-//            player.setPlayerId(playerId);
+            playerId = sql.getNumberOfPlayers();
+            player.setPlayerId(playerId);
+            sql.addPlayer(player);
         }
     }
     
-    void initialisePlayerList()
+    public void endGame()
     {
-//        int numberOfPlayers = sql.getNumberOfPlayers();
-//        for (int i=0; i++; i<numberOfPlayers)
-//        {
-//            if (i != player.getPlayerId())
-//            {
-//                Player newPlayer = new Player(100,100,textureSize,textureSize,new ImageIcon("images/sans.png").getImage());
-//                newPlayer.setPlayerId(i);
-//                listPlayers.add(newPlayer);
-//            } 
-//            else
-//            {
-//                listPlayers.add(player);
-//            }
-//            
-//        }
+        try {
+            sql.getConnection().close();
+        } catch (SQLException ex) {
+            Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-//    void updatePlayerList(long dT)
-//    {
+    public void initialisePlayerList()
+    {
+        int numberOfPlayers = sql.getNumberOfPlayers();
+        for(int i=0;i<numberOfPlayers;i++)
+        {
+            if (i != player.getPlayerId())
+            {
+                double[] posNewPlayer = sql.getPositionWithPlayerId(i);
+                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
+                newPlayer.setPlayerId(i);
+                listPlayers.add(newPlayer);
+            } 
+            else
+            {
+                listPlayers.add(player);
+            }
+        }
+    }
+    
+    public void updatePlayerList(long dT)
+    {
 //        playerListUpdateTime += dT;
 ////        System.out.println(playerListUpdateTime);
 //        if (playerListUpdateTime > 1000)
@@ -221,5 +232,26 @@ public void paint(Graphics g) {
 //        {
 //            playerListUpdateTime += dT;
 //        }
-//    }
+        int numberOfPlayers = sql.getNumberOfPlayers();
+        listPlayers.clear();;
+        for(int i=0;i<numberOfPlayers;i++)
+        {
+            if (i != player.getPlayerId())
+            {
+                double[] posNewPlayer = sql.getPositionWithPlayerId(i);
+                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
+                newPlayer.setPlayerId(i);
+                listPlayers.add(newPlayer);
+            } 
+            else
+            {
+                listPlayers.add(player);
+            }
+        }
+    }
+    
+    public boolean isGameDone()
+    {
+        return endGame;
+    }
 }
