@@ -24,12 +24,14 @@ public class GamePanel extends JPanel{
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight;
     private ArrayList pressedButtons;
     private boolean isHost;
+    private long playerListUpdateTime;
     private SQLManager sql; 
     
     private static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW; //usefull for the KeyBindings
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight, boolean isHost){
         super();
+        this.playerListUpdateTime = 0;
         this.isHost = isHost;
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
@@ -207,20 +209,18 @@ public void paint(Graphics g) {
 //        }
     }
     
-    void startGame()
+    void updatePlayerList(long dT)
     {
-        boolean start = false;
-        while(!start)
+        playerListUpdateTime += dT;
+//        System.out.println(playerListUpdateTime);
+        if (playerListUpdateTime > 1000)
         {
-            if (pressedButtons.contains(KeyEvent.VK_ENTER)){
-                start = true;
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            playerListUpdateTime -= 1000;
+//            System.out.println("Here");
+        }
+        else
+        {
+            playerListUpdateTime += dT;
         }
     }
-    
 }

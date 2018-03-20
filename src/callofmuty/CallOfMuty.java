@@ -28,24 +28,18 @@ public class CallOfMuty {
         minUpdateTime =(long) 1000/maxFPS;
         
         game.initialiseGame();
-                
-        // Wait till all players join - > wait for input
-        
-//        game.startGame();
-        
-        // Once everyone has joined -> we initialise the player list
         game.initialisePlayerList();
-        
-        
         timer.update();
         
         while(true){
             dT = timer.update();
             game.updateGame(dT);
             dT =timer.getDT();
+            System.out.println(dT);
             if (dT<minUpdateTime){
                 Thread.sleep(minUpdateTime-dT);
             }
+            game.updatePlayerList(dT);
             game.repaint();
         }
     }
