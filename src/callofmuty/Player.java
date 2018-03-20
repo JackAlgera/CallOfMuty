@@ -10,6 +10,7 @@ public class Player {
     private Image image;
     private double maxSpeed, posX, posY, wantedX, wantedY;
     private double[] speed;
+    private double[] acceleration;
     
     public Player(int x,int y, int playerWidth, int playerHeight,Image image){
         this.posX=x;
@@ -21,10 +22,14 @@ public class Player {
         speed = new double[2];
         speed[0] = 0.0; //x speed
         speed[1] = 0.0; // y speed
-        
+        acceleration = new double[2];
+        acceleration[0] = 0.0;
+        acceleration[1] = 0.0;
     }
     
     public void move(long dT){
+        speed[0] += acceleration[0]*dT;
+        speed[1] += acceleration[1]*dT;
         posX += speed[0]*dT;
         posY += speed[1]*dT;
     }
@@ -35,14 +40,34 @@ public class Player {
     
     public void update(int xDirection, int yDirection, long dT, Map map){
         //Calculate speed vector
-        if (xDirection!=0 && yDirection!=0){ 
-            speed[0] = maxSpeed/Math.sqrt(2)*xDirection;
-            speed[1] = maxSpeed/Math.sqrt(2)*yDirection;
+        acceleration[0] = xDirection*0.002;
+        acceleration[1] = yDirection*0.002;
+       
+        if (Math.abs(speed[0])>maxSpeed ){
+            if (xDirection==1){
+                speed[0]=maxSpeed;
+            } else {
+                speed[0]=-maxSpeed;
+            }
         }
-        else {
-            speed[0] = maxSpeed*xDirection;
-            speed[1] = maxSpeed*yDirection;
+        if (Math.abs(speed[1])>maxSpeed){
+            if (yDirection==1){
+                speed[1]=maxSpeed;
+            } else {
+                speed[1]=-maxSpeed;
+            }
+            
         }
+        
+        if (speed[0]!= 0.0 && xDirection==0){
+            speed[0]=0.0;
+        }
+        
+        if (speed[1]!=0.0 && yDirection==0){
+            speed[1]=0.0;
+        }
+    
+                
         // check if player is still in the map
         wantedX = posX + speed[0]*dT;
         wantedY = posY + speed[1]*dT;
@@ -73,10 +98,36 @@ public class Player {
                 }
             }
         }
-        //move;
+        move(dT);
         posX = wantedX;
         posY = wantedY;
     }
+    
+    /*public void update(int xDirection, int yDirection, long dT){
+        
+        
+        if (xDirection!=0 || yDirection!=0){
+            if (Math.abs(speed[0])<maxSpeed && Math.abs(speed[1])<maxSpeed){
+                speed[0] += acceleration*dT*xDirection;
+                speed[1] += acceleration*dT*yDirection;
+            } else {
+                speed[0] = maxSpeed*xDirection;
+                speed[1] = maxSpeed*yDirection;
+        }
+        } else  {
+            if (Math.abs(speed[0])<(maxSpeed/Math.sqrt(2)) && Math.abs(speed[1])<(maxSpeed/Math.sqrt(2))){
+                speed[0] += acceleration*dT*xDirection;
+                speed[1] += acceleration*dT*yDirection;
+            } else {
+                speed[0] = maxSpeed/Math.sqrt(2)*xDirection;
+                speed[1] = maxSpeed/Math.sqrt(2)*yDirection;
+            }
+            
+        } 
+        // check if able to move in given direction
+        move(dT);
+    }*/
+    
     
     void setPosition(float[] newPos)
     {
