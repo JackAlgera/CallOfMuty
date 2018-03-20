@@ -7,21 +7,21 @@ import javax.imageio.ImageIO;
 
 public class TileType {
    
-    private final boolean isCrossable;
+    private final boolean crossable;
     private final int colone;
     private final int line;  
     private BufferedImage image;
     File tileset = new File("images/Tileset.png");
 
     TileType( boolean isCrossable, int column, int row){
-        this.isCrossable = isCrossable;
+        this.crossable = isCrossable;
         this.colone=column;
         this.line=row;
         loadAndSelectaTile(tileset, column, row);
     }
 
-    public boolean IsCrossable() {
-        return isCrossable;
+    public boolean isCrossable() {
+        return crossable;
     }
 
     public void loadAndSelectaTile(File tilesetfile, int column, int row){
