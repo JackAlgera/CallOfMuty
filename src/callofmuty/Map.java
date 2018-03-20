@@ -1,13 +1,13 @@
 package callofmuty;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 public class Map{
     
     private int[][] map;
     private int mapWidth,mapHeight, textureSize;
-    private static TileType grass = TileType.GRASS, rock = TileType.ROCK, dirt = TileType.ROCK;
-    
+    private static TileType grass = TileType.GRASS, rock = TileType.ROCK, dirt = TileType.DIRT;
     // Grass = 0 ; Rock = 1 ; Dirt = 2;
     
     public Map(int[][] map, int textureSize){
@@ -21,6 +21,9 @@ public class Map{
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.textureSize = tileSize;
+        BufferedImage grassI= grass.getImage();
+        
+        
         map = new int[mapWidth][mapHeight];
         for (int i = 1 ; i<mapWidth-1 ; i++){
             for (int j = 1; j<mapHeight-1; j++){

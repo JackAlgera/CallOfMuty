@@ -7,37 +7,38 @@ import javax.imageio.ImageIO;
 
 public enum TileType {
     
-    GRASS(true,1,1), DIRT(true,1,2), ROCK(false,1,3);
+    GRASS(true,1,1), DIRT(true,1,18), ROCK(false,1,3); 
     
     private final boolean isCrossable;
-    private int colone;
-    private int line;
-    
-    
+    private final int colone;
+    private final int line;  
     private BufferedImage image;
     File tileset = new File("images/Tileset.png");
 
-
-    TileType( boolean isCrossable, int colone, int line){
+    TileType( boolean isCrossable, int column, int row){
         this.isCrossable = isCrossable;
-        this.colone=colone;
-        this.line=line;
+        this.colone=column;
+        this.line=row;
+        loadAndSelectaTile(tileset, column, row);
     }
 
     public boolean IsCrossable() {
         return isCrossable;
     }
 
-    public BufferedImage loadAndSelectaTile(File tilesetfile, int colone, int line){
+    public void loadAndSelectaTile(File tilesetfile, int column, int row){
         try {
-            image = ImageIO.read(tilesetfile);
+            BufferedImage imageFull;
+            imageFull = ImageIO.read(tilesetfile);
+            System.out.println("Error: cannot read tileset image.");        
+            int y =32*(column-1);
+            int x =32*(row-1);
+            this.image = imageFull.getSubimage(x, y, 32, 32);
         } catch (IOException error) {
-            System.out.println("Error: cannot read tileset image.");        }
-        int x =32*(colone-1);
-        int y =32*(line-1);
-        return image.getSubimage(x, y, 32, 32);
+        }
     }
+    
     public BufferedImage getImage() {
-       return loadAndSelectaTile(tileset, this.colone, this.line);
+       return this.image;
     }
 }
