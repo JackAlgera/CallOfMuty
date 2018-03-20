@@ -62,5 +62,13 @@ public class Player {
     {
         return this.playerId;
     }
+    float getAbscisse(){
+        return this.posX ;
+    }
+    float getOrdonnee(){
+        return this.posY;
+    }
+    
+            
     
 }
