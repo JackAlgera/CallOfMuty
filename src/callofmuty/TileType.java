@@ -5,10 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public enum TileType {
-    
-    GRASS(true,1,1), DIRT(true,1,18), ROCK(false,1,3); 
-    
+public class TileType {
+   
     private final boolean isCrossable;
     private final int colone;
     private final int line;  

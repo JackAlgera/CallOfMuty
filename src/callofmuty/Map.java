@@ -7,8 +7,11 @@ public class Map{
     
     private int[][] map;
     private int mapWidth,mapHeight, textureSize;
-    private static TileType grass = TileType.GRASS, rock = TileType.ROCK, dirt = TileType.DIRT;
-    // Grass = 0 ; Rock = 1 ; Dirt = 2;
+    private static TileType grass = new TileType(true,1,1);
+    private static TileType dirt = new TileType(true,1,18);
+    private static TileType rock= new TileType(false,1,12); 
+    
+// Grass = 0 ; Rock = 1 ; Dirt = 2;
     
     public Map(int[][] map, int textureSize){
         this.map=map;
