@@ -103,13 +103,31 @@ public class Map{
         TileType tile;
         switch (map[(int)x/textureSize][(int)y/textureSize]){
             case 1:
-                tile = rock;
+                tile = woodt;
                 break;
             case 2:
-                tile = dirt;
+                tile = woodb;
+                break;
+            case 3:
+                tile = woodl;
+                break;
+            case 4:
+                tile = woodr;
+                break;
+            case 5:
+                tile = woodtl;
+                break;
+            case 6:
+                tile = woodbl;
+                break;
+            case 7:
+                tile = woodtr;
+                break;
+            case 8:
+                tile = woodbr;
                 break;
             default :
-                tile = grass;
+                tile = dirt;
         }
         return tile;
     }
