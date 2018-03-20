@@ -21,12 +21,22 @@ public class Map{
         this.textureSize = textureSize;
     }
     
+    public int getMapHeight(){
+        return mapHeight;
+    }
+    
+    public int getMapWidth(){
+        return mapWidth;
+    }
+    
+    public int getTextureSize(){
+        return textureSize;
+    }
+    
     public Map(int mapWidth, int mapHeight, int tileSize){
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.textureSize = tileSize;
-        BufferedImage grassI= grass.getImage();
-        
         
         map = new int[mapWidth][mapHeight];
         for (int i = 1 ; i<mapWidth-1 ; i++){
@@ -89,8 +99,24 @@ public class Map{
         }
     }
     
-    public int getTile(int x, int y){
-        return map[x/textureSize][y/textureSize];
+    public TileType getTile(double x, double y){
+        TileType tile;
+        switch (map[(int)x/textureSize][(int)y/textureSize]){
+            case 1:
+                tile = rock;
+                break;
+            case 2:
+                tile = dirt;
+                break;
+            default :
+                tile = grass;
+        }
+        return tile;
+    }
+    
+    public boolean pathIsCrossable(double x, double y, int playerWidth, int playerHeight){ // checks if a player is only on crossable tiles
+        boolean pathIsCrossable  = getTile(x,y).isCrossable() && getTile(x + playerWidth, y).isCrossable() && getTile(x, y + playerHeight).isCrossable() && getTile(x + playerWidth, y + playerHeight).isCrossable();
+        return pathIsCrossable;
     }
     
 }

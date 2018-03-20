@@ -7,32 +7,32 @@ import javax.imageio.ImageIO;
 
 public class TileType {
    
-    private final boolean isCrossable;
+    private final boolean crossable;
     private final int colone;
     private final int line;  
     private BufferedImage image;
     File tileset = new File("images/Tileset.png");
 
     TileType( boolean isCrossable, int column, int row){
-        this.isCrossable = isCrossable;
+        this.crossable = isCrossable;
         this.colone=column;
         this.line=row;
         loadAndSelectaTile(tileset, column, row);
     }
 
-    public boolean IsCrossable() {
-        return isCrossable;
+    public boolean isCrossable() {
+        return crossable;
     }
 
     public void loadAndSelectaTile(File tilesetfile, int column, int row){
         try {
             BufferedImage imageFull;
-            imageFull = ImageIO.read(tilesetfile);
-            System.out.println("Error: cannot read tileset image.");        
+            imageFull = ImageIO.read(tilesetfile);      
             int y =32*(column-1);
             int x =32*(row-1);
             this.image = imageFull.getSubimage(x, y, 32, 32);
         } catch (IOException error) {
+            System.out.println("Error: cannot read tileset image.");  
         }
     }
     

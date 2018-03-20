@@ -7,9 +7,8 @@ public class Player {
     
     private int playerId;
     private int playerWidth,playerHeight;
-    private float posX,posY;
     private Image image;
-    private double maxSpeed;
+    private double maxSpeed, posX, posY, wantedX, wantedY;
     private double[] speed;
     
     public Player(int x,int y, int playerWidth, int playerHeight,Image image){
@@ -18,7 +17,7 @@ public class Player {
         this.image=image;
         this.playerWidth=playerWidth;
         this.playerHeight=playerHeight;
-        maxSpeed = 0.2; //in pixel per ms
+        maxSpeed = 0.3; //in pixel per ms
         speed = new double[2];
         speed[0] = 0.0; //x speed
         speed[1] = 0.0; // y speed
@@ -34,8 +33,9 @@ public class Player {
         g.drawImage(image,(int) posX,(int) posY, playerWidth, playerHeight, null);
     }
     
-    public void update(int xDirection, int yDirection, long dT){
-        if (xDirection!=0 && yDirection!=0){
+    public void update(int xDirection, int yDirection, long dT, Map map){
+        //Calculate speed vector
+        if (xDirection!=0 && yDirection!=0){ 
             speed[0] = maxSpeed/Math.sqrt(2)*xDirection;
             speed[1] = maxSpeed/Math.sqrt(2)*yDirection;
         }
@@ -43,8 +43,39 @@ public class Player {
             speed[0] = maxSpeed*xDirection;
             speed[1] = maxSpeed*yDirection;
         }
-        // check if able to move in given direction
-        move(dT);
+        // check if player is still in the map
+        wantedX = posX + speed[0]*dT;
+        wantedY = posY + speed[1]*dT;
+        if (wantedX<0 || wantedX+playerWidth>map.getMapWidth()*map.getTextureSize()){ 
+            wantedX = posX;
+            speed[0] = 0;
+            System.out.println("X movement blocked");
+        }
+        if (wantedY<0 || wantedY+playerHeight>map.getMapHeight()*map.getTextureSize()){
+            wantedY = posY;
+            speed[1] = 0;
+            System.out.println("Y movement blocked");
+        }
+        // check if able to move in given direction (not trying to cross uncrossable tile)
+        if(!map.pathIsCrossable(wantedX, wantedY, playerWidth, playerHeight)){ // test if the tile the player is going to is crossable
+            if (map.pathIsCrossable(posX, wantedY, playerWidth, playerHeight)){ //try to block x movement
+                wantedX = posX;
+                speed[0] = 0;
+            } else {
+                if (map.pathIsCrossable(wantedX, posY, playerWidth, playerHeight)){ // try to block y movement
+                    wantedY = posY;
+                    speed[1] = 0;
+                } else { // block movement
+                    wantedX = posX;
+                    speed[0] = 0;
+                    wantedY = posY;
+                    speed[1] = 0;
+                }
+            }
+        }
+        //move;
+        posX = wantedX;
+        posY = wantedY;
     }
     
     void setPosition(float[] newPos)
