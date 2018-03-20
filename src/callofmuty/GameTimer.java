@@ -32,6 +32,4 @@ public class GameTimer {
         isPaused=false;
         LastUpdate=System.currentTimeMillis();
     }
-    
-    
 }

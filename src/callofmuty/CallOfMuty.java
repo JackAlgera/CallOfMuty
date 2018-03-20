@@ -31,6 +31,8 @@ public class CallOfMuty {
                 
         // Wait till all players join - > wait for input
         
+//        game.startGame();
+        
         // Once everyone has joined -> we initialise the player list
         game.initialisePlayerList();
         
