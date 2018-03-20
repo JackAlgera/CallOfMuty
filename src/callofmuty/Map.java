@@ -17,12 +17,18 @@ public class Map{
         this.textureSize = textureSize;
     }
     
+    public int getMapHeight(){
+        return mapHeight;
+    }
+    
+    public int getMapWidth(){
+        return mapWidth;
+    }
+    
     public Map(int mapWidth, int mapHeight, int tileSize){
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.textureSize = tileSize;
-        BufferedImage grassI= grass.getImage();
-        
         
         map = new int[mapWidth][mapHeight];
         for (int i = 1 ; i<mapWidth-1 ; i++){

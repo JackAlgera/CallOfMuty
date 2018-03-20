@@ -29,12 +29,12 @@ public enum TileType {
     public void loadAndSelectaTile(File tilesetfile, int column, int row){
         try {
             BufferedImage imageFull;
-            imageFull = ImageIO.read(tilesetfile);
-            System.out.println("Error: cannot read tileset image.");        
+            imageFull = ImageIO.read(tilesetfile);      
             int y =32*(column-1);
             int x =32*(row-1);
             this.image = imageFull.getSubimage(x, y, 32, 32);
         } catch (IOException error) {
+            System.out.println("Error: cannot read tileset image.");  
         }
     }
     

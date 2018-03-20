@@ -42,7 +42,7 @@ public class GamePanel extends JPanel{
         if (pressedButtons.contains(KeyEvent.VK_RIGHT)){
             xDirection +=1;
         }
-        player.update(xDirection, yDirection, dT); // need to place the player into the list of players
+        player.update(xDirection, yDirection, dT, map); // need to place the player into the list of players
         updatePositionPlayerList();
     }
     
