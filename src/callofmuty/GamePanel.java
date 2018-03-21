@@ -44,7 +44,7 @@ public class GamePanel extends JPanel{
         panelHeight = textureSize*mapHeight;
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         map = new Map(mapWidth, mapHeight, textureSize);
-        player = new Player(100,100,textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
+        player = new Player(200,200,textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
         pressedButtons = new ArrayList();
         mapKeys();
         
@@ -171,6 +171,7 @@ public void paint(Graphics g) {
             listPlayers.get(i).setPosition(pos); 
             }
         }
+        
     }
     
     public void initialiseGame()
@@ -180,7 +181,6 @@ public void paint(Graphics g) {
             int playerId;
             sql.clearTable(); //Clear previous game on SQL server
             playerId = sql.getNumberOfPlayers(); //If host -> playerId = 0
-            System.out.println(playerId);
             player.setPlayerId(playerId);
             sql.addPlayer(player);
         }

@@ -28,6 +28,9 @@ public class CallOfMuty {
         minUpdateTime =(long) 1000/maxFPS;
         
         game.initialiseGame();
+        
+//        Thread.sleep(5000);
+        
         game.initialisePlayerList();
         timer.update();
         

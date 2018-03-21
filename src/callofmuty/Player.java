@@ -132,8 +132,9 @@ public class Player {
     
     void setPosition(double[] newPos)
     {
-        posX = newPos[1];
-        posY = newPos[2];
+        System.out.println(newPos.length);
+        posX = newPos[0];
+        posY = newPos[1];
     }
     
     void setPlayerId(int playerId)

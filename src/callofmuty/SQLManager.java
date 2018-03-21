@@ -76,7 +76,6 @@ public class SQLManager {
     
     public void addPlayer(Player player){
         int idPlayer = player.getPlayerId(); 
-        System.out.println(1);
         PreparedStatement requete;
         try {
             requete = connexion.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?)");
