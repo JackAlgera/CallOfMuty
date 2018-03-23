@@ -2,6 +2,7 @@ package callofmuty;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.io.File;
 
 public class Player {
     
@@ -11,7 +12,11 @@ public class Player {
     private double maxSpeed, posX, posY, wantedX, wantedY;
     private double[] speed;
     private double[] acceleration;
-    
+    private double health;
+    private boolean isdead;    //could be usefull for dead colision tests (bullets and objects)
+    private int skin;
+
+        
     public Player(double x,double y, int playerWidth, int playerHeight,Image image){
         this.posX=x;
         this.posY=y;
@@ -24,8 +29,9 @@ public class Player {
         speed[1] = 0.0; // y speed
         acceleration = new double[2];
         acceleration[0] = 0.0;
-        acceleration[1] = 0.0;
-
+        acceleration[1] = 0.0;        
+        isdead = false;
+        health=100.0;
     }
     
     public void move(long dT){
@@ -66,9 +72,7 @@ public class Player {
         
         if (speed[1]!=0.0 && yDirection==0){
             speed[1]=0.0;
-        }
-    
-                
+        }       
         // check if player is still in the map
         wantedX = posX + speed[0]*dT;
         wantedY = posY + speed[1]*dT;
@@ -151,5 +155,29 @@ public class Player {
     }
     double getPosY(){
         return this.posY;
+    }
+        
+    void setplayerdeath(boolean isdeath){
+        this.isdead=isdeath;
+    }
+    boolean getplayerdeath(){
+        return this.isdead;
+    }
+    void damageplayer(double damage){
+        if (this.health-damage<=0){
+            this.health=0;
+            this.setplayerdeath(true);
+        }else{
+            this.health-=damage;
+        }
+    }
+    void setplayerhealth(double life){
+        this.health=life;
+    }
+    double getplayerhealth(){
+        return this.health;
+    }       
+    void chooseskin(int row, int column){
+        this.image =Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), row, column);
     }
 }

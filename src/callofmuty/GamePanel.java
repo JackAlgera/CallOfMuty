@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -87,6 +86,9 @@ public class GamePanel extends JPanel{
         player.update(xDirection, yDirection, dT, map); // To do : need to place the player into the list of players
         updatePositionPlayerList();
         sql.setPosition(player.getPosX(), player.getPosY(), player);
+        if(player.getplayerdeath()==true){
+            player.chooseskin(2,4);
+        }
     }
     
     // Use of KeyBindings
