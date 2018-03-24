@@ -9,7 +9,8 @@ public class Map{
     private static TileType grass = new TileType(true,1,1);
     private static TileType dirt = new TileType(true,1,1);
     private static TileType woodt= new TileType(false,1,12), woodb= new TileType(false,3,12), woodl= new TileType(false,2,11), woodr= new TileType(false,2,13), woodtl= new TileType(false,1,11), woodbl= new TileType(false,3,11), woodtr= new TileType(false,1,13), woodbr= new TileType(false,3,13);
-    
+    private static TileType box = new TileType(false,2,6);
+
     
 // Grass = 0 ; Rock = 1 ; Dirt = 2;
     
@@ -58,7 +59,9 @@ public class Map{
         map[0][0] = 5;
         map[0][mapHeight-1] = 6;
         map[mapWidth-1][0] = 7;
-        map[mapWidth-1][mapHeight-1] = 8;        
+        map[mapWidth-1][mapHeight-1] = 8;
+        map[4][1] = 9 ;map[4][2] = 9;map[1][4] = 9;map[2][4] = 9;map[4][6] = 9;map[4][7] = 9;
+        
     }
     
     public void draw(Graphics2D g2d){
@@ -91,6 +94,10 @@ public class Map{
                     case 8:
                         g2d.drawImage(woodbr.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
                         break;                                        
+                    case 9:
+                        g2d.drawImage(dirt.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(box.getImage(), j * textureSize, i * textureSize, textureSize, textureSize, null);
+                        break;
                     default:
                         g2d.drawImage(dirt.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
 }
@@ -124,6 +131,9 @@ public class Map{
                 break;
             case 8:
                 tile = woodbr;
+                break;
+            case 9:
+                tile = box;
                 break;
             default :
                 tile = dirt;

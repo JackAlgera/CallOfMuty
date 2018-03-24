@@ -14,7 +14,7 @@ public class CallOfMuty {
         boolean isHost = true;
         
         // Map dimensions
-        textureSize=64;
+        textureSize=96;
         mapWidth= 16;
         mapHeight= 9;
         String frameTitle = "Call of µty";
