@@ -10,14 +10,11 @@ public class Map{
     private static TileType dirt = new TileType(true,1,1);
     private static TileType woodt= new TileType(false,1,12), woodb= new TileType(false,3,12), woodl= new TileType(false,2,11), woodr= new TileType(false,2,13), woodtl= new TileType(false,1,11), woodbl= new TileType(false,3,11), woodtr= new TileType(false,1,13), woodbr= new TileType(false,3,13);
     private static TileType box = new TileType(false,2,6);
-
-    
-// Grass = 0 ; Rock = 1 ; Dirt = 2;
     
     public Map(int[][] map, int textureSize){
         this.map=map;
-        mapHeight=map.length;
-        mapWidth=map[0].length;
+        mapWidth=map.length;
+        mapHeight=map[0].length;
         this.textureSize = textureSize;
     }
     
@@ -37,7 +34,6 @@ public class Map{
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.textureSize = tileSize;
-        
         map = new int[mapWidth][mapHeight];
         for (int i = 1 ; i<mapWidth-1 ; i++){
             for (int j = 1; j<mapHeight-1; j++){
@@ -65,41 +61,41 @@ public class Map{
     }
     
     public void draw(Graphics2D g2d){
-        for (int i = 0 ; i<mapHeight ; i++){
-            for (int j = 0; j<mapWidth; j++){
-                switch(map[j][i]){
+        for (int i = 0 ; i<mapWidth ; i++){
+            for (int j = 0; j<mapHeight; j++){
+                switch(map[i][j]){
                     case 1:
-                        g2d.drawImage(woodt.getImage(),j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(woodt.getImage(),i*textureSize, j*textureSize, textureSize, textureSize, null);
                         break;
                     case 2:
-                        g2d.drawImage(woodb.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(woodb.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
                         break;
                     case 3:
-                        g2d.drawImage(dirt.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
-                        g2d.drawImage(woodl.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(dirt.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(woodl.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
                         break;
                     case 4:
-                        g2d.drawImage(dirt.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
-                        g2d.drawImage(woodr.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(dirt.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(woodr.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
                         break;
                     case 5:
-                        g2d.drawImage(woodtl.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(woodtl.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
                         break;
                     case 6:
-                        g2d.drawImage(woodbl.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(woodbl.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
                         break;
                     case 7:                        
-                        g2d.drawImage(woodtr.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(woodtr.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
                         break;
                     case 8:
-                        g2d.drawImage(woodbr.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(woodbr.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
                         break;                                        
                     case 9:
-                        g2d.drawImage(dirt.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
-                        g2d.drawImage(box.getImage(), j * textureSize, i * textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(dirt.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(box.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
                         break;
                     default:
-                        g2d.drawImage(dirt.getImage(), j*textureSize, i*textureSize, textureSize, textureSize, null);
+                        g2d.drawImage(dirt.getImage(), i*textureSize, j*textureSize, textureSize, textureSize, null);
 }
             }
         }
@@ -144,6 +140,10 @@ public class Map{
     public boolean pathIsCrossable(double x, double y, int playerWidth, int playerHeight){ // checks if a player is only on crossable tiles
         boolean pathIsCrossable  = getTile(x,y).isCrossable() && getTile(x + playerWidth, y).isCrossable() && getTile(x, y + playerHeight).isCrossable() && getTile(x + playerWidth, y + playerHeight).isCrossable();
         return pathIsCrossable;
+    }
+    
+    public int[][] getMap(){
+        return map;
     }
     
 }
