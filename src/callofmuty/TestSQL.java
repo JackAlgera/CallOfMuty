@@ -19,8 +19,8 @@ public class TestSQL {
      */
     public static void main(String[] args) throws SQLException {
         SQLManager jackscrummaster= new SQLManager();
-        Player player = new Player(100,100,32,32,new ImageIcon("images/sans.png").getImage());
-        Player player1 = new Player(50,100,32,32,new ImageIcon("images/sans.png").getImage());
+        Player player = new Player(100,100,32,32,1,4);
+        Player player1 = new Player(50,100,32,32,1,4);
         
         player1.setPlayerId(6);
         jackscrummaster.setPosition(60.0,20.0,player1);

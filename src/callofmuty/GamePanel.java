@@ -29,6 +29,8 @@ public class GamePanel extends JPanel{
     private SQLManager sql; 
     private boolean endGame = false;
     
+    private int i=0;
+    
     private static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW; //usefull for the KeyBindings
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight, boolean isHost){
@@ -43,7 +45,7 @@ public class GamePanel extends JPanel{
         panelHeight = textureSize*mapHeight;
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         map = new Map(mapWidth, mapHeight, textureSize);
-        player = new Player(200,200,textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
+        player = new Player(200,200,textureSize,textureSize,1, 2);
         pressedButtons = new ArrayList();
         releasedButtons = new ArrayList();
         mapKeys();
@@ -116,12 +118,17 @@ public class GamePanel extends JPanel{
         }
         
         player.update(dT, map); // To do : need to place the player into the list of players
-//        updatePositionPlayerList();
         player.healthcheck();
+//        updatePositionPlayerList();
 //        sql.setPosition(player.getPosX(), player.getPosY(), player);
-        if(player.getplayerdeath()==true){
-            player.chooseskin(2,4);
+        if (player.getplayerdeath()){
+            i+=1;
         }
+        if(player.getplayerhealth()==0 && i==100){
+            player.setplayerhealth(100);
+            i=0;
+        }
+        player.damageplayer(0.5);
     }
     
     // Use of KeyBindings
@@ -247,7 +254,7 @@ public void paint(Graphics g) {
             if (i != player.getPlayerId())
             {
                 double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
+                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize, 1, 4);
                 newPlayer.setPlayerId(i);
                 listPlayers.add(newPlayer);
             } 
@@ -271,7 +278,7 @@ public void paint(Graphics g) {
                 if (i != player.getPlayerId())
                 {
                     double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                    Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
+                    Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize, 1, 4);
                     newPlayer.setPlayerId(i);
                     listPlayers.add(newPlayer);
                 } 

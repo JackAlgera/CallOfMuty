@@ -17,16 +17,20 @@ public class Player {
     private int[] directionOfTravel;
     private double health;
     private boolean isdead;  
-    private int skin;
+    private int[] skin;
     private ArrayList<Bullet> bulletList = new ArrayList();
 
         
-    public Player(double x,double y, int playerWidth, int playerHeight,Image image){
+    public Player(double x,double y, int playerWidth, int playerHeight, int skinrow, int skincolumn){
         this.posX=x;
         this.posY=y;
         this.image=image;
         this.playerWidth=playerWidth;
         this.playerHeight=playerHeight;
+        skin = new int[2];
+        this.skin[0]= skinrow;
+        this.skin[1]= skincolumn;
+        image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
         maxSpeed = 0.5; //in pixel per ms
         speed = new double[2];
         speed[0] = 0.0; //x speed
@@ -63,6 +67,7 @@ public class Player {
     }
     
     public void update(long dT, Map map){
+        if(!this.isdead){
         //Calculate speed vector
         speed[0] += acceleration[0]*dT;
         speed[1] += acceleration[1]*dT;
@@ -120,12 +125,16 @@ public class Player {
         }
         posX = wantedX;
         posY = wantedY;
-        
+        }else{
+            speed[0]=0;
+            speed[1]=0;
+        }
         // Update bullets
         for (Bullet b : bulletList)
         {
             b.update(dT);
         }
+        
     }
     
     void setDirectionOfTravel(int axis, int direction)
@@ -167,6 +176,12 @@ public class Player {
         
     void setplayerdeath(boolean isdeath){
         this.isdead=isdeath;
+        if (isdeath==true){
+            this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 2, 4);
+            this.health=0;
+        }else{
+            this.chooseskin(this.skin[0],this.skin[1]);
+        }
     }
     boolean getplayerdeath(){
         return this.isdead;
@@ -189,11 +204,17 @@ public class Player {
         return this.health;
     }       
     void chooseskin(int row, int column){
-        this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), row, column);
+        this.skin[0]=row;
+        this.skin[1]=column;
+        this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), this.skin[0], this.skin[1]);
     }
     void healthcheck(){
+        if(this.isdead==true){
+            this.hpbar= Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 2, 11);
+        }else{
         int cursor = (int)Math.floor(this.health/10)+1;
         this.hpbar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, cursor);
+        }
     }
     
     void addBullet(double initPosX, double initPosY, double[] direction, double speed)
@@ -203,6 +224,8 @@ public class Player {
             bulletList.remove(0);
         }
         
-        bulletList.add(new Bullet(initPosX, initPosY, direction, speed, this.playerId));
+        if (!this.isdead) {
+            bulletList.add(new Bullet(initPosX, initPosY, direction, speed, this.playerId));
+        }
     }
 }
