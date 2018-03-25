@@ -9,9 +9,10 @@ public class Player {
     private int playerId;
     private int playerWidth,playerHeight;
     private Image image;
-    private double maxSpeed, posX, posY, wantedX, wantedY;
+    private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
     private double[] speed;
     private double[] acceleration;
+    private int[] directionOfTravel;
     private double health;
     private boolean isdead;    //could be usefull for dead colision tests (bullets and objects)
     private int skin;
@@ -23,13 +24,17 @@ public class Player {
         this.image=image;
         this.playerWidth=playerWidth;
         this.playerHeight=playerHeight;
-        maxSpeed = 0.3; //in pixel per ms
+        maxSpeed = 0.5; //in pixel per ms
         speed = new double[2];
         speed[0] = 0.0; //x speed
         speed[1] = 0.0; // y speed
         acceleration = new double[2];
-        acceleration[0] = 0.0;
-        acceleration[1] = 0.0;        
+        acceleration[0] = 0.0; // x acceleration
+        acceleration[1] = 0.0; // y acceleration
+        directionOfTravel = new int[2];
+        directionOfTravel[0] = 0; // =-1 -> wants to go left, =+1 -> wants to go right, =0 -> stands still on x axis
+        directionOfTravel[1] = 0; // =-1 -> wants to go up, =+1 -> wants to go down, =0 -> stands still on y axis
+        this.accelerationValue = 0.002;
         isdead = false;
         health=100.0;
     }
@@ -45,34 +50,32 @@ public class Player {
         g.drawImage(image,(int) posX,(int) posY, playerWidth, playerHeight, null);
     }
     
-    public void update(int xDirection, int yDirection, long dT, Map map){
+    public void update(long dT, Map map){
         //Calculate speed vector
-        acceleration[0] = xDirection*0.002;
-        acceleration[1] = yDirection*0.002;
-       
+        speed[0] += acceleration[0]*dT;
+        speed[1] += acceleration[1]*dT;
+        
         if (Math.abs(speed[0])>maxSpeed ){
-            if (xDirection==1){
-                speed[0]=maxSpeed;
-            } else {
-                speed[0]=-maxSpeed;
-            }
+            speed[0] = Math.signum(speed[0])*maxSpeed;
         }
-        if (Math.abs(speed[1])>maxSpeed){
-            if (yDirection==1){
-                speed[1]=maxSpeed;
-            } else {
-                speed[1]=-maxSpeed;
-            }
-            
+        if (Math.abs(speed[1])>maxSpeed ){
+            speed[1] = Math.signum(speed[1])*maxSpeed;
         }
         
-        if (speed[0]!= 0.0 && xDirection==0){
-            speed[0]=0.0;
+        // Deceleration
+        if (directionOfTravel[0] == 1 && acceleration[0] < 0 && speed[0]<0){
+            speed[0] = 0;
+        }
+        if (directionOfTravel[0] == -1 && acceleration[0] > 0 && speed[0]>0){
+            speed[0] = 0;
+        }
+        if (directionOfTravel[1] == 1 && acceleration[1] < 0 && speed[1]<0){
+            speed[1] = 0;
+        }
+        if (directionOfTravel[1] == -1 && acceleration[1] > 0 && speed[1]>0){
+            speed[1] = 0;
         }
         
-        if (speed[1]!=0.0 && yDirection==0){
-            speed[1]=0.0;
-        }       
         // check if player is still in the map
         wantedX = posX + speed[0]*dT;
         wantedY = posY + speed[1]*dT;
@@ -103,40 +106,27 @@ public class Player {
                 }
             }
         }
-        move(dT);
         posX = wantedX;
         posY = wantedY;
     }
     
-    /*public void update(int xDirection, int yDirection, long dT){
-        
-        
-        if (xDirection!=0 || yDirection!=0){
-            if (Math.abs(speed[0])<maxSpeed && Math.abs(speed[1])<maxSpeed){
-                speed[0] += acceleration*dT*xDirection;
-                speed[1] += acceleration*dT*yDirection;
-            } else {
-                speed[0] = maxSpeed*xDirection;
-                speed[1] = maxSpeed*yDirection;
-        }
-        } else  {
-            if (Math.abs(speed[0])<(maxSpeed/Math.sqrt(2)) && Math.abs(speed[1])<(maxSpeed/Math.sqrt(2))){
-                speed[0] += acceleration*dT*xDirection;
-                speed[1] += acceleration*dT*yDirection;
-            } else {
-                speed[0] = maxSpeed/Math.sqrt(2)*xDirection;
-                speed[1] = maxSpeed/Math.sqrt(2)*yDirection;
-            }
-            
-        } 
-        // check if able to move in given direction
-        move(dT);
-    }*/
+    void setDirectionOfTravel(int axis, int direction)
+    {
+        this.directionOfTravel[axis] = direction;
+    }
     
+    void reverseAcceleration(int axis)
+    {
+        this.acceleration[axis] = -this.acceleration[axis];
+    }
+    
+    void setAcceleration(int axis, double accelerationSign)
+    {
+        this.acceleration[axis] = accelerationSign*this.accelerationValue;
+    }
     
     void setPosition(double[] newPos)
     {
-        System.out.println(newPos.length);
         posX = newPos[0];
         posY = newPos[1];
     }

@@ -23,7 +23,7 @@ public class GamePanel extends JPanel{
     private Player player;
     ArrayList <Player> listPlayers = new ArrayList();
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight;
-    private ArrayList pressedButtons;
+    private ArrayList pressedButtons, releasedButtons;
     private boolean isHost;
     private long playerListUpdateTime;
     private SQLManager sql; 
@@ -45,6 +45,7 @@ public class GamePanel extends JPanel{
         map = new Map(mapWidth, mapHeight, textureSize);
         player = new Player(200,200,textureSize,textureSize,Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 1, 4));
         pressedButtons = new ArrayList();
+        releasedButtons = new ArrayList();
         mapKeys();
         
         addMouseListener(new MouseAdapter() {
@@ -70,22 +71,44 @@ public class GamePanel extends JPanel{
     
     public void updateGame(long dT){
         
-        int xDirection = 0, yDirection = 0;
         if (pressedButtons.contains(KeyEvent.VK_DOWN)){
-            yDirection +=1;
-        }
-        if (pressedButtons.contains(KeyEvent.VK_LEFT)){
-            xDirection +=-1;
+            player.setAcceleration(1, 1);
+            player.setDirectionOfTravel(1, 1);
         }
         if (pressedButtons.contains(KeyEvent.VK_UP)){
-            yDirection +=-1;
+            player.setAcceleration(1, -1);
+            player.setDirectionOfTravel(1, -1);
+        }
+        if (pressedButtons.contains(KeyEvent.VK_LEFT)){
+            player.setAcceleration(0, -1);
+            player.setDirectionOfTravel(0, -1);
         }
         if (pressedButtons.contains(KeyEvent.VK_RIGHT)){
-            xDirection +=1;
+            player.setAcceleration(0, 1);
+            player.setDirectionOfTravel(0, 1);
         }
-        player.update(xDirection, yDirection, dT, map); // To do : need to place the player into the list of players
+        
+//        Deceleration
+        if (releasedButtons.contains(KeyEvent.VK_DOWN)){
+            player.reverseAcceleration(1);
+            releasedButtons.remove((Integer)KeyEvent.VK_DOWN);
+        }
+        if (releasedButtons.contains(KeyEvent.VK_UP)){
+            player.reverseAcceleration(1);
+            releasedButtons.remove((Integer)KeyEvent.VK_UP);
+        }
+        if (releasedButtons.contains(KeyEvent.VK_LEFT)){
+            player.reverseAcceleration(0);
+            releasedButtons.remove((Integer)KeyEvent.VK_LEFT);
+        }
+        if (releasedButtons.contains(KeyEvent.VK_RIGHT)){
+            player.reverseAcceleration(0);
+            releasedButtons.remove((Integer)KeyEvent.VK_RIGHT);
+        }
+        
+        player.update(dT, map); // To do : need to place the player into the list of players
         updatePositionPlayerList();
-        sql.setPosition(player.getPosX(), player.getPosY(), player);
+//        sql.setPosition(player.getPosX(), player.getPosY(), player);
         if(player.getplayerdeath()==true){
             player.chooseskin(2,4);
         }
@@ -140,7 +163,7 @@ public void paint(Graphics g) {
         
         @Override
         public void actionPerformed( ActionEvent tf ){
-//            System.out.println("pressed");
+//            System.out.println(key);
             if(!pressedButtons.contains(key)){
                 pressedButtons.add(key);
             }
@@ -156,9 +179,10 @@ public void paint(Graphics g) {
         
         @Override
         public void actionPerformed( ActionEvent tf ){
-//            System.out.println("released");
+//            System.out.println(key);
             if(pressedButtons.contains(key)){
                 pressedButtons.remove((Integer)key);
+                releasedButtons.add(key);
             }
         }
     }
