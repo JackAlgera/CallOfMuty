@@ -108,7 +108,8 @@ public class GamePanel extends JPanel{
         
         player.update(dT, map); // To do : need to place the player into the list of players
         updatePositionPlayerList();
-//        sql.setPosition(player.getPosX(), player.getPosY(), player);
+        player.healthcheck();
+        sql.setPosition(player.getPosX(), player.getPosY(), player);
         if(player.getplayerdeath()==true){
             player.chooseskin(2,4);
         }
@@ -142,7 +143,7 @@ public void paint(Graphics g) {
     RenderingHints.VALUE_ANTIALIAS_ON);
     map.draw(g2d);
     player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
-    
+
     for(Player p : listPlayers)
     {
         if(p.getPlayerId() != player.getPlayerId())

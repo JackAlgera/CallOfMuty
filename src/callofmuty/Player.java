@@ -9,6 +9,7 @@ public class Player {
     private int playerId;
     private int playerWidth,playerHeight;
     private Image image;
+    private Image hpbar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
     private double[] speed;
     private double[] acceleration;
@@ -48,6 +49,7 @@ public class Player {
     
     public void draw(Graphics2D g){
         g.drawImage(image,(int) posX,(int) posY, playerWidth, playerHeight, null);
+        g.drawImage(hpbar,(int) posX,(int) posY-12, playerWidth, playerHeight, null);
     }
     
     public void update(long dT, Map map){
@@ -163,11 +165,18 @@ public class Player {
     }
     void setplayerhealth(double life){
         this.health=life;
+        if (this.getplayerdeath()&& life>0){
+            this.setplayerdeath(false);
+        }
     }
     double getplayerhealth(){
         return this.health;
     }       
     void chooseskin(int row, int column){
-        this.image =Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), row, column);
+        this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), row, column);
+    }
+    void healthcheck(){
+        int cursor = (int)Math.floor(this.health/10)+1;
+        this.hpbar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, cursor);
     }
 }
