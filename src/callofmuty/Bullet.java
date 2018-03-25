@@ -27,8 +27,8 @@ public class Bullet {
         posY += direction[1]*dT*speed;
     }
     
-    public void draw(Graphics2D g2d)
+    public void draw(Graphics2D g2d,int texturesize)
     {
-        g2d.drawImage(image,(int) posX+16,(int) posY+16, 64, 64, null);
+        g2d.drawImage(image,(int) posX,(int) posY, texturesize/2, texturesize/2, null);
     }
 }

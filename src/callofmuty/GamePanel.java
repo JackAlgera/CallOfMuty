@@ -64,14 +64,14 @@ public class GamePanel extends JPanel{
             }@Override
             public void mousePressed(MouseEvent e) {
                 double[] directionOfFire = new double[2];
-                directionOfFire[0] = e.getX() - player.getPosX();
-                directionOfFire[1] = e.getY() - player.getPosY();
+                directionOfFire[0] = e.getX() - player.getPosX()-textureSize/2;
+                directionOfFire[1] = e.getY() - player.getPosY()-textureSize/2;
                 
                 double norme = Math.sqrt(directionOfFire[0]*directionOfFire[0] + directionOfFire[1]*directionOfFire[1]);
                 directionOfFire[0] = directionOfFire[0]/norme;
                 directionOfFire[1] = directionOfFire[1]/norme;
                 
-                player.addBullet(player.getPosX(), player.getPosY(), directionOfFire, 1);
+                player.addBullet(player.getPosX()+textureSize/4, player.getPosY()+textureSize/4, directionOfFire, 1);
                 
             }@Override
             public void mouseReleased(MouseEvent e) {
@@ -123,6 +123,8 @@ public class GamePanel extends JPanel{
         player.healthcheck();
 //        updatePositionPlayerList();
 //        sql.setPosition(player.getPosX(), player.getPosY(), player);
+        /*
+        //test for the dead state, and the respawn
         if (player.getplayerdeath()){
             i+=1;
         }
@@ -130,7 +132,7 @@ public class GamePanel extends JPanel{
             player.setplayerhealth(100);
             i=0;
         }
-        player.damageplayer(0.5);
+        player.damageplayer(0.5);*/
     }
     
     // Use of KeyBindings
@@ -161,7 +163,7 @@ public void paint(Graphics g) {
     RenderingHints.VALUE_ANTIALIAS_ON);
     map.draw(g2d);
     player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
-    player.drawBullets(g2d);
+    player.drawBullets(g2d,map.getTextureSize());
 
     for(Player p : listPlayers)
     {

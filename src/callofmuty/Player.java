@@ -58,11 +58,11 @@ public class Player {
         g.drawImage(hpbar,(int) posX,(int) posY-12, playerWidth, playerHeight, null);
     }
     
-    public void drawBullets(Graphics2D g)
+    public void drawBullets(Graphics2D g,int texturesize)
     {
         for (Bullet b : bulletList)
         {
-            b.draw(g);
+            b.draw(g,texturesize);
         }
     }
     
