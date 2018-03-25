@@ -44,6 +44,7 @@ public class GamePanel extends JPanel{
         panelWidth = textureSize*mapWidth;
         panelHeight = textureSize*mapHeight;
         setPreferredSize(new Dimension(panelWidth, panelHeight));
+        //map = new Map(Tools.textFileToIntMap("testMap.txt"),textureSize);
         map = new Map(mapWidth, mapHeight, textureSize);
         player = new Player(200,200,textureSize,textureSize,1, 2);
         pressedButtons = new ArrayList();
@@ -78,6 +79,7 @@ public class GamePanel extends JPanel{
             }
         });
 	setFocusable(true);
+        //Tools.mapToTextFile(map, "testMap.txt");
     }
     
     public void updateGame(long dT){
@@ -237,13 +239,9 @@ public void paint(Graphics g) {
         }
     }
     
-    public void endGame()
-    {
-        try {
-            sql.getConnection().close();
-        } catch (SQLException ex) {
-            Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void endGame() {
+        sql.removePlayer(player);
+        sql.disconnect();
     }
     
     public void initialisePlayerList()

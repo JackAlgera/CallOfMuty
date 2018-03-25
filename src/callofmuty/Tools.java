@@ -6,7 +6,11 @@
 package callofmuty;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -30,6 +34,51 @@ public class Tools {
         return image;
     }
    
+    public static int[][] textFileToIntMap(String address){
+        int [][] intMap = null;
+        try {
+            BufferedReader file = new BufferedReader (new FileReader(address));
+            String[] line = file.readLine().split(" ");
+            file.close();
+            int mapWidth, mapHeight;
+            if (line.length > 1) {
+                mapWidth = Integer.parseInt(line[0]);
+                mapHeight = Integer.parseInt(line[1]);
+                intMap = new int[mapWidth][mapHeight];
+                if (line.length == 2 + mapWidth * mapHeight) {
+                    for (int i = 0; i < mapWidth; i++) {
+                        for (int j = 0; j < mapHeight; j++) {
+                            intMap[i][j] = Integer.parseInt(line[i*mapHeight + j+2]);
+                        }
+                    }
+                } else {
+                    System.out.println("Cannot load the map : file length is wrong");
+                }
+            } else {
+                System.out.println("Cannot load the map : file (almost) empty");
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Cannot load the map : unreadable file");
+        }
+        return intMap;
+    }
     
+    public static void mapToTextFile(Map map, String address){
+        int[][] intMap = map.getMap();
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(address));
+            writer.write("" + map.getMapWidth()+ " " + map.getMapHeight());
+            for (int i = 0; i < map.getMapWidth(); i++) {
+                for (int j = 0; j < map.getMapHeight(); j++) {
+                    writer.write(" "+intMap[i][j]);
+                }
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     
 }

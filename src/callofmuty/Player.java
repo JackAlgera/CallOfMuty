@@ -99,12 +99,10 @@ public class Player {
         if (wantedX<0 || wantedX+playerWidth>map.getMapWidth()*map.getTextureSize()){ 
             wantedX = posX;
             speed[0] = 0;
-            System.out.println("X movement blocked");
         }
         if (wantedY<0 || wantedY+playerHeight>map.getMapHeight()*map.getTextureSize()){
             wantedY = posY;
             speed[1] = 0;
-            System.out.println("Y movement blocked");
         }
         // check if able to move in given direction (not trying to cross uncrossable tile)
         if(!map.pathIsCrossable(wantedX, wantedY, playerWidth, playerHeight)){ // test if the tile the player is going to is crossable
@@ -174,9 +172,9 @@ public class Player {
         return this.posY;
     }
         
-    void setplayerdeath(boolean isdeath){
-        this.isdead=isdeath;
-        if (isdeath==true){
+    void setplayerdeath(boolean isdead){
+        this.isdead=isdead;
+        if (isdead==true){
             this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 2, 4);
             this.health=0;
         }else{

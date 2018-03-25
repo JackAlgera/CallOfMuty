@@ -92,6 +92,18 @@ public class SQLManager {
         }
     }
     
+    public void removePlayer(Player player){
+        int idPlayer = player.getPlayerId(); 
+        PreparedStatement requete;
+        try {
+            requete = connexion.prepareStatement("DELETE FROM players WHERE id="+idPlayer);//("INSERT INTO players VALUES (?,?,?,?,?)");
+            requete.executeUpdate();
+            requete.close();  
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     public void clearTable(){
         PreparedStatement requete;
         

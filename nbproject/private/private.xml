@@ -3,25 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/GamePanel.java</file>
-            <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/SQLManager.java</file>
-            <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/CallOfMuty.java</file>
-            <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/TileType.java</file>
-            <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/Map.java</file>
-            <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/GameTimer.java</file>
-            <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/Bullet.java</file>
-            <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/TestSQL.java</file>
-            <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/Player.java</file>
-=======
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GameTimer.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Tools.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Map.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/TileType.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GamePanel.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Player.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/CallOfMuty.java</file>
->>>>>>> 462e9b20b823a806b194e2f96c25bbe87080201b
+            <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/CallOfMuty.java</file>
+            <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Map.java</file>
+            <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/GamePanel.java</file>
+            <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Tools.java</file>
+            <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/SQLManager.java</file>
         </group>
     </open-files>
 </project-private>
