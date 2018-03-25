@@ -21,7 +21,7 @@ public class GamePanel extends JPanel{
     
     private Map map; 
     private Player player;
-    ArrayList <Player> listPlayers = new ArrayList();
+    private ArrayList <Player> listPlayers = new ArrayList();
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight;
     private ArrayList pressedButtons, releasedButtons;
     private boolean isHost;
@@ -51,7 +51,7 @@ public class GamePanel extends JPanel{
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                System.out.println("Clicked on " + e.getX() + " ; " + e.getY());
+//                System.out.println("Clicked");
             }@Override
             public void mouseEntered(MouseEvent e) {
 //                System.out.println("Entered on " + e.getX() + " ; " + e.getY());
@@ -60,7 +60,16 @@ public class GamePanel extends JPanel{
 //                System.out.println("Exited on " + e.getX() + " ; " + e.getY());
             }@Override
             public void mousePressed(MouseEvent e) {
-//                System.out.println("Pressed on " + e.getX() + " ; " + e.getY());
+                double[] directionOfFire = new double[2];
+                directionOfFire[0] = e.getX() - player.getPosX();
+                directionOfFire[1] = e.getY() - player.getPosY();
+                
+                double norme = Math.sqrt(directionOfFire[0]*directionOfFire[0] + directionOfFire[1]*directionOfFire[1]);
+                directionOfFire[0] = directionOfFire[0]/norme;
+                directionOfFire[1] = directionOfFire[1]/norme;
+                
+                player.addBullet(player.getPosX(), player.getPosY(), directionOfFire, 1);
+                
             }@Override
             public void mouseReleased(MouseEvent e) {
 //                System.out.println("Released on " + e.getX() + " ; " + e.getY());
@@ -107,9 +116,9 @@ public class GamePanel extends JPanel{
         }
         
         player.update(dT, map); // To do : need to place the player into the list of players
-        updatePositionPlayerList();
+//        updatePositionPlayerList();
         player.healthcheck();
-        sql.setPosition(player.getPosX(), player.getPosY(), player);
+//        sql.setPosition(player.getPosX(), player.getPosY(), player);
         if(player.getplayerdeath()==true){
             player.chooseskin(2,4);
         }
@@ -143,6 +152,7 @@ public void paint(Graphics g) {
     RenderingHints.VALUE_ANTIALIAS_ON);
     map.draw(g2d);
     player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
+    player.drawBullets(g2d);
 
     for(Player p : listPlayers)
     {

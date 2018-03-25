@@ -3,6 +3,7 @@ package callofmuty;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
+import java.util.ArrayList;
 
 public class Player {
     
@@ -15,8 +16,9 @@ public class Player {
     private double[] acceleration;
     private int[] directionOfTravel;
     private double health;
-    private boolean isdead;    //could be usefull for dead colision tests (bullets and objects)
+    private boolean isdead;  
     private int skin;
+    private ArrayList<Bullet> bulletList = new ArrayList();
 
         
     public Player(double x,double y, int playerWidth, int playerHeight,Image image){
@@ -50,6 +52,14 @@ public class Player {
     public void draw(Graphics2D g){
         g.drawImage(image,(int) posX,(int) posY, playerWidth, playerHeight, null);
         g.drawImage(hpbar,(int) posX,(int) posY-12, playerWidth, playerHeight, null);
+    }
+    
+    public void drawBullets(Graphics2D g)
+    {
+        for (Bullet b : bulletList)
+        {
+            b.draw(g);
+        }
     }
     
     public void update(long dT, Map map){
@@ -110,6 +120,12 @@ public class Player {
         }
         posX = wantedX;
         posY = wantedY;
+        
+        // Update bullets
+        for (Bullet b : bulletList)
+        {
+            b.update(dT);
+        }
     }
     
     void setDirectionOfTravel(int axis, int direction)
@@ -178,5 +194,15 @@ public class Player {
     void healthcheck(){
         int cursor = (int)Math.floor(this.health/10)+1;
         this.hpbar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, cursor);
+    }
+    
+    void addBullet(double initPosX, double initPosY, double[] direction, double speed)
+    {
+        if (bulletList.size() > 25)
+        {
+            bulletList.remove(0);
+        }
+        
+        bulletList.add(new Bullet(initPosX, initPosY, direction, speed, this.playerId));
     }
 }
