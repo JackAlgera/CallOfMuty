@@ -27,22 +27,22 @@ public class GamePanel extends JPanel{
     private boolean isHost;
     private long playerListUpdateTime;
     private SQLManager sql; 
-    private boolean endGame = false;
+    private boolean endGame = false, isConnected;
     
     private int i=0;
     
     private static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW; //usefull for the KeyBindings
     
-    public GamePanel(int textureSize, int mapWidth, int mapHeight, boolean isHost){
+    public GamePanel(int textureSize, int mapWidth, int mapHeight){
         super();
         this.playerListUpdateTime = 0;
-        this.isHost = isHost;
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         this.sql = new SQLManager();
         panelWidth = textureSize*mapWidth;
         panelHeight = textureSize*mapHeight;
+        isConnected = false;
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         //map = new Map(Tools.textFileToIntMap("testMap.txt"),textureSize);
         map = new Map(mapWidth, mapHeight, textureSize);
@@ -158,18 +158,18 @@ public class GamePanel extends JPanel{
 @Override
 public void paint(Graphics g) {
     super.paint(g);
-    Graphics2D g2d = (Graphics2D) g;
-    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-    RenderingHints.VALUE_ANTIALIAS_ON);
-    map.draw(g2d);
-    player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
-    player.drawBullets(g2d,map.getTextureSize());
+    if (isConnected) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        map.draw(g2d);
+        player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
+        player.drawBullets(g2d, map.getTextureSize());
 
-    for(Player p : listPlayers)
-    {
-        if(p.getPlayerId() != player.getPlayerId())
-        {
-            p.draw(g2d);
+        for (Player p : listPlayers) {
+            if (p.getPlayerId() != player.getPlayerId()) {
+                p.draw(g2d);
+            }
         }
     }
 }
@@ -222,23 +222,25 @@ public void paint(Graphics g) {
         
     }
     
-    public void initialiseGame()
-    {
-        if (isHost)
-        {
+    public void initialiseGame(boolean isHost){
+        this.isHost = isHost;
+        if (isHost){
             int playerId;
             sql.clearTable(); //Clear previous game on SQL server
             playerId = sql.getNumberOfPlayers(); //If host -> playerId = 0
             player.setPlayerId(playerId);
             sql.addPlayer(player);
-        }
-        else
-        {
+        } else {
             int playerId;
             playerId = sql.getNumberOfPlayers();
             player.setPlayerId(playerId);
             sql.addPlayer(player);
         }
+        isConnected = true;
+    }
+    
+    public boolean isConnected(){
+        return isConnected;
     }
     
     public void endGame() {
