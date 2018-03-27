@@ -46,7 +46,7 @@ public class GamePanel extends JPanel{
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         //map = new Map(Tools.textFileToIntMap("testMap.txt"),textureSize);
         map = new Map(mapWidth, mapHeight, textureSize);
-        player = new Player(200,200,textureSize,textureSize,1, 2);
+        player = new Player(200,200,textureSize,textureSize);
         pressedButtons = new ArrayList();
         releasedButtons = new ArrayList();
         mapKeys();
@@ -121,8 +121,8 @@ public class GamePanel extends JPanel{
         
         player.update(dT, map); // To do : need to place the player into the list of players
         player.healthcheck();
-//        updatePositionPlayerList();
-//        sql.setPosition(player.getPosX(), player.getPosY(), player);
+        updatePositionPlayerList();
+        sql.setPosition(player.getPosX(), player.getPosY(), player);
         /*
         //test for the dead state, and the respawn
         if (player.getplayerdeath()){
@@ -158,8 +158,11 @@ public class GamePanel extends JPanel{
 @Override
 public void paint(Graphics g) {
     super.paint(g);
-    if (isConnected) {
-        Graphics2D g2d = (Graphics2D) g;
+    Graphics2D g2d = (Graphics2D) g;
+    if (!isConnected) {
+        g2d.drawImage(player.getImage(), (panelWidth-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
+    } else {
+        
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         map.draw(g2d);
@@ -256,8 +259,9 @@ public void paint(Graphics g) {
             if (i != player.getPlayerId())
             {
                 double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize, 1, 4);
+                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize);
                 newPlayer.setPlayerId(i);
+                newPlayer.setSkin(4);
                 listPlayers.add(newPlayer);
             } 
             else
@@ -280,7 +284,8 @@ public void paint(Graphics g) {
                 if (i != player.getPlayerId())
                 {
                     double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                    Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize, 1, 4);
+                    Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize);
+                    newPlayer.setSkin(4);
                     newPlayer.setPlayerId(i);
                     listPlayers.add(newPlayer);
                 } 
@@ -300,5 +305,9 @@ public void paint(Graphics g) {
     public boolean isGameDone()
     {
         return endGame;
+    }
+    
+    public Player getPlayer(){
+        return player;
     }
 }

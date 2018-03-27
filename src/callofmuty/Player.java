@@ -21,17 +21,17 @@ public class Player {
     private ArrayList<Bullet> bulletList = new ArrayList();
 
         
-    public Player(double x,double y, int playerWidth, int playerHeight, int skinrow, int skincolumn){
+    public Player(double x,double y, int playerWidth, int playerHeight){
         this.posX=x;
         this.posY=y;
         this.image=image;
         this.playerWidth=playerWidth;
         this.playerHeight=playerHeight;
         skin = new int[2];
-        this.skin[0]= skinrow;
-        this.skin[1]= skincolumn;
+        this.skin[0]= 1;
+        this.skin[1]= 1;
         image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
-        maxSpeed = 0.5; //in pixel per ms
+        maxSpeed = 0.4; //in pixel per ms
         speed = new double[2];
         speed[0] = 0.0; //x speed
         speed[1] = 0.0; // y speed
@@ -44,6 +44,19 @@ public class Player {
         this.accelerationValue = 0.002;
         isdead = false;
         health=100.0;
+    }
+
+    public int getPlayerWidth() {
+        return playerWidth;
+    }
+
+    public int getPlayerHeight() {
+        return playerHeight;
+    }
+    
+    public void setSkin(int skinIndex){
+        skin[1]=skinIndex;
+        image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
     }
     
     public void move(long dT){
@@ -225,5 +238,9 @@ public class Player {
         if (!this.isdead) {
             bulletList.add(new Bullet(initPosX, initPosY, direction, speed, this.playerId));
         }
+    }
+    
+    public Image getImage(){
+        return image;
     }
 }

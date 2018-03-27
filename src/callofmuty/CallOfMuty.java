@@ -44,19 +44,21 @@ public class CallOfMuty {
                 }
             }
         };
-        JButton connectButton = new JButton("Connect to game");
+        JButton connectButton = new JButton("Se connecter à une partie");
         connectButton.setBounds(100, 200, 150, 40);
         connectButton.setVisible(true);
-        JButton gameCreateButton = new JButton("Create new game");
+        JButton gameCreateButton = new JButton("Créer une partie");
         gameCreateButton.setBounds(100, 100, 150, 40);
         gameCreateButton.setVisible(true);
+        JButton skinButton = new JButton("Changer d'apparence");
+        skinButton.setBounds(100, 200, 150, 40);
+        skinButton.setVisible(true);
         
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 game.initialiseGame(false);
                 connectButton.setVisible(false);
                 gameCreateButton.setVisible(false);
-                
             }
         });
         game.add(connectButton);
@@ -70,16 +72,24 @@ public class CallOfMuty {
         });
         game.add(gameCreateButton);
         
+        skinButton.addActionListener(new ActionListener() {
+            int skinIndex = 1;
+            public void actionPerformed(ActionEvent e) {
+                skinIndex = (skinIndex%5)+1;
+                game.getPlayer().setSkin(skinIndex);
+                game.repaint();
+            }
+        });
+        game.add(skinButton);
+        
         frame.addWindowListener(exitListener);
         game.requestFocusInWindow();
         game.revalidate();
         
         while (!game.isConnected()){
             Thread.sleep(1000);
-            System.out.println("waiting");
         }
         
-        System.out.println("start");
         minUpdateTime =(long) 1000/maxFPS;
         
         game.initialisePlayerList();
@@ -91,7 +101,7 @@ public class CallOfMuty {
             if (dT<minUpdateTime){
                 Thread.sleep(minUpdateTime-dT);
             }
-//            game.updatePlayerList(dT);
+            game.updatePlayerList(dT);
             game.repaint();
         }
         game.endGame();
