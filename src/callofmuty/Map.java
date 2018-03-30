@@ -137,11 +137,6 @@ public class Map{
         return tile;
     }
     
-//    public boolean pathIsCrossable(double x, double y, int playerWidth, int playerHeight){ // checks if a player is only on crossable tiles
-//        boolean pathIsCrossable  = getTile(x,y).isCrossable() && getTile(x + playerWidth, y).isCrossable() && getTile(x, y + playerHeight).isCrossable() && getTile(x + playerWidth, y + playerHeight).isCrossable();
-//        return pathIsCrossable;
-//    }
-    
     public int[][] getMap(){
         return map;
     }
