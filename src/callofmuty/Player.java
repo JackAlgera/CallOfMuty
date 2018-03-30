@@ -85,25 +85,43 @@ public class Player {
         speed[0] += acceleration[0]*dT;
         speed[1] += acceleration[1]*dT;
         
-        if (Math.abs(speed[0])>maxSpeed ){
-            speed[0] = Math.signum(speed[0])*maxSpeed;
+        double speedNorm = Math.sqrt(Math.pow(speed[0], 2) + Math.pow(speed[1], 2));
+        double angle;
+        
+        if (speedNorm == 0)
+        {
+            angle = 0;
         }
-        if (Math.abs(speed[1])>maxSpeed ){
-            speed[1] = Math.signum(speed[1])*maxSpeed;
+        else 
+        {
+            angle = Math.acos(speed[0]/speedNorm);
+        }
+        
+        if (speedNorm>maxSpeed ){
+            if (acceleration[1] < 0)
+            {
+                angle = -angle;
+            }
+            speed[0] = maxSpeed*Math.cos(angle);
+            speed[1] = maxSpeed*Math.sin(angle);
         }
         
         // Deceleration
         if (directionOfTravel[0] == 1 && acceleration[0] < 0 && speed[0]<0){
             speed[0] = 0;
+            acceleration[0] = 0;
         }
         if (directionOfTravel[0] == -1 && acceleration[0] > 0 && speed[0]>0){
             speed[0] = 0;
+            acceleration[0] = 0;
         }
         if (directionOfTravel[1] == 1 && acceleration[1] < 0 && speed[1]<0){
             speed[1] = 0;
+            acceleration[1] = 0;
         }
         if (directionOfTravel[1] == -1 && acceleration[1] > 0 && speed[1]>0){
             speed[1] = 0;
+            acceleration[1] = 0;
         }
         
         // check if player is still in the map
@@ -118,12 +136,12 @@ public class Player {
             speed[1] = 0;
         }
         // check if able to move in given direction (not trying to cross uncrossable tile)
-        if(!map.pathIsCrossable(wantedX, wantedY, playerWidth, playerHeight)){ // test if the tile the player is going to is crossable
-            if (map.pathIsCrossable(posX, wantedY, playerWidth, playerHeight)){ //try to block x movement
+        if(!Tools.pathIsCrossable(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
+            if (Tools.pathIsCrossable(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
                 wantedX = posX;
                 speed[0] = 0;
             } else {
-                if (map.pathIsCrossable(wantedX, posY, playerWidth, playerHeight)){ // try to block y movement
+                if (Tools.pathIsCrossable(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
                     wantedY = posY;
                     speed[1] = 0;
                 } else { // block movement
@@ -144,6 +162,10 @@ public class Player {
         for (Bullet b : bulletList)
         {
             b.update(dT);
+//            if (b.checkCollision(map) && bulletList.size()!=0)
+//            {
+////                bulletList.remove(b);
+//            }
         }
         
     }

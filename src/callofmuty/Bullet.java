@@ -7,6 +7,7 @@ import java.io.File;
 
 public class Bullet {
     public double posX, posY, speed;
+    public int ballWidth, ballHeight;
     public double[] direction;
     public int playerId;
     public Image image;
@@ -15,6 +16,8 @@ public class Bullet {
     {
         this.posX = posX;
         this.posY = posY;
+        ballWidth = 15;
+        ballHeight = 15;
         this.speed = speed;
         this.direction = direction;
         this.playerId = playerId;
@@ -30,5 +33,14 @@ public class Bullet {
     public void draw(Graphics2D g2d,int texturesize)
     {
         g2d.drawImage(image,(int) posX,(int) posY, texturesize/2, texturesize/2, null);
+    }
+    
+    public boolean checkCollision(Map map)
+    {
+        if(!Tools.pathIsCrossable(posX, posY, ballWidth, ballHeight, map))
+        {
+            return true;
+        }
+        else return false;
     }
 }

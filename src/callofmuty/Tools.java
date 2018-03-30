@@ -80,5 +80,9 @@ public class Tools {
             e.printStackTrace();
         }
     }
-    
+
+    static boolean pathIsCrossable(double x, double y, int objectWidth, int objectHeight, Map map) {
+        boolean pathIsCrossable  = map.getTile(x,y).isCrossable() && map.getTile(x + objectWidth, y).isCrossable() && map.getTile(x, y + objectHeight).isCrossable() && map.getTile(x + objectWidth, y + objectHeight).isCrossable();
+        return pathIsCrossable;
+    }    
 }
