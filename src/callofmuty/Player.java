@@ -19,6 +19,7 @@ public class Player {
     private boolean isdead;  
     private int[] skin;
     private ArrayList<Bullet> bulletList = new ArrayList();
+    private Guns Gun;
 
         
     public Player(double x,double y, int playerWidth, int playerHeight){
