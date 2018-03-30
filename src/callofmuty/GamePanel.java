@@ -167,7 +167,7 @@ public void paint(Graphics g) {
     super.paint(g);
     Graphics2D g2d = (Graphics2D) g;
     if (!isConnected) {
-        //g2d.drawImage(Background, 0, 0, 16*64, 9*64, this);
+        g2d.drawImage(Background, 0, 0, 16*64, 9*64, this);
         g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
     } else {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,

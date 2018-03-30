@@ -16,6 +16,11 @@ public class CallOfMuty {
     
     public static void main(String[] args) throws InterruptedException, IOException {
         
+        ImageIcon joinGameIcon = new ImageIcon("images/Buttons/JoinGame.png"),
+                createGameIcon = new ImageIcon("images/Buttons/CreateGame.png"),
+                leftArrowIcon = new ImageIcon("images/Buttons/LeftArrow.png"),
+                rightArrowIcon = new ImageIcon("images/Buttons/rightArrow.png");
+        
         int textureSize, mapWidth, mapHeight, maxFPS;
         long dT, minUpdateTime;
         
@@ -46,18 +51,23 @@ public class CallOfMuty {
                 }
             }
         };
+        
         game.setLayout(null);
+        
         JButton connectButton = new JButton();
-        connectButton.setIcon(new ImageIcon("images/Buttons/JoinGame.png"));
+        connectButton.setIcon(joinGameIcon);
         connectButton.setVisible(true);
-        connectButton.setAlignmentX(200);
-        connectButton.setAlignmentY(500);
-        JButton gameCreateButton = new JButton("Créer une partie");
-        gameCreateButton.setBounds(100, 100, 150, 40);
+        connectButton.setBounds(286, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
+        
+        JButton gameCreateButton = new JButton();
+        gameCreateButton.setIcon(createGameIcon);
+        gameCreateButton.setBounds(286, 227, createGameIcon.getIconWidth(), createGameIcon.getIconHeight());
         gameCreateButton.setVisible(true);
-        JButton skinButton = new JButton("Changer d'apparence");
-        skinButton.setBounds(100, 200, 150, 40);
-        skinButton.setVisible(true);
+        
+        JButton rightSkinArrow = new JButton();
+        rightSkinArrow.setIcon(rightArrowIcon);
+        rightSkinArrow.setBounds(100, 200, 150, 40);
+        rightSkinArrow.setVisible(true);
         
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -77,7 +87,7 @@ public class CallOfMuty {
         });
         game.add(gameCreateButton);
         
-        skinButton.addActionListener(new ActionListener() {
+        rightSkinArrow.addActionListener(new ActionListener() {
             int skinIndex = 1;
             public void actionPerformed(ActionEvent e) {
                 skinIndex = (skinIndex%5)+1;
@@ -85,7 +95,7 @@ public class CallOfMuty {
                 game.repaint();
             }
         });
-        game.add(skinButton);
+        game.add(rightSkinArrow);
         
         frame.addWindowListener(exitListener);
         game.requestFocusInWindow();
