@@ -80,9 +80,22 @@ public class Tools {
             e.printStackTrace();
         }
     }
-
-    static boolean pathIsCrossable(double x, double y, int objectWidth, int objectHeight, Map map) {
-        boolean pathIsCrossable  = map.getTile(x,y).isCrossable() && map.getTile(x + objectWidth, y).isCrossable() && map.getTile(x, y + objectHeight).isCrossable() && map.getTile(x + objectWidth, y + objectHeight).isCrossable();
-        return pathIsCrossable;
-    }    
+    
+    public static boolean isMapCrossable(double x, double y, int objectWidth, int objectHeight, Map map) {
+        boolean mapIsCrossable = map.getTile(x,y).isCrossable() 
+                                    && map.getTile(x + objectWidth, y).isCrossable() 
+                                    && map.getTile(x, y + objectHeight).isCrossable() 
+                                    && map.getTile(x + objectWidth, y + objectHeight).isCrossable();
+        return mapIsCrossable;
+    }
+    
+    public static boolean isPlayerHit(double objX, double objY, int objectWidth, int objectHeight, Player p) {
+        
+        boolean playerIsHit = (objX + objectWidth) > p.getPosX()
+                                && objX < (p.getPosX() + p.getPlayerWidth())
+                                && (objY + objectHeight) > p.getPosY()
+                                && objY < (p.getPosY() + p.getPlayerHeight());
+        
+        return playerIsHit;
+    }
 }

@@ -16,8 +16,8 @@ public class Bullet {
     {
         this.posX = posX;
         this.posY = posY;
-        ballWidth = 15;
-        ballHeight = 15;
+        ballWidth = 10;
+        ballHeight = 10;
         this.speed = speed;
         this.direction = direction;
         this.playerId = playerId;
@@ -35,12 +35,37 @@ public class Bullet {
         g2d.drawImage(image,(int) posX,(int) posY, texturesize/2, texturesize/2, null);
     }
     
-    public boolean checkCollision(Map map)
+    public boolean checkCollisionWithMap(Map map)
     {
-        if(!Tools.pathIsCrossable(posX, posY, ballWidth, ballHeight, map))
+        if(!Tools.isMapCrossable(posX, posY, ballWidth, ballHeight, map))
         {
             return true;
         }
         else return false;
+    }
+    
+    public boolean checkCollisionWithPlayer(Player p)
+    {
+        if(!Tools.isPlayerHit(posX, posY, ballWidth, ballHeight, p))
+        {
+            return true;
+        }
+        else return false;
+    }
+
+    public double getPosX() {
+        return posX;
+    }
+
+    public double getPosY() {
+        return posY;
+    }
+
+    public int getBallWidth() {
+        return ballWidth;
+    }
+
+    public int getBallHeight() {
+        return ballHeight;
     }
 }
