@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -12,7 +14,7 @@ import javax.swing.JTextField;
 
 public class CallOfMuty {
     
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         
         int textureSize, mapWidth, mapHeight, maxFPS;
         long dT, minUpdateTime;
@@ -44,9 +46,12 @@ public class CallOfMuty {
                 }
             }
         };
-        JButton connectButton = new JButton("Se connecter à une partie");
-        connectButton.setBounds(100, 200, 150, 40);
+        game.setLayout(null);
+        JButton connectButton = new JButton();
+        connectButton.setIcon(new ImageIcon("images/Buttons/JoinGame.png"));
         connectButton.setVisible(true);
+        connectButton.setAlignmentX(200);
+        connectButton.setAlignmentY(500);
         JButton gameCreateButton = new JButton("Créer une partie");
         gameCreateButton.setBounds(100, 100, 150, 40);
         gameCreateButton.setVisible(true);

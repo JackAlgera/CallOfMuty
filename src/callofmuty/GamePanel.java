@@ -8,16 +8,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 public class GamePanel extends JPanel{
+
+    public static BufferedImage Background = Tools.loadImage("image/Background");
     
     private Map map; 
     private Player player;
@@ -33,8 +38,9 @@ public class GamePanel extends JPanel{
     
     private static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW; //usefull for the KeyBindings
     
-    public GamePanel(int textureSize, int mapWidth, int mapHeight){
+    public GamePanel(int textureSize, int mapWidth, int mapHeight) throws IOException{
         super();
+        this.Background = ImageIO.read(new File("images/Background.png"));
         this.playerListUpdateTime = 0;
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
@@ -160,9 +166,9 @@ public void paint(Graphics g) {
     super.paint(g);
     Graphics2D g2d = (Graphics2D) g;
     if (!isConnected) {
-        g2d.drawImage(player.getImage(), (panelWidth-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
+        //g2d.drawImage(Background, 0, 0, 16*64, 9*64, this);
+        g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
     } else {
-        
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         map.draw(g2d);

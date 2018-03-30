@@ -34,6 +34,16 @@ public class Tools {
         return image;
     }
    
+   public static BufferedImage loadImage(String address){
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(new File(address));
+        } catch (IOException error) {
+            System.out.println("Error: cannot read  image.");  
+        }
+        return image;
+    } 
+    
     public static int[][] textFileToIntMap(String address){
         int [][] intMap = null;
         try {
