@@ -136,12 +136,12 @@ public class Player {
             speed[1] = 0;
         }
         // check if able to move in given direction (not trying to cross uncrossable tile)
-        if(!Tools.pathIsCrossable(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
-            if (Tools.pathIsCrossable(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
+        if(!Tools.isMapCrossable(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
+            if (Tools.isMapCrossable(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
                 wantedX = posX;
                 speed[0] = 0;
             } else {
-                if (Tools.pathIsCrossable(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
+                if (Tools.isMapCrossable(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
                     wantedY = posY;
                     speed[1] = 0;
                 } else { // block movement
@@ -158,16 +158,6 @@ public class Player {
             speed[0]=0;
             speed[1]=0;
         }
-        // Update bullets
-        for (Bullet b : bulletList)
-        {
-            b.update(dT);
-//            if (b.checkCollision(map) && bulletList.size()!=0)
-//            {
-////                bulletList.remove(b);
-//            }
-        }
-        
     }
     
     void setDirectionOfTravel(int axis, int direction)
@@ -264,5 +254,27 @@ public class Player {
     
     public Image getImage(){
         return image;
+    }
+    
+    public void updateBulletImpact(long dT, Map map, ArrayList <Player> listPlayers)
+    {
+        // Update bullets
+        for (int i=0; i<bulletList.size(); i++)
+        {
+            Bullet b = bulletList.get(i);
+            b.update(dT);
+            if (b.checkCollisionWithMap(map))
+            {
+                bulletList.remove(b);
+            }
+            for (int j=0; j<listPlayers.size(); j++)
+            {
+                if (j != playerId && b.checkCollisionWithPlayer(listPlayers.get(j)))
+                {
+                    bulletList.remove(b);
+                }
+            }
+            
+        }
     }
 }
