@@ -27,25 +27,25 @@ public class GamePanel extends JPanel{
     private Map map; 
     private Player player;
     private ArrayList <Player> listPlayers = new ArrayList();
-    private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight;
+    private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState;
     private ArrayList pressedButtons, releasedButtons;
     private boolean isHost;
     private long playerListUpdateTime;
     private SQLManager sql; 
-    private boolean endGame = false, isConnected;
+    private boolean isConnected;
     
     private int i=0;
     
-    private static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW; //usefull for the KeyBindings
+    public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW, MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2;
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight) throws IOException{
         super();
-        this.Background = ImageIO.read(new File("images/Background.png"));
-        this.playerListUpdateTime = 0;
+        gameState = MAIN_MENU;
+        Background = ImageIO.read(new File("images/Background.png"));
+        playerListUpdateTime = 0;
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-        this.sql = new SQLManager();
         panelWidth = textureSize*mapWidth;
         panelHeight = textureSize*mapHeight;
         isConnected = false;
@@ -166,21 +166,27 @@ public class GamePanel extends JPanel{
 public void paint(Graphics g) {
     super.paint(g);
     Graphics2D g2d = (Graphics2D) g;
-    if (!isConnected) {
-        g2d.drawImage(Background, 0, 0, 16*64, 9*64, this);
-        g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
-    } else {
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+    switch(gameState) {
+        case MAIN_MENU:
+            map.draw(g2d, 530, 170, 462, 260);
+            g2d.drawImage(Background, 0, 0, 16*64, 9*64, this);
+            g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
+            break;
+        case IN_GAME:
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        map.draw(g2d);
-        player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
-        player.drawBullets(g2d, map.getTextureSize());
+            map.draw(g2d);
+            player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
+            player.drawBullets(g2d, map.getTextureSize());
 
-        for (Player p : listPlayers) {
-            if (p.getPlayerId() != player.getPlayerId()) {
-                p.draw(g2d);
+            for (Player p : listPlayers) {
+                if (p.getPlayerId() != player.getPlayerId()) {
+                    p.draw(g2d);
+                }
             }
-        }
+            break;
+        case MAP_EDITOR:
+            
     }
 }
     
@@ -234,6 +240,9 @@ public void paint(Graphics g) {
     
     public void initialiseGame(boolean isHost){
         this.isHost = isHost;
+        sql = new SQLManager();
+        isConnected = true;
+        gameState = IN_GAME;
         if (isHost){
             int playerId;
             sql.clearTable(); //Clear previous game on SQL server
@@ -246,7 +255,6 @@ public void paint(Graphics g) {
             player.setPlayerId(playerId);
             sql.addPlayer(player);
         }
-        isConnected = true;
     }
     
     public boolean isConnected(){
@@ -254,8 +262,11 @@ public void paint(Graphics g) {
     }
     
     public void endGame() {
-        sql.removePlayer(player);
-        sql.disconnect();
+        if (isConnected){
+            sql.removePlayer(player);
+            sql.disconnect();
+        }
+        gameState = MAIN_MENU;
     }
     
     public void initialisePlayerList()
@@ -306,12 +317,10 @@ public void paint(Graphics g) {
         {
             playerListUpdateTime += dT;
         }
-        
     }
     
-    public boolean isGameDone()
-    {
-        return endGame;
+    public int getState(){
+        return gameState;
     }
     
     public Player getPlayer(){

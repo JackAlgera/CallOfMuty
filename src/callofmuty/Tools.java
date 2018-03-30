@@ -39,7 +39,7 @@ public class Tools {
         try {
             image = ImageIO.read(new File(address));
         } catch (IOException error) {
-            System.out.println("Error: cannot read  image.");  
+            System.out.println("Error: cannot read image : "+ error);  
         }
         return image;
     } 

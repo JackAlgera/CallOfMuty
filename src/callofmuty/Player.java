@@ -60,6 +60,10 @@ public class Player {
         image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
     }
     
+    public int getSkinIndex(){
+        return skin[1];
+    }
+    
     public void move(long dT){
         speed[0] += acceleration[0]*dT;
         speed[1] += acceleration[1]*dT;
