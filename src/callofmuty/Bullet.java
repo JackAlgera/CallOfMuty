@@ -4,13 +4,15 @@ package callofmuty;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
+import java.util.ArrayList;
 
 public class Bullet {
     public double posX, posY, speed;
     public int ballWidth, ballHeight;
     public double[] direction;
     public int playerId;
-    public Image image;
+    public ArrayList<Image> animationImages = new ArrayList();
+    public Animation bulletAnimation;
     
     public Bullet(double posX, double posY, double[] direction, double speed, int playerId)
     {
@@ -21,18 +23,25 @@ public class Bullet {
         this.speed = speed;
         this.direction = direction;
         this.playerId = playerId;
-        image=Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), 1, 1);
+        
+        this.bulletAnimation = new Animation(250,4,0);// en ms
+        
+        for (int i=0; i<bulletAnimation.getNumberOfImagesAnimation(); i++)
+        {
+            animationImages.add(Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), 1, i+1));
+        }
     }
     
     public void update(double dT)
     {
         posX += direction[0]*dT*speed;
         posY += direction[1]*dT*speed;
+        bulletAnimation.update(dT);
     }
     
     public void draw(Graphics2D g2d,int texturesize)
     {
-        g2d.drawImage(image,(int) posX,(int) posY, texturesize/2, texturesize/2, null);
+        g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
     }
     
     public boolean checkCollisionWithMap(Map map)

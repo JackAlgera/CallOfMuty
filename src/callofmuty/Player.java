@@ -18,6 +18,10 @@ public class Player {
     private double health;
     private boolean isdead;  
     private int[] skin;
+    
+    public ArrayList<Image> animationImages = new ArrayList();
+    public Animation playerAnimation;
+    
     private ArrayList<Bullet> bulletList = new ArrayList();
     private Guns Gun;
 
@@ -32,6 +36,13 @@ public class Player {
         this.skin[0]= 1;
         this.skin[1]= 1;
         image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
+        
+        this.playerAnimation = new Animation(200,5,0); // en ms
+        
+        for (int i=0; i<playerAnimation.getNumberOfImagesAnimation(); i++)
+        {
+            animationImages.add(Tools.loadAndSelectaTile(new File("images/animationTestCallOfMuty.png"), 1, i+1));
+        }
         maxSpeed = 0.4; //in pixel per ms
         speed = new double[2];
         speed[0] = 0.0; //x speed
@@ -72,7 +83,7 @@ public class Player {
     }
     
     public void draw(Graphics2D g){
-        g.drawImage(image,(int) posX,(int) posY, playerWidth, playerHeight, null);
+        g.drawImage(animationImages.get(playerAnimation.getCurrentImage()),(int) posX,(int) posY, playerWidth, playerHeight, null);
         g.drawImage(hpbar,(int) posX,(int) posY-12, playerWidth, playerHeight, null);
     }
     
@@ -86,80 +97,93 @@ public class Player {
     
     public void update(long dT, Map map){
         if(!this.isdead){
-        //Calculate speed vector
-        speed[0] += acceleration[0]*dT;
-        speed[1] += acceleration[1]*dT;
-        
-        double speedNorm = Math.sqrt(Math.pow(speed[0], 2) + Math.pow(speed[1], 2));
-        double angle;
-        
-        if (speedNorm == 0)
-        {
-            angle = 0;
-        }
-        else 
-        {
-            angle = Math.acos(speed[0]/speedNorm);
-        }
-        
-        if (speedNorm>maxSpeed ){
-            if (acceleration[1] < 0)
+
+            // Update animation
+            this.playerAnimation.update(dT);
+            //Calculate speed vector
+            speed[0] += acceleration[0]*dT;
+            speed[1] += acceleration[1]*dT;
+
+            double speedNorm = Math.sqrt(Math.pow(speed[0], 2) + Math.pow(speed[1], 2));
+            double angle;
+
+            if (speedNorm == 0)
             {
-                angle = -angle;
+                angle = 0;
             }
-            speed[0] = maxSpeed*Math.cos(angle);
-            speed[1] = maxSpeed*Math.sin(angle);
-        }
-        
-        // Deceleration
-        if (directionOfTravel[0] == 1 && acceleration[0] < 0 && speed[0]<0){
-            speed[0] = 0;
-            acceleration[0] = 0;
-        }
-        if (directionOfTravel[0] == -1 && acceleration[0] > 0 && speed[0]>0){
-            speed[0] = 0;
-            acceleration[0] = 0;
-        }
-        if (directionOfTravel[1] == 1 && acceleration[1] < 0 && speed[1]<0){
-            speed[1] = 0;
-            acceleration[1] = 0;
-        }
-        if (directionOfTravel[1] == -1 && acceleration[1] > 0 && speed[1]>0){
-            speed[1] = 0;
-            acceleration[1] = 0;
-        }
-        
-        // check if player is still in the map
-        wantedX = posX + speed[0]*dT;
-        wantedY = posY + speed[1]*dT;
-        if (wantedX<0 || wantedX+playerWidth>map.getMapWidth()*map.getTextureSize()){ 
-            wantedX = posX;
-            speed[0] = 0;
-        }
-        if (wantedY<0 || wantedY+playerHeight>map.getMapHeight()*map.getTextureSize()){
-            wantedY = posY;
-            speed[1] = 0;
-        }
-        // check if able to move in given direction (not trying to cross uncrossable tile)
-        if(!Tools.isMapCrossable(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
-            if (Tools.isMapCrossable(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
+            else 
+            {
+                angle = Math.acos(speed[0]/speedNorm); //Angle between speed vector and [1,0]+
+            }
+            if (speedNorm>maxSpeed ){
+
+                if (directionOfTravel[1] == -1)
+                {
+                    angle = -angle;
+                }
+                speed[0] = maxSpeed*Math.cos(angle);
+                speed[1] = maxSpeed*Math.sin(angle);
+            }
+
+            // Deceleration
+            if (directionOfTravel[0] == 1 && acceleration[0] < 0 && speed[0]<0){
+                speed[0] = 0;
+                acceleration[0] = 0;
+            }
+            if (directionOfTravel[0] == -1 && acceleration[0] > 0 && speed[0]>0){
+                speed[0] = 0;
+                acceleration[0] = 0;
+            }
+            if (directionOfTravel[1] == 1 && acceleration[1] < 0 && speed[1]<0){
+                speed[1] = 0;
+                acceleration[1] = 0;
+            }
+            if (directionOfTravel[1] == -1 && acceleration[1] > 0 && speed[1]>0){
+                speed[1] = 0;
+                acceleration[1] = 0;
+            }
+
+            // check if player is still in the map
+            wantedX = posX + speed[0]*dT;
+            wantedY = posY + speed[1]*dT;
+            if (wantedX<0 || wantedX+playerWidth>map.getMapWidth()*map.getTextureSize()){ 
                 wantedX = posX;
                 speed[0] = 0;
-            } else {
-                if (Tools.isMapCrossable(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
-                    wantedY = posY;
-                    speed[1] = 0;
-                } else { // block movement
+            }
+            if (wantedY<0 || wantedY+playerHeight>map.getMapHeight()*map.getTextureSize()){
+                wantedY = posY;
+                speed[1] = 0;
+            }
+            // check if able to move in given direction (not trying to cross uncrossable tile)
+            if(!Tools.isMapCrossable(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
+                if (Tools.isMapCrossable(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
                     wantedX = posX;
                     speed[0] = 0;
-                    wantedY = posY;
-                    speed[1] = 0;
+                } else {
+                    if (Tools.isMapCrossable(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
+                        wantedY = posY;
+                        speed[1] = 0;
+                    } else { // block movement
+                        wantedX = posX;
+                        speed[0] = 0;
+                        wantedY = posY;
+                        speed[1] = 0;
+                    }
                 }
             }
+            posX = wantedX;
+            posY = wantedY;
+            if (speed[0] == 0 && acceleration[0] == 0)
+            {
+                directionOfTravel[0] = 0;
+            }
+            if (speed[1] == 0 && acceleration[1] == 0)
+            {
+                directionOfTravel[1] = 0;
+            }
         }
-        posX = wantedX;
-        posY = wantedY;
-        }else{
+        else
+        {
             speed[0]=0;
             speed[1]=0;
         }
@@ -247,10 +271,11 @@ public class Player {
     
     void addBullet(double initPosX, double initPosY, double[] direction, double speed)
     {
-        if (bulletList.size() > 25)
-        {
-            bulletList.remove(0);
-        }
+        // Max number of bullets
+//        if (bulletList.size() > 25)
+//        {
+//            bulletList.remove(0);
+//        }
         
         if (!this.isdead) {
             bulletList.add(new Bullet(initPosX, initPosY, direction, speed, this.playerId));

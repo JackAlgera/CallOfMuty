@@ -77,7 +77,7 @@ public class GamePanel extends JPanel{
                 directionOfFire[0] = directionOfFire[0]/norme;
                 directionOfFire[1] = directionOfFire[1]/norme;
                 
-                player.addBullet(player.getPosX()+textureSize/4, player.getPosY()+textureSize/4, directionOfFire, 1);
+                player.addBullet(player.getPosX()+textureSize/4, player.getPosY()+textureSize/4, directionOfFire, 0.5);
                 
             }@Override
             public void mouseReleased(MouseEvent e) {
@@ -128,8 +128,9 @@ public class GamePanel extends JPanel{
         player.update(dT, map); // To do : need to place the player into the list of players
         player.healthcheck();
         player.updateBulletImpact(dT, map, listPlayers);
-        updatePositionPlayerList();
-        sql.setPosition(player.getPosX(), player.getPosY(), player);
+//        updatePositionPlayerList();
+//        sql.setPosition(player.getPosX(), player.getPosY(), player);
+
         /*
         //test for the dead state, and the respawn
         if (player.getplayerdeath()){

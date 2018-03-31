@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,7 +29,6 @@ public class CallOfMuty {
         
         // Game variables   
         maxFPS = 60; 
-        boolean isHost;
         
         // Map dimensions
         textureSize=64;
@@ -49,6 +49,7 @@ public class CallOfMuty {
         
         // Interface construction
         game.setLayout(null);
+        ArrayList <JButton> buttons = new ArrayList();
         
         JButton connectButton = new JButton();
         connectButton.setIcon(joinGameIcon);
@@ -58,6 +59,7 @@ public class CallOfMuty {
         connectButton.setContentAreaFilled(false);
         connectButton.setBorderPainted(false);
         game.add(connectButton);
+        buttons.add(connectButton);
         
         JButton gameCreateButton = new JButton();
         gameCreateButton.setIcon(createGameIcon);
@@ -67,6 +69,7 @@ public class CallOfMuty {
         gameCreateButton.setContentAreaFilled(false);
         gameCreateButton.setBorderPainted(false);
         game.add(gameCreateButton);
+        buttons.add(gameCreateButton);
         
         JButton exitButton = new JButton();
         exitButton.setIcon(exitIcon);
@@ -76,6 +79,7 @@ public class CallOfMuty {
         exitButton.setContentAreaFilled(false);
         exitButton.setBorderPainted(false);
         game.add(exitButton);
+        buttons.add(exitButton);
         
         JButton gameModeButton = new JButton();
         gameModeButton.setIcon(gameModeIcon);
@@ -85,6 +89,7 @@ public class CallOfMuty {
         gameModeButton.setContentAreaFilled(false);
         gameModeButton.setBorderPainted(false);
         game.add(gameModeButton);
+        buttons.add(gameModeButton);
         
         JButton rightSkinArrow = new JButton();
         rightSkinArrow.setIcon(rightArrowIcon);
@@ -94,6 +99,7 @@ public class CallOfMuty {
         rightSkinArrow.setContentAreaFilled(false);
         rightSkinArrow.setBorderPainted(false);
         game.add(rightSkinArrow);
+        buttons.add(rightSkinArrow);
         
         JButton leftSkinArrow = new JButton();
         leftSkinArrow.setIcon(leftArrowIcon);
@@ -103,6 +109,7 @@ public class CallOfMuty {
         leftSkinArrow.setContentAreaFilled(false);
         leftSkinArrow.setBorderPainted(false);
         game.add(leftSkinArrow);
+        buttons.add(leftSkinArrow);
         
         JButton rightMapArrow = new JButton();
         rightMapArrow.setIcon(rightArrowIcon);
@@ -112,6 +119,7 @@ public class CallOfMuty {
         rightMapArrow.setContentAreaFilled(false);
         rightMapArrow.setBorderPainted(false);
         game.add(rightMapArrow);
+        buttons.add(rightMapArrow);
         
         JButton leftMapArrow = new JButton();
         leftMapArrow.setIcon(leftArrowIcon);
@@ -121,20 +129,29 @@ public class CallOfMuty {
         leftMapArrow.setContentAreaFilled(false);
         leftMapArrow.setBorderPainted(false);
         game.add(leftMapArrow);
+        buttons.add(leftMapArrow);
         
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 game.initialiseGame(false);
-                connectButton.setVisible(false);
-                gameCreateButton.setVisible(false);
+                for (JButton b : buttons)
+                {
+                    b.setVisible(false); //Pour evitier d'avoir 10 lignes de ____.setVisible
+                }
+//                connectButton.setVisible(false);
+//                gameCreateButton.setVisible(false);
             }
         });
         
         gameCreateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 game.initialiseGame(true);
-                connectButton.setVisible(false);
-                gameCreateButton.setVisible(false);
+                for (JButton b : buttons)
+                {
+                    b.setVisible(false);
+                }
+//                connectButton.setVisible(false);
+//                gameCreateButton.setVisible(false);
             }
         });
         
@@ -204,7 +221,7 @@ public class CallOfMuty {
             if (dT<minUpdateTime){
                 Thread.sleep(minUpdateTime-dT);
             }
-            game.updatePlayerList(dT);
+//            game.updatePlayerList(dT);
             game.repaint();
         }
         game.endGame();
