@@ -7,16 +7,13 @@ import java.util.ArrayList;
 
 public class Player {
     
-    private int playerId;
-    private int playerWidth,playerHeight;
-    private Image image;
-    private Image hpbar;
+    private int playerId, playerWidth, playerHeight, facedDirection;
+    private Image image, hpbar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
-    private double[] speed;
-    private double[] acceleration;
+    private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health;
-    private boolean isdead;  
+    private boolean isdead, isIdle;  
     private int[] skin;
     
     public ArrayList<Image> animationImages = new ArrayList();
@@ -27,6 +24,8 @@ public class Player {
 
         
     public Player(double x,double y, int playerWidth, int playerHeight){
+        isIdle = true;
+        facedDirection = 0;
         this.posX=x;
         this.posY=y;
         this.image=image;
@@ -37,13 +36,17 @@ public class Player {
         this.skin[1]= 1;
         image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
         
-        this.playerAnimation = new Animation(200,5,0); // en ms
+        this.playerAnimation = new Animation(135,8,12,4,0); // en ms
         
-        for (int i=0; i<playerAnimation.getNumberOfImagesAnimation(); i++)
+        for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++)
         {
-            animationImages.add(Tools.loadAndSelectaTile(new File("images/animationTestCallOfMuty.png"), 1, i+1));
+            for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++)
+            {
+                animationImages.add(Tools.loadAndSelectaTile(new File("images/man.png"), i+1, j+1));
+            }
         }
-        maxSpeed = 0.4; //in pixel per ms
+        
+        maxSpeed = 0.3; //in pixel per ms
         speed = new double[2];
         speed[0] = 0.0; //x speed
         speed[1] = 0.0; // y speed
@@ -83,7 +86,7 @@ public class Player {
     }
     
     public void draw(Graphics2D g){
-        g.drawImage(animationImages.get(playerAnimation.getCurrentImage()),(int) posX,(int) posY, playerWidth, playerHeight, null);
+        g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
         g.drawImage(hpbar,(int) posX,(int) posY-12, playerWidth, playerHeight, null);
     }
     
@@ -91,13 +94,13 @@ public class Player {
     {
         for (Bullet b : bulletList)
         {
-            b.draw(g,texturesize);
+            b.draw(g,texturesize,0);
         }
     }
     
     public void update(long dT, Map map){
         if(!this.isdead){
-
+            
             // Update animation
             this.playerAnimation.update(dT);
             //Calculate speed vector
@@ -187,6 +190,23 @@ public class Player {
             speed[0]=0;
             speed[1]=0;
         }
+        if (Math.abs(speed[0]) <= 0.000000001 && Math.abs(speed[1]) <= 0.000000001)
+        {
+            isIdle = true;
+        }
+        else
+        {
+            isIdle = false;
+        }
+        
+    }
+
+    public void setFacedDirection(int facedDirection) {
+        this.facedDirection = facedDirection;
+    }
+
+    public Animation getPlayerAnimation() {
+        return playerAnimation;
     }
     
     void setDirectionOfTravel(int axis, int direction)

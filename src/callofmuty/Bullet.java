@@ -24,11 +24,14 @@ public class Bullet {
         this.direction = direction;
         this.playerId = playerId;
         
-        this.bulletAnimation = new Animation(250,4,0);// en ms
+        this.bulletAnimation = new Animation(250,1,4,4,0);// en ms
         
-        for (int i=0; i<bulletAnimation.getNumberOfImagesAnimation(); i++)
+        for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
         {
-            animationImages.add(Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), 1, i+1));
+            for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++)
+            {
+                animationImages.add(Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), i+1, j+1));
+            }
         }
     }
     
@@ -39,9 +42,9 @@ public class Bullet {
         bulletAnimation.update(dT);
     }
     
-    public void draw(Graphics2D g2d,int texturesize)
+    public void draw(Graphics2D g2d, int texturesize, int row)
     {
-        g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
+        g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage(row, false)),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
     }
     
     public boolean checkCollisionWithMap(Map map)

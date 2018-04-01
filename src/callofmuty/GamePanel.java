@@ -359,18 +359,22 @@ public class GamePanel extends JPanel{
     public void updateGame(long dT){
         
         if (pressedButtons.contains(KeyEvent.VK_DOWN)){
+            player.setFacedDirection(0);
             player.setAcceleration(1, 1);
             player.setDirectionOfTravel(1, 1);
         }
         if (pressedButtons.contains(KeyEvent.VK_UP)){
+            player.setFacedDirection(3);
             player.setAcceleration(1, -1);
             player.setDirectionOfTravel(1, -1);
         }
         if (pressedButtons.contains(KeyEvent.VK_LEFT)){
+            player.setFacedDirection(1);
             player.setAcceleration(0, -1);
             player.setDirectionOfTravel(0, -1);
         }
         if (pressedButtons.contains(KeyEvent.VK_RIGHT)){
+            player.setFacedDirection(2);
             player.setAcceleration(0, 1);
             player.setDirectionOfTravel(0, 1);
         }

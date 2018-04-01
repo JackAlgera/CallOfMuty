@@ -2,14 +2,19 @@ package callofmuty;
 
 public class Animation {
     double totalTime, switchTime;
-    int numberOfImagesAnimation, currentImage; // currentImage starts at 0
+    int[] numberOfImagesAnimation;
+    int currentImage, firstImage, animationImageLength; // currentImage starts at 0
     
-    public Animation(double switchTime, int numberOfImagesAnimation, int firstImage)
+    public Animation(double switchTime, int numberOfImagesY, int numberOfImagesX, int animationImageLength, int firstImage)
     {
         this.totalTime = 0;
         this.switchTime = switchTime;
-        this.numberOfImagesAnimation = numberOfImagesAnimation;
+        numberOfImagesAnimation = new int[2];
+        this.numberOfImagesAnimation[0] = numberOfImagesX;
+        this.numberOfImagesAnimation[1] = numberOfImagesY;
         this.currentImage = firstImage;
+        this.firstImage = firstImage;
+        this.animationImageLength = animationImageLength;
     }
     
     public void update(double dT)
@@ -18,9 +23,9 @@ public class Animation {
         if (totalTime >= switchTime)
         {
             totalTime -= switchTime;
-            if (currentImage == numberOfImagesAnimation-1)
+            if (currentImage >= firstImage + animationImageLength-1)
             {
-                currentImage = 0;
+                currentImage = firstImage;
             }
             else
             {
@@ -33,11 +38,34 @@ public class Animation {
         return switchTime;
     }
 
-    public int getNumberOfImagesAnimation() {
-        return numberOfImagesAnimation;
+    public int getAnimationImageLength() {
+        return animationImageLength;
     }
-
-    public int getCurrentImage() {
-        return currentImage;
+    
+    public int getNumberOfImagesX()
+    {
+        return numberOfImagesAnimation[0];
+    }
+   
+    public int getNumberOfImagesY()
+    {
+        return numberOfImagesAnimation[1];
+    }
+    
+    public int getCurrentImage(int row, boolean isIdle)
+    {
+        if (isIdle)
+        {
+            return (row*numberOfImagesAnimation[0] + firstImage + 1);
+        }
+        else
+        {
+            return (row*numberOfImagesAnimation[0] + currentImage);
+        }
+    }
+    
+    public void setFirstImage(int firstImage)
+    {
+        this.firstImage = firstImage;
     }
 }
