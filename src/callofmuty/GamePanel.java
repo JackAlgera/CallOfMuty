@@ -24,7 +24,9 @@ import javax.swing.KeyStroke;
 
 public class GamePanel extends JPanel{
 
-    public static BufferedImage Background = Tools.loadImage("image/Background");
+    public static BufferedImage MenuBackground = Tools.loadImage("image/MenuBackground");
+    public static BufferedImage EditorBackground = Tools.loadImage("image/EditorBackground");
+
     ImageIcon joinGameIcon = new ImageIcon("images/Buttons/JoinGame.png"),
             createGameIcon = new ImageIcon("images/Buttons/CreateGame.png"),
             leftArrowIcon = new ImageIcon("images/Buttons/LeftArrow.png"),
@@ -51,7 +53,8 @@ public class GamePanel extends JPanel{
     public GamePanel(int textureSize, int mapWidth, int mapHeight) throws IOException{
         super();
         gameState = MAIN_MENU;
-        Background = ImageIO.read(new File("images/Background.png"));
+        MenuBackground = ImageIO.read(new File("images/MenuBackground.png"));
+        EditorBackground = ImageIO.read(new File("images/EditorBackground.png"));
         playerListUpdateTime = 0;
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
@@ -437,9 +440,9 @@ public void paint(Graphics g) {
     Graphics2D g2d = (Graphics2D) g;
     switch(gameState) {
         case MAIN_MENU:
-            map.draw(g2d);
-            g2d.drawImage(Background, 0, 0, 16*64, 9*64, this);
+            g2d.drawImage(MenuBackground, 0, 0, 16*64, 9*64, this);
             g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
+            map.draw(g2d);
             break;
         case IN_GAME:
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -455,6 +458,7 @@ public void paint(Graphics g) {
             }
             break;
         case MAP_EDITOR:
+            g2d.drawImage(EditorBackground, 0, 0, 16*64, 9*64, this);     
             map.draw(g2d);
             tileSelector.draw(g2d);
     }

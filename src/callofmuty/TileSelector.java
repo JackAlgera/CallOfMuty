@@ -1,5 +1,7 @@
 package callofmuty;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class TileSelector extends Map {
@@ -18,6 +20,8 @@ public class TileSelector extends Map {
     public void draw(Graphics2D g2d){
         super.draw(g2d);
         int newXTextureSize = getDrawWidth()/getMapWidth(), newYTextureSize = getDrawHeight()/getMapHeight();
+        g2d.setStroke(new BasicStroke(5));
+        g2d.setColor(Color.lightGray);
         g2d.drawRect(getxPos()+selectedTile*newXTextureSize, getyPos(), newXTextureSize, newYTextureSize);
     }
     
