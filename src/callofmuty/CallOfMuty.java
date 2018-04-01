@@ -17,13 +17,6 @@ public class CallOfMuty {
     
     public static void main(String[] args) throws InterruptedException, IOException {
         
-        ImageIcon joinGameIcon = new ImageIcon("images/Buttons/JoinGame.png"),
-                createGameIcon = new ImageIcon("images/Buttons/CreateGame.png"),
-                leftArrowIcon = new ImageIcon("images/Buttons/LeftArrow.png"),
-                rightArrowIcon = new ImageIcon("images/Buttons/rightArrow.png"),
-                exitIcon = new ImageIcon("images/Buttons/Exit.png"),
-                gameModeIcon = new ImageIcon("images/Buttons/GameMode.png");
-        
         int textureSize, mapWidth, mapHeight, maxFPS;
         long dT, minUpdateTime;
         
@@ -43,162 +36,9 @@ public class CallOfMuty {
         WindowListener exitListener = new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                quitGame(game);
+                game.quitGame();
             }
         };
-        
-        // Interface construction
-        game.setLayout(null);
-        ArrayList <JButton> buttons = new ArrayList();
-        
-        JButton connectButton = new JButton();
-        connectButton.setIcon(joinGameIcon);
-        connectButton.setVisible(true);
-        connectButton.setBounds(286, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
-        //connectButton.setPressedIcon(pressedJoinGameIcon);
-        connectButton.setContentAreaFilled(false);
-        connectButton.setBorderPainted(false);
-        game.add(connectButton);
-        buttons.add(connectButton);
-        
-        JButton gameCreateButton = new JButton();
-        gameCreateButton.setIcon(createGameIcon);
-        gameCreateButton.setBounds(286, 227, createGameIcon.getIconWidth(), createGameIcon.getIconHeight());
-        //gameCreateButton.setPressedIcon(pressedcreateGameIcon);
-        gameCreateButton.setVisible(true);
-        gameCreateButton.setContentAreaFilled(false);
-        gameCreateButton.setBorderPainted(false);
-        game.add(gameCreateButton);
-        buttons.add(gameCreateButton);
-        
-        JButton exitButton = new JButton();
-        exitButton.setIcon(exitIcon);
-        exitButton.setBounds(286, 373, exitIcon.getIconWidth(), exitIcon.getIconHeight());
-        //exitButton.setPressedIcon(pressedExitIcon);
-        exitButton.setVisible(true);
-        exitButton.setContentAreaFilled(false);
-        exitButton.setBorderPainted(false);
-        game.add(exitButton);
-        buttons.add(exitButton);
-        
-        JButton gameModeButton = new JButton();
-        gameModeButton.setIcon(gameModeIcon);
-        gameModeButton.setBounds(286, 154, gameModeIcon.getIconWidth(), gameModeIcon.getIconHeight());
-        //gameModeButton.setPressedIcon(gameModeIcon);
-        gameModeButton.setVisible(true);
-        gameModeButton.setContentAreaFilled(false);
-        gameModeButton.setBorderPainted(false);
-        game.add(gameModeButton);
-        buttons.add(gameModeButton);
-        
-        JButton rightSkinArrow = new JButton();
-        rightSkinArrow.setIcon(rightArrowIcon);
-        rightSkinArrow.setBounds(181, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
-        //rightSkinArrow.setPressedIcon(pressedrightArrowIcon);
-        rightSkinArrow.setVisible(true);
-        rightSkinArrow.setContentAreaFilled(false);
-        rightSkinArrow.setBorderPainted(false);
-        game.add(rightSkinArrow);
-        buttons.add(rightSkinArrow);
-        
-        JButton leftSkinArrow = new JButton();
-        leftSkinArrow.setIcon(leftArrowIcon);
-        leftSkinArrow.setBounds(55, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
-        //leftSkinArrow.setPressedIcon(pressedleftArrowIcon);
-        leftSkinArrow.setVisible(true);
-        leftSkinArrow.setContentAreaFilled(false);
-        leftSkinArrow.setBorderPainted(false);
-        game.add(leftSkinArrow);
-        buttons.add(leftSkinArrow);
-        
-        JButton rightMapArrow = new JButton();
-        rightMapArrow.setIcon(rightArrowIcon);
-        rightMapArrow.setBounds(820, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
-        //rightMapArrow.setPressedIcon(pressedrightArrowIcon);
-        rightMapArrow.setVisible(true);
-        rightMapArrow.setContentAreaFilled(false);
-        rightMapArrow.setBorderPainted(false);
-        game.add(rightMapArrow);
-        buttons.add(rightMapArrow);
-        
-        JButton leftMapArrow = new JButton();
-        leftMapArrow.setIcon(leftArrowIcon);
-        leftMapArrow.setBounds(640, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
-        //leftMapArrow.setPressedIcon(pressedleftArrowIcon);
-        leftMapArrow.setVisible(true);
-        leftMapArrow.setContentAreaFilled(false);
-        leftMapArrow.setBorderPainted(false);
-        game.add(leftMapArrow);
-        buttons.add(leftMapArrow);
-        
-        connectButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.initialiseGame(false);
-                for (JButton b : buttons)
-                {
-                    b.setVisible(false); //Pour evitier d'avoir 10 lignes de ____.setVisible
-                }
-//                connectButton.setVisible(false);
-//                gameCreateButton.setVisible(false);
-            }
-        });
-        
-        gameCreateButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                game.initialiseGame(true);
-                for (JButton b : buttons)
-                {
-                    b.setVisible(false);
-                }
-//                connectButton.setVisible(false);
-//                gameCreateButton.setVisible(false);
-            }
-        });
-        
-        exitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                quitGame(game);
-            }
-        });
-        
-        gameModeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // to do
-            }
-        });
-        
-        rightSkinArrow.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int skinIndex = game.getPlayer().getSkinIndex();
-                skinIndex = (skinIndex%5)+1;
-                game.getPlayer().setSkin(skinIndex);
-                game.repaint();
-            }
-        });
-        
-        leftSkinArrow.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int skinIndex = game.getPlayer().getSkinIndex();
-                skinIndex--;
-                if (skinIndex<1){
-                    skinIndex=5;
-                }
-                game.getPlayer().setSkin(skinIndex);
-                game.repaint();
-            }
-        });
-        
-        rightMapArrow.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // to do
-            }
-        });
-        
-        leftMapArrow.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // toudou
-            }
-        });
         
         frame.addWindowListener(exitListener);
         game.requestFocusInWindow();
@@ -225,17 +65,6 @@ public class CallOfMuty {
             game.repaint();
         }
         game.endGame();
-    }
-    
-    private static void quitGame(GamePanel game) {
-        int confirm = JOptionPane.showOptionDialog(
-                null, "Are you sure you want to quit ?",
-                "Quit the game", JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, null, null);
-        if (confirm == 0) {
-            game.endGame();
-            System.exit(0);
-        }
     }
     
     private static JFrame createJFrame(String frameTitle, GamePanel game) {
