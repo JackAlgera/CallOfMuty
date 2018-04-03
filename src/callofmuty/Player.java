@@ -87,8 +87,8 @@ public class Player {
     
     public void draw(Graphics2D g){
         //g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
-        g.drawImage(image,(int) posX,(int) posY, playerWidth, playerHeight, null);
-        g.drawImage(hpbar,(int) posX,(int) posY-12, playerWidth, playerHeight, null);
+        g.drawImage(image,(int) posX+playerWidth/2-image.getWidth(null),(int) posY+playerHeight/2-image.getHeight(null), image.getWidth(null)*2, image.getHeight(null)*2, null);
+        g.drawImage(hpbar,(int) posX+playerWidth/2-image.getWidth(null),(int) posY+playerHeight/2-image.getHeight(null)-12, image.getWidth(null)*2, image.getHeight(null)*2, null);
     }
     
     public void drawBullets(Graphics2D g,int texturesize)

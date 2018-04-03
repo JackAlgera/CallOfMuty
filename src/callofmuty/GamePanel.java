@@ -70,7 +70,7 @@ public class GamePanel extends JPanel{
         map = new Map(mapWidth, mapHeight, textureSize);
         tileSelector = new TileSelector(textureSize);
         map.setDrawingParameters(MAIN_MENU); // small map in main menu
-        player = new Player(200,200,textureSize,textureSize);
+        player = new Player(200,200,textureSize-30,textureSize);
         pressedButtons = new ArrayList();
         releasedButtons = new ArrayList();
         mapKeys();
