@@ -22,20 +22,16 @@ public class SQLManager {
     }
     
     public double[] getPosition(Player player){
-        int idPlayer;
-        idPlayer= player.getPlayerId(); 
+        int idPlayer = player.getPlayerId(); 
         double[] stockagePosition = {0,0};
         
         PreparedStatement requete;
         try {
-            double positionAbscisse, positionOrdonnee;
             requete = connexion.prepareStatement("SELECT x,y FROM players WHERE id="+idPlayer);
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
-                positionAbscisse = resultat.getDouble("x");
-                positionOrdonnee = resultat.getDouble("y");
-                stockagePosition[0] = positionAbscisse ;
-                stockagePosition[1] = positionOrdonnee;
+                stockagePosition[0] = resultat.getDouble("x");
+                stockagePosition[1] = resultat.getDouble("y");
             }
         requete.close();
               
@@ -54,7 +50,6 @@ public class SQLManager {
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
                 numberOfPlayers = resultat.getInt("COUNT(id)");
-                
             }
         requete.close();
               
@@ -80,21 +75,17 @@ public class SQLManager {
     }
     
     public void addPlayer(Player player){
-        int idPlayer;
-        idPlayer= player.getPlayerId(); 
-        float abscissePlayer=player.getAbscisse();
-        float ordonnePlayer=player.getOrdonnee(); 
-        double playerHp =player.getPlayerHp();
-        int playerSkin=player.skin[1];
-        
+        int idPlayer = player.getPlayerId(); 
+        double playerHp = player.getplayerhealth();
+        int playerSkin=player.getSkinIndex();
         PreparedStatement requete;
         try {
             requete = connexion.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?,?)");//a VERIFIER FONCTIONNEMENT pour hp ET SKIN
             requete.setInt(1,idPlayer);
             requete.setString(2, "player" +idPlayer);
             requete.setDouble(3, playerHp);
-            requete.setFloat(4, abscissePlayer);
-            requete.setFloat(5, ordonnePlayer);
+            requete.setDouble(4, player.getPosX());
+            requete.setDouble(5, player.getPosY());
             requete.setInt(6,playerSkin);
             requete.executeUpdate();
 
@@ -102,7 +93,20 @@ public class SQLManager {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-}
+    }
+    
+    public void removePlayer(Player player){
+        int idPlayer = player.getPlayerId(); 
+        PreparedStatement requete;
+        try {
+            requete = connexion.prepareStatement("DELETE FROM players WHERE id="+idPlayer);//("INSERT INTO players VALUES (?,?,?,?,?)");
+            requete.executeUpdate();
+            requete.close();  
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     public void clearTable(){
         PreparedStatement requete;
         
@@ -128,7 +132,6 @@ public class SQLManager {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //Travail du samedi
     
     public double getplayerHp(Player player) {  
         int idPlayer;
@@ -164,21 +167,38 @@ public class SQLManager {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }    
     }
+    
     public double[] getPositionBullet(Bullet bullet){
-        int idBullet;
-        idBullet= bullet.getBulletId(); 
+        int idBullet = bullet.getBulletId(); 
+        double positionAbscisse, positionOrdonnee;
+        PreparedStatement requete;
         double[] stockagePosition = {0,0};
         
-        PreparedStatement requete;
         try {
-            double positionAbscisse, positionOrdonnee;
             requete = connexion.prepareStatement("SELECT posX,posY FROM bullet WHERE id="+idBullet);
             ResultSet resultat = requete.executeQuery();
-            while (resultat.next()) {
+            while (resultat.next()){
                 positionAbscisse = resultat.getDouble("posX");
                 positionOrdonnee = resultat.getDouble("posY");
                 stockagePosition[0] = positionAbscisse ;
                 stockagePosition[1] = positionOrdonnee;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return stockagePosition;  
+    }
+            
+    public double[] getPositionWithPlayerId(int idPlayer){
+        double[] stockagePosition = {0,0};
+        PreparedStatement requete;
+        
+        try {
+            requete = connexion.prepareStatement("SELECT x,y FROM players WHERE id="+idPlayer);
+            ResultSet resultat = requete.executeQuery();
+            while (resultat.next()) {
+                stockagePosition[0] = resultat.getDouble("x");
+                stockagePosition[1] = resultat.getDouble("y");
             }
         requete.close();
               
@@ -188,8 +208,9 @@ public class SQLManager {
         
         return stockagePosition;    
     }
+        
     public void setPositionBullet(double posX, double posY, Bullet bullet){
-        int idBullet = bullet.getBullerId(); 
+        int idBullet = bullet.getBulletId(); 
                
         PreparedStatement requete;
         try {
@@ -202,28 +223,27 @@ public class SQLManager {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }    
     }
+    
     public void addBullet(Bullet bullet){
         int idBullet;
         idBullet= bullet.getBulletId(); 
         int idOwner;
-        idOwner=bullet.getOwnerId(); //voir comment sappelle cette fonction
-        float abscisseBullet=bullet.getPosX();
-        float ordonneBullet=bullet.getPosY(); 
+        idOwner=bullet.getPlayerId(); //voir comment sappelle cette fonction
+        double abscisseBullet=bullet.getPosX();
+        double ordonneBullet=bullet.getPosY(); 
         
         PreparedStatement requete;
         try {
             requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?)");//
             requete.setInt(1,idBullet);
             requete.setInt(2,idOwner);
-            requete.setFloat(3, abscisseBullet);
-            requete.setFloat(4, ordonneBullet);
+            requete.setDouble(3, abscisseBullet);
+            requete.setDouble(4, ordonneBullet);
             requete.executeUpdate();
 
             requete.close();  
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-    
     }
-    
 }

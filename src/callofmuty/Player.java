@@ -2,30 +2,80 @@ package callofmuty;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.io.File;
+import java.util.ArrayList;
 
 public class Player {
     
-    private int playerId;
-    private int playerWidth,playerHeight;
-    private Image image;
-    private double maxSpeed, posX, posY, wantedX, wantedY;
-    private double[] speed;
-    private double[] acceleration;
+    private int playerId, playerWidth, playerHeight, facedDirection;
+    private Image image, hpbar;
+    private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
+    private double[] speed, acceleration;
+    private int[] directionOfTravel;
+    private double health;
+    private boolean isdead, isIdle;  
+    private int[] skin;
     
-    public Player(int x,int y, int playerWidth, int playerHeight,Image image){
+    public ArrayList<Image> animationImages = new ArrayList();
+    public Animation playerAnimation;
+    
+    private ArrayList<Bullet> bulletList = new ArrayList();
+    private Guns Gun;
+
+        
+    public Player(double x,double y, int playerWidth, int playerHeight){
+        isIdle = true;
+        facedDirection = 0;
         this.posX=x;
         this.posY=y;
         this.image=image;
         this.playerWidth=playerWidth;
         this.playerHeight=playerHeight;
+        skin = new int[2];
+        this.skin[0]= 1;
+        this.skin[1]= 1;
+        image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
+        
+        this.playerAnimation = new Animation(135,8,12,4,0); // en ms
+        
+        for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++)
+        {
+            for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++)
+            {
+                animationImages.add(Tools.loadAndSelectaTile(new File("images/man.png"), i+1, j+1));
+            }
+        }
+        
         maxSpeed = 0.3; //in pixel per ms
         speed = new double[2];
         speed[0] = 0.0; //x speed
         speed[1] = 0.0; // y speed
         acceleration = new double[2];
-        acceleration[0] = 0.0;
-        acceleration[1] = 0.0;
+        acceleration[0] = 0.0; // x acceleration
+        acceleration[1] = 0.0; // y acceleration
+        directionOfTravel = new int[2];
+        directionOfTravel[0] = 0; // =-1 -> wants to go left, =+1 -> wants to go right, =0 -> stands still on x axis
+        directionOfTravel[1] = 0; // =-1 -> wants to go up, =+1 -> wants to go down, =0 -> stands still on y axis
+        this.accelerationValue = 0.002;
+        isdead = false;
+        health=100.0;
+    }
 
+    public int getPlayerWidth() {
+        return playerWidth;
+    }
+
+    public int getPlayerHeight() {
+        return playerHeight;
+    }
+    
+    public void setSkin(int skinIndex){
+        skin[1]=skinIndex;
+        image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
+    }
+    
+    public int getSkinIndex(){
+        return skin[1];
     }
     
     public void move(long dT){
@@ -36,104 +86,148 @@ public class Player {
     }
     
     public void draw(Graphics2D g){
-        g.drawImage(image,(int) posX,(int) posY, playerWidth, playerHeight, null);
+        g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
+        g.drawImage(hpbar,(int) posX,(int) posY-12, playerWidth, playerHeight, null);
     }
     
-    public void update(int xDirection, int yDirection, long dT, Map map){
-        //Calculate speed vector
-        acceleration[0] = xDirection*0.002;
-        acceleration[1] = yDirection*0.002;
-       
-        if (Math.abs(speed[0])>maxSpeed ){
-            if (xDirection==1){
-                speed[0]=maxSpeed;
-            } else {
-                speed[0]=-maxSpeed;
-            }
+    public void drawBullets(Graphics2D g,int texturesize)
+    {
+        for (Bullet b : bulletList)
+        {
+            b.draw(g,texturesize,0);
         }
-        if (Math.abs(speed[1])>maxSpeed){
-            if (yDirection==1){
-                speed[1]=maxSpeed;
-            } else {
-                speed[1]=-maxSpeed;
-            }
-            
-        }
-        
-        if (speed[0]!= 0.0 && xDirection==0){
-            speed[0]=0.0;
-        }
-        
-        if (speed[1]!=0.0 && yDirection==0){
-            speed[1]=0.0;
-        }
+    }
     
-                
-        // check if player is still in the map
-        wantedX = posX + speed[0]*dT;
-        wantedY = posY + speed[1]*dT;
-        if (wantedX<0 || wantedX+playerWidth>map.getMapWidth()*map.getTextureSize()){ 
-            wantedX = posX;
-            speed[0] = 0;
-            System.out.println("X movement blocked");
-        }
-        if (wantedY<0 || wantedY+playerHeight>map.getMapHeight()*map.getTextureSize()){
-            wantedY = posY;
-            speed[1] = 0;
-            System.out.println("Y movement blocked");
-        }
-        // check if able to move in given direction (not trying to cross uncrossable tile)
-        if(!map.pathIsCrossable(wantedX, wantedY, playerWidth, playerHeight)){ // test if the tile the player is going to is crossable
-            if (map.pathIsCrossable(posX, wantedY, playerWidth, playerHeight)){ //try to block x movement
+    public void update(long dT, Map map){
+        if(!this.isdead){
+            
+            // Update animation
+            this.playerAnimation.update(dT);
+            //Calculate speed vector
+            speed[0] += acceleration[0]*dT;
+            speed[1] += acceleration[1]*dT;
+
+            double speedNorm = Math.sqrt(Math.pow(speed[0], 2) + Math.pow(speed[1], 2));
+            double angle;
+
+            if (speedNorm == 0)
+            {
+                angle = 0;
+            }
+            else 
+            {
+                angle = Math.acos(speed[0]/speedNorm); //Angle between speed vector and [1,0]+
+            }
+            if (speedNorm>maxSpeed ){
+
+                if (directionOfTravel[1] == -1)
+                {
+                    angle = -angle;
+                }
+                speed[0] = maxSpeed*Math.cos(angle);
+                speed[1] = maxSpeed*Math.sin(angle);
+            }
+
+            // Deceleration
+            if (directionOfTravel[0] == 1 && acceleration[0] < 0 && speed[0]<0){
+                speed[0] = 0;
+                acceleration[0] = 0;
+            }
+            if (directionOfTravel[0] == -1 && acceleration[0] > 0 && speed[0]>0){
+                speed[0] = 0;
+                acceleration[0] = 0;
+            }
+            if (directionOfTravel[1] == 1 && acceleration[1] < 0 && speed[1]<0){
+                speed[1] = 0;
+                acceleration[1] = 0;
+            }
+            if (directionOfTravel[1] == -1 && acceleration[1] > 0 && speed[1]>0){
+                speed[1] = 0;
+                acceleration[1] = 0;
+            }
+
+            // check if player is still in the map
+            wantedX = posX + speed[0]*dT;
+            wantedY = posY + speed[1]*dT;
+            if (wantedX<0 || wantedX+playerWidth>map.getMapWidth()*map.getTextureSize()){ 
                 wantedX = posX;
                 speed[0] = 0;
-            } else {
-                if (map.pathIsCrossable(wantedX, posY, playerWidth, playerHeight)){ // try to block y movement
-                    wantedY = posY;
-                    speed[1] = 0;
-                } else { // block movement
+            }
+            if (wantedY<0 || wantedY+playerHeight>map.getMapHeight()*map.getTextureSize()){
+                wantedY = posY;
+                speed[1] = 0;
+            }
+            // check if able to move in given direction (not trying to cross uncrossable tile)
+            if(!Tools.isMapCrossable(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
+                if (Tools.isMapCrossable(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
                     wantedX = posX;
                     speed[0] = 0;
-                    wantedY = posY;
-                    speed[1] = 0;
+                } else {
+                    if (Tools.isMapCrossable(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
+                        wantedY = posY;
+                        speed[1] = 0;
+                    } else { // block movement
+                        wantedX = posX;
+                        speed[0] = 0;
+                        wantedY = posY;
+                        speed[1] = 0;
+                    }
                 }
             }
+            posX = wantedX;
+            posY = wantedY;
+            if (speed[0] == 0 && acceleration[0] == 0)
+            {
+                directionOfTravel[0] = 0;
+            }
+            if (speed[1] == 0 && acceleration[1] == 0)
+            {
+                directionOfTravel[1] = 0;
+            }
         }
-        move(dT);
-        posX = wantedX;
-        posY = wantedY;
+        else
+        {
+            speed[0]=0;
+            speed[1]=0;
+        }
+        if (Math.abs(speed[0]) <= 0.000000001 && Math.abs(speed[1]) <= 0.000000001)
+        {
+            isIdle = true;
+        }
+        else
+        {
+            isIdle = false;
+        }
+        
+    }
+
+    public void setFacedDirection(int facedDirection) {
+        this.facedDirection = facedDirection;
+    }
+
+    public Animation getPlayerAnimation() {
+        return playerAnimation;
     }
     
-    /*public void update(int xDirection, int yDirection, long dT){
-        
-        
-        if (xDirection!=0 || yDirection!=0){
-            if (Math.abs(speed[0])<maxSpeed && Math.abs(speed[1])<maxSpeed){
-                speed[0] += acceleration*dT*xDirection;
-                speed[1] += acceleration*dT*yDirection;
-            } else {
-                speed[0] = maxSpeed*xDirection;
-                speed[1] = maxSpeed*yDirection;
-        }
-        } else  {
-            if (Math.abs(speed[0])<(maxSpeed/Math.sqrt(2)) && Math.abs(speed[1])<(maxSpeed/Math.sqrt(2))){
-                speed[0] += acceleration*dT*xDirection;
-                speed[1] += acceleration*dT*yDirection;
-            } else {
-                speed[0] = maxSpeed/Math.sqrt(2)*xDirection;
-                speed[1] = maxSpeed/Math.sqrt(2)*yDirection;
-            }
-            
-        } 
-        // check if able to move in given direction
-        move(dT);
-    }*/
-    
-    
-    void setPosition(float[] newPos)
+    void setDirectionOfTravel(int axis, int direction)
     {
-        posX = newPos[1];
-        posY = newPos[2];
+        this.directionOfTravel[axis] = direction;
+    }
+    
+    void reverseAcceleration(int axis)
+    {
+        this.acceleration[axis] = -this.acceleration[axis];
+    }
+    
+    void setAcceleration(int axis, double accelerationSign)
+    {
+        this.acceleration[axis] = accelerationSign*this.accelerationValue;
+    }
+    
+    void setPosition(double[] newPos)
+    {
+        posX = newPos[0];
+        posY = newPos[1];
     }
     
     void setPlayerId(int playerId)
@@ -145,13 +239,92 @@ public class Player {
     {
         return this.playerId;
     }
-    float getAbscisse(){
+    double getPosX(){
         return this.posX ;
     }
-    float getOrdonnee(){
+    double getPosY(){
         return this.posY;
     }
+        
+    void setplayerdeath(boolean isdead){
+        this.isdead=isdead;
+        if (isdead==true){
+            this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 2, 4);
+            this.health=0;
+        }else{
+            this.chooseskin(this.skin[0],this.skin[1]);
+        }
+    }
+    boolean getplayerdeath(){
+        return this.isdead;
+    }
+    void damageplayer(double damage){
+        if (this.health-damage<=0){
+            this.health=0;
+            this.setplayerdeath(true);
+        }else{
+            this.health-=damage;
+        }
+    }
+    void setplayerhealth(double life){
+        this.health=life;
+        if (this.getplayerdeath()&& life>0){
+            this.setplayerdeath(false);
+        }
+    }
+    double getplayerhealth(){
+        return this.health;
+    }       
+    void chooseskin(int row, int column){
+        this.skin[0]=row;
+        this.skin[1]=column;
+        this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), this.skin[0], this.skin[1]);
+    }
+    void healthcheck(){
+        if(this.isdead==true){
+            this.hpbar= Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 2, 11);
+        }else{
+        int cursor = (int)Math.floor(this.health/10)+1;
+        this.hpbar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, cursor);
+        }
+    }
     
+    void addBullet(double initPosX, double initPosY, double[] direction, double speed)
+    {
+        // Max number of bullets
+//        if (bulletList.size() > 25)
+//        {
+//            bulletList.remove(0);
+//        }
+        
+        if (!this.isdead) {
+            bulletList.add(new Bullet(initPosX, initPosY, direction, speed, this.playerId));
+        }
+    }
+    
+    public Image getImage(){
+        return image;
+    }
+    
+    public void updateBulletImpact(long dT, Map map, ArrayList <Player> listPlayers)
+    {
+        // Update bullets
+        for (int i=0; i<bulletList.size(); i++)
+        {
+            Bullet b = bulletList.get(i);
+            b.update(dT);
+            if (b.checkCollisionWithMap(map))
+            {
+                bulletList.remove(b);
+            }
+            for (int j=0; j<listPlayers.size(); j++)
+            {
+                if (j != playerId && b.checkCollisionWithPlayer(listPlayers.get(j)))
+                {
+                    bulletList.remove(b);
+                }
+            }
             
-    
+        }
+    }
 }

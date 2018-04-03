@@ -6,7 +6,11 @@
 package callofmuty;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -30,6 +34,78 @@ public class Tools {
         return image;
     }
    
+   public static BufferedImage loadImage(String address){
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(new File(address));
+        } catch (IOException error) {
+            System.out.println("Error: cannot read image : "+ error);  
+        }
+        return image;
+    } 
     
+    public static int[][] textFileToIntMap(String address){
+        int [][] intMap = null;
+        try {
+            BufferedReader file = new BufferedReader (new FileReader(address));
+            String[] line = file.readLine().split(" ");
+            file.close();
+            int mapWidth, mapHeight;
+            if (line.length > 1) {
+                mapWidth = Integer.parseInt(line[0]);
+                mapHeight = Integer.parseInt(line[1]);
+                intMap = new int[mapWidth][mapHeight];
+                if (line.length == 2 + mapWidth * mapHeight) {
+                    for (int i = 0; i < mapWidth; i++) {
+                        for (int j = 0; j < mapHeight; j++) {
+                            intMap[i][j] = Integer.parseInt(line[i*mapHeight + j+2]);
+                        }
+                    }
+                } else {
+                    System.out.println("Cannot load the map : file length is wrong");
+                }
+            } else {
+                System.out.println("Cannot load the map : file (almost) empty");
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Cannot load the map : unreadable file");
+        }
+        return intMap;
+    }
     
+    public static void mapToTextFile(Map map, String address){
+        int[][] intMap = map.getMap();
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(address));
+            writer.write("" + map.getMapWidth()+ " " + map.getMapHeight());
+            for (int i = 0; i < map.getMapWidth(); i++) {
+                for (int j = 0; j < map.getMapHeight(); j++) {
+                    writer.write(" "+intMap[i][j]);
+                }
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static boolean isMapCrossable(double x, double y, int objectWidth, int objectHeight, Map map) {
+        boolean mapIsCrossable = map.getTile(x,y).isCrossable() 
+                                    && map.getTile(x + objectWidth, y).isCrossable() 
+                                    && map.getTile(x, y + objectHeight).isCrossable() 
+                                    && map.getTile(x + objectWidth, y + objectHeight).isCrossable();
+        return mapIsCrossable;
+    }
+    
+    public static boolean isPlayerHit(double objX, double objY, int objectWidth, int objectHeight, Player p) {
+        
+        boolean playerIsHit = (objX + objectWidth) > p.getPosX()
+                                && objX < (p.getPosX() + p.getPlayerWidth())
+                                && (objY + objectHeight) > p.getPosY()
+                                && objY < (p.getPosY() + p.getPlayerHeight());
+        
+        return playerIsHit;
+    }
 }
