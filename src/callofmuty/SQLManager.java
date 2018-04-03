@@ -245,11 +245,10 @@ public class SQLManager {
         }
     }
     
-    public Bullet[] getBulletListOfPlayer(Player player){
+    public ArrayList<Bullet> getBulletListOfPlayer(Player player){
          
         int idPlayer = player.getPlayerId(); //voir comment sappelle cette fonction
-        Bullet[] listBullets = null;
-        int i=0;
+        ArrayList<Bullet> listBullets = new ArrayList();
         
         PreparedStatement requete;
         
@@ -257,8 +256,7 @@ public class SQLManager {
             requete = connexion.prepareStatement("SELECT * FROM Bullet WHERE id="+idPlayer);
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
-                listBullets[i] = new Bullet(resultat.getDouble("posX"),resultat.getDouble("posY"),resultat.getDouble("speedX"),resultat.getDouble("speedY"),0.5,resultat.getInt("playerId"));
-                i++;
+                listBullets.add(new Bullet(resultat.getDouble("posX"),resultat.getDouble("posY"),resultat.getDouble("speedX"),resultat.getDouble("speedY"),0.5,resultat.getInt("playerId")));
             }
         requete.close();
               
@@ -269,11 +267,10 @@ public class SQLManager {
         return listBullets;
     }
     
-    public double[] getBulletListExceptPlayer(Player player){
+    public ArrayList<Bullet> getBulletListExceptPlayer(Player player){
          
         int idPlayer = player.getPlayerId(); //voir comment sappelle cette fonction
-        double[] listPositionBullets = null;
-        int i=0;
+        ArrayList<Bullet> listPositionBullets = new ArrayList();
         
         PreparedStatement requete;
         
@@ -281,9 +278,7 @@ public class SQLManager {
             requete = connexion.prepareStatement("SELECT * FROM Bullet WHERE id!="+idPlayer);
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
-                listPositionBullets[2*i] = resultat.getDouble("posX");
-                listPositionBullets[2*i+1] = resultat.getDouble("posY");
-                i++;
+                listPositionBullets.add(new Bullet(resultat.getDouble("posX"),resultat.getDouble("posY"),0,0,0,0));
             }
         requete.close();
               
@@ -292,5 +287,20 @@ public class SQLManager {
         }
         
         return listPositionBullets;
+    }
+    
+    public void setPositionBullet(Bullet bullet){
+        int idBullet = bullet.getBulletId(); 
+               
+        PreparedStatement requete;
+        try {
+            requete = connexion.prepareStatement("UPDATE bullet SET posX=?, posY=? WHERE idbullet=" + idBullet);
+            requete.setDouble(1, bullet.getPosX());
+            requete.setDouble(2, bullet.getPosY());  
+            requete.executeUpdate();
+            requete.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }    
     }
 }

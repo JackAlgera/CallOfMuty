@@ -20,6 +20,10 @@ public class Player {
     public Animation playerAnimation;
     
     private ArrayList<Bullet> bulletList = new ArrayList();
+
+    public ArrayList<Bullet> getBulletList() {
+        return bulletList;
+    }
     private Guns Gun;
 
         
@@ -289,7 +293,7 @@ public class Player {
         }
     }
     
-    void addBullet(double initPosX, double initPosY, double[] direction, double speed)
+    void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql)
     {
         // Max number of bullets
 //        if (bulletList.size() > 25)
@@ -298,7 +302,9 @@ public class Player {
 //        }
         
         if (!this.isdead) {
-            bulletList.add(new Bullet(initPosX, initPosY, direction, speed, this.playerId));
+            Bullet b = new Bullet(initPosX, initPosY, direction, speed, this.playerId);
+            bulletList.add(b);
+            sql.addBullet(b);
         }
     }
     

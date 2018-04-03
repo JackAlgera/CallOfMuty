@@ -94,7 +94,7 @@ public class GamePanel extends JPanel{
                     directionOfFire[0] = directionOfFire[0] / norme;
                     directionOfFire[1] = directionOfFire[1] / norme;
 
-                    player.addBullet(player.getPosX() + textureSize / 4, player.getPosY() + textureSize / 4, directionOfFire, 0.5);
+                    player.addBullet(player.getPosX() + textureSize / 4, player.getPosY() + textureSize / 4, directionOfFire, 0.5, sql);
                     break;
                 case MAP_EDITOR:
                     int[] mapClicked = map.clickedTile(e.getX(), e.getY());
@@ -374,6 +374,11 @@ public class GamePanel extends JPanel{
         player.updateBulletImpact(dT, map, listPlayers);
         updatePositionPlayerList();
         sql.setPosition(player.getPosX(), player.getPosY(), player);
+        ArrayList<Bullet> listOtherBullets = sql.getBulletListExceptPlayer(player);
+        for(Bullet bullet : player.getBulletList())
+        {
+            sql.setPositionBullet(bullet.getPosX(),bullet.getPosY(),bullet);
+        }
         
         if (pressedButtons.contains(KeyEvent.VK_ESCAPE)){
             int confirm = JOptionPane.showOptionDialog(
@@ -388,6 +393,7 @@ public class GamePanel extends JPanel{
                 }
             }
         }
+        
         
         /*
         //test for the dead state, and the respawn
