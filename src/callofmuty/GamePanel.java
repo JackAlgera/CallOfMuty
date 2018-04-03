@@ -70,7 +70,7 @@ public class GamePanel extends JPanel{
         map = new Map(mapWidth, mapHeight, textureSize);
         tileSelector = new TileSelector(textureSize);
         map.setDrawingParameters(MAIN_MENU); // small map in main menu
-        player = new Player(200,200,textureSize-30,textureSize);
+        player = new Player(200,200);
         pressedButtons = new ArrayList();
         releasedButtons = new ArrayList();
         mapKeys();
@@ -259,8 +259,7 @@ public class GamePanel extends JPanel{
         
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                gameState = IN_GAME;
-                startButton.setVisible(false);
+                setState(IN_GAME);
             }
         });
         
@@ -299,15 +298,7 @@ public class GamePanel extends JPanel{
         
         mapEditorButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                gameState = MAP_EDITOR;
-                map.setDrawingParameters(MAP_EDITOR);
-                for (JButton b : MMbuttons){
-                    b.setVisible(false);
-                }
-                for (JButton b : MEbuttons){
-                    b.setVisible(true);
-                }
-                repaint();
+                setState(MAP_EDITOR);
             }
         });
         
@@ -363,6 +354,7 @@ public class GamePanel extends JPanel{
                     JFileChooser.APPROVE_OPTION) {
                     String adresse = fileChooser.getSelectedFile().getPath();
                     map = new Map(Tools.textFileToIntMap(adresse), textureSize);
+                    map.setDrawingParameters(MAP_EDITOR);
                 }
                 repaint();
             }
@@ -370,22 +362,46 @@ public class GamePanel extends JPanel{
         
         doneButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                gameState = MAIN_MENU;
-                map.setDrawingParameters(MAIN_MENU);
-                for (JButton b : MEbuttons){
-                    b.setVisible(false);
-                }
-                for (JButton b : MMbuttons)
-                {
-                    b.setVisible(true);
-                }
-                repaint();
+                setState(MAIN_MENU);
             }
         });
     }
     
     public void updateGame(long dT){
+        updatePlayerMovement();
+        player.update(dT, map);
+        player.healthcheck();
+        player.updateBulletImpact(dT, map, listPlayers);
+        updatePositionPlayerList();
+        sql.setPosition(player.getPosX(), player.getPosY(), player);
         
+        if (pressedButtons.contains(KeyEvent.VK_ESCAPE)){
+            int confirm = JOptionPane.showOptionDialog(
+                null, "Do you want to disconnect from the game ?",
+                "Disconnecting", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (confirm == 0) {
+                endGame();
+                setState(MAIN_MENU);
+                if (pressedButtons.contains(KeyEvent.VK_ESCAPE)){
+                    pressedButtons.remove(KeyEvent.VK_ESCAPE);
+                }
+            }
+        }
+        
+        /*
+        //test for the dead state, and the respawn
+        if (player.getplayerdeath()){
+            i+=1;
+        }
+        if(player.getplayerhealth()==0 && i==100){
+            player.setplayerhealth(100);
+            i=0;
+        }
+        player.damageplayer(0.5);*/
+    }
+    
+    private void updatePlayerMovement(){
         if (pressedButtons.contains(KeyEvent.VK_DOWN)){
 //            player.setFacedDirection(0);
             player.setAcceleration(1, 1);
@@ -424,25 +440,6 @@ public class GamePanel extends JPanel{
             player.reverseAcceleration(0);
             releasedButtons.remove((Integer)KeyEvent.VK_RIGHT);
         }
-        
-        player.update(dT, map); // To do : need to place the player into the list of players
-        player.healthcheck();
-        player.updateBulletImpact(dT, map, listPlayers);
-        updatePositionPlayerList();
-        sql.setPosition(player.getPosX(), player.getPosY(), player);
-        
-        
-        
-        /*
-        //test for the dead state, and the respawn
-        if (player.getplayerdeath()){
-            i+=1;
-        }
-        if(player.getplayerhealth()==0 && i==100){
-            player.setplayerhealth(100);
-            i=0;
-        }
-        player.damageplayer(0.5);*/
     }
     
     // Use of KeyBindings
@@ -455,6 +452,8 @@ public class GamePanel extends JPanel{
         this.getInputMap().put(KeyStroke.getKeyStroke("released LEFT"), "leftReleased");
         this.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "rightPressed");
         this.getInputMap().put(KeyStroke.getKeyStroke("released RIGHT"), "rightReleased");
+        this.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escapePressed");
+        this.getInputMap().put(KeyStroke.getKeyStroke("released ESCAPE"), "escapeReleased");
         this.getActionMap().put("upPressed", new KeyPressed(KeyEvent.VK_UP));
         this.getActionMap().put("upReleased", new KeyReleased(KeyEvent.VK_UP) );
         this.getActionMap().put("downPressed", new KeyPressed(KeyEvent.VK_DOWN));
@@ -463,6 +462,8 @@ public class GamePanel extends JPanel{
         this.getActionMap().put("leftReleased", new KeyReleased(KeyEvent.VK_LEFT) );
         this.getActionMap().put("rightPressed", new KeyPressed(KeyEvent.VK_RIGHT));
         this.getActionMap().put("rightReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
+        this.getActionMap().put("escapePressed", new KeyPressed(KeyEvent.VK_ESCAPE));
+        this.getActionMap().put("escapeReleased", new KeyReleased(KeyEvent.VK_ESCAPE) );
     }
     
 @Override
@@ -558,7 +559,7 @@ public void paint(Graphics g) {
         this.isHost = isHost;
         sql = new SQLManager();
         isConnected = true;
-        gameState = PRE_GAME;
+        setState(PRE_GAME);
         if (isHost){
             int playerId;
             sql.clearTable(); //Clear previous game on SQL server
@@ -582,7 +583,7 @@ public void paint(Graphics g) {
             sql.removePlayer(player);
             sql.disconnect();
         }
-        gameState = MAIN_MENU;
+        setState(MAIN_MENU);
     }
     
     public void initialisePlayerList()
@@ -593,7 +594,7 @@ public void paint(Graphics g) {
             if (i != player.getPlayerId())
             {
                 double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize);
+                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1]);
                 newPlayer.setPlayerId(i);
                 newPlayer.setSkin(4);
                 listPlayers.add(newPlayer);
@@ -611,7 +612,7 @@ public void paint(Graphics g) {
         for (int i = 0; i < numberOfPlayers; i++) {
             if (i != player.getPlayerId()) {
                 double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                Player newPlayer = new Player(posNewPlayer[0], posNewPlayer[1], textureSize, textureSize);
+                Player newPlayer = new Player(posNewPlayer[0], posNewPlayer[1]);
                 newPlayer.setSkin(4);
                 newPlayer.setPlayerId(i);
                 listPlayers.add(newPlayer);
@@ -638,5 +639,56 @@ public void paint(Graphics g) {
             endGame();
             System.exit(0);
         }
+    }
+    
+    public void setState(int newGameState){
+        gameState = newGameState;
+        map.setDrawingParameters(gameState);
+        switch(gameState){
+            case MAIN_MENU:
+                for (JButton button : MMbuttons){
+                    button.setVisible(true);
+                }
+                for (JButton button : MEbuttons){
+                    button.setVisible(false);
+                }
+                for (JButton button : PGbuttons){
+                    button.setVisible(false);
+                }
+                break;
+            case MAP_EDITOR:
+                for (JButton button : MMbuttons){
+                    button.setVisible(false);
+                }
+                for (JButton button : MEbuttons){
+                    button.setVisible(true);
+                }
+                for (JButton button : PGbuttons){
+                    button.setVisible(false);
+                }
+                break;
+            case PRE_GAME:
+                for (JButton button : MMbuttons){
+                    button.setVisible(false);
+                }
+                for (JButton button : MEbuttons){
+                    button.setVisible(false);
+                }
+                for (JButton button : PGbuttons){
+                    button.setVisible(isHost);
+                }
+                break;
+            case IN_GAME:
+                for (JButton button : MMbuttons){
+                    button.setVisible(false);
+                }
+                for (JButton button : MEbuttons){
+                    button.setVisible(false);
+                }
+                for (JButton button : PGbuttons){
+                    button.setVisible(false);
+                }
+        }
+        repaint();
     }
 }

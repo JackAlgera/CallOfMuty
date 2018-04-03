@@ -23,14 +23,14 @@ public class Player {
     private Guns Gun;
 
         
-    public Player(double x,double y, int playerWidth, int playerHeight){
+    public Player(double x,double y){
         isIdle = true;
         facedDirection = 0;
         this.posX=x;
         this.posY=y;
         this.image=image;
-        this.playerWidth=playerWidth;
-        this.playerHeight=playerHeight;
+        this.playerWidth=35;
+        this.playerHeight=55;
         skin = new int[2];
         this.skin[0]= 1;
         this.skin[1]= 1;
