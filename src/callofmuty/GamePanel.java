@@ -32,6 +32,10 @@ public class GamePanel extends JPanel{
             leftArrowIcon = new ImageIcon("images/Buttons/LeftArrow.png"),
             rightArrowIcon = new ImageIcon("images/Buttons/rightArrow.png"),
             exitIcon = new ImageIcon("images/Buttons/Exit.png"),
+            mapEditorIcon = new ImageIcon("images/Buttons/EditMaps.png"),
+            saveMapIcon = new ImageIcon("images/buttons/Save.png"),
+            loadMapIcon = new ImageIcon("images/buttons/Load.png"),
+            doneIcon = new ImageIcon("images/buttons/Done.png"),
             gameModeIcon = new ImageIcon("images/Buttons/GameMode.png");
 
     private Map map;
@@ -44,7 +48,7 @@ public class GamePanel extends JPanel{
     private long playerListUpdateTime;
     private SQLManager sql; 
     private boolean isConnected;
-    private ArrayList <JButton> MMbuttons, MEbuttons;
+    private ArrayList <JButton> MMbuttons, MEbuttons, PGbuttons;
     
     private int i=0;
     
@@ -115,6 +119,7 @@ public class GamePanel extends JPanel{
         setLayout(null);
         MMbuttons = new ArrayList(); //MM : Main menu
         MEbuttons = new ArrayList(); //ME : Map Editor
+        PGbuttons = new ArrayList(); // Pre game
         
         
         JButton startButton = new JButton("Start");
@@ -122,6 +127,7 @@ public class GamePanel extends JPanel{
         startButton.setBounds(286, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
         //connectButton.setPressedIcon(pressedJoinGameIcon);
         add(startButton);
+        PGbuttons.add(startButton);
         
         
         
@@ -158,7 +164,7 @@ public class GamePanel extends JPanel{
         JButton gameModeButton = new JButton();
         gameModeButton.setIcon(gameModeIcon);
         gameModeButton.setBounds(286, 154, gameModeIcon.getIconWidth(), gameModeIcon.getIconHeight());
-        //gameModeButton.setPressedIcon(gameModeIcon);
+        //gameModeButton.setPressedIcon(pressedGameModeIcon);
         gameModeButton.setVisible(true);
         gameModeButton.setContentAreaFilled(false);
         gameModeButton.setBorderPainted(false);
@@ -205,35 +211,15 @@ public class GamePanel extends JPanel{
         add(leftMapArrow);
         MMbuttons.add(leftMapArrow);
         
-        JButton mapEditorButton = new JButton("Edit");
-        //mapEditorButton.setIcon(mapEditorIcon);
-        mapEditorButton.setBounds(590, 140, 80, 40);
+        JButton mapEditorButton = new JButton();
+        mapEditorButton.setIcon(mapEditorIcon);
+        mapEditorButton.setBounds(537, 140, mapEditorIcon.getIconWidth(), mapEditorIcon.getIconHeight());
         //mapEditorButton.setPressedIcon(pressedmapEditorIcon);
         mapEditorButton.setVisible(true);
-        //mapEditorButton.setContentAreaFilled(false);
-        //mapEditorButton.setBorderPainted(false);
+        mapEditorButton.setContentAreaFilled(false);
+        mapEditorButton.setBorderPainted(false);
         add(mapEditorButton);
         MMbuttons.add(mapEditorButton);
-        
-        JButton saveMapButton = new JButton("Save map");
-        //saveMapButton.setIcon(saveMapIcon);
-        saveMapButton.setBounds(680, 140, 100, 40);
-        //saveMapButton.setPressedIcon(pressedSaveMapIcon);
-        saveMapButton.setVisible(true);
-        //saveMapButton.setContentAreaFilled(false);
-        //saveMapButton.setBorderPainted(false);
-        add(saveMapButton);
-        MMbuttons.add(saveMapButton);
-        
-        JButton loadMapButton = new JButton("Load map");
-        //loadMapButton.setIcon(loadMapIcon);
-        loadMapButton.setBounds(790, 140, 100, 40);
-        //loadMapButton.setPressedIcon(pressedLoadMapIcon);
-        loadMapButton.setVisible(true);
-        //loadMapButton.setContentAreaFilled(false);
-        //loadMapButton.setBorderPainted(false);
-        add(loadMapButton);
-        MMbuttons.add(loadMapButton);
         
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -325,6 +311,38 @@ public class GamePanel extends JPanel{
             }
         });
         
+        // Map Editor interface
+        
+        JButton saveMapButton = new JButton();
+        saveMapButton.setIcon(saveMapIcon);
+        saveMapButton.setBounds(7, 212, saveMapIcon.getIconWidth(), saveMapIcon.getIconHeight());
+        //saveMapButton.setPressedIcon(pressedSaveMapIcon);
+        saveMapButton.setVisible(false);
+        //saveMapButton.setContentAreaFilled(false);
+        saveMapButton.setBorderPainted(false);
+        add(saveMapButton);
+        MEbuttons.add(saveMapButton);
+        
+        JButton loadMapButton = new JButton();
+        loadMapButton.setIcon(loadMapIcon);
+        loadMapButton.setBounds(7, 162, loadMapIcon.getIconWidth(), loadMapIcon.getIconHeight());
+        //loadMapButton.setPressedIcon(pressedLoadMapIcon);
+        loadMapButton.setVisible(false);
+        //loadMapButton.setContentAreaFilled(false);
+        loadMapButton.setBorderPainted(false);
+        add(loadMapButton);
+        MEbuttons.add(loadMapButton);
+        
+        JButton doneButton = new JButton();
+        doneButton.setIcon(doneIcon);
+        doneButton.setBounds(7, 280, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        //doneButton.setPressedIcon(presseddoneIcon);
+        doneButton.setVisible(false);
+        //doneButton.setContentAreaFilled(false);
+        doneButton.setBorderPainted(false);
+        add(doneButton);
+        MEbuttons.add(doneButton);
+        
         saveMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser("");
@@ -349,17 +367,6 @@ public class GamePanel extends JPanel{
                 repaint();
             }
         });
-        
-        // Map Editor interface
-        JButton doneButton = new JButton("Done");
-        //leftMapArrow.setIcon(doneIcon);
-        doneButton.setBounds(0, 100, 100,100);
-        //leftMapArrow.setPressedIcon(presseddoneIcon);
-        doneButton.setVisible(false);
-        //doneButton.setContentAreaFilled(false);
-        //doneButton.setBorderPainted(false);
-        add(doneButton);
-        MEbuttons.add(doneButton);
         
         doneButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -464,12 +471,17 @@ public void paint(Graphics g) {
     Graphics2D g2d = (Graphics2D) g;
     switch(gameState) {
         case PRE_GAME:
-            
+            for(JButton button : PGbuttons){
+                button.repaint();
+            }
             break;
         case MAIN_MENU:
             g2d.drawImage(MenuBackground, 0, 0, 16*64, 9*64, this);
             g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
             map.draw(g2d);
+            for(JButton button : MMbuttons){
+                button.repaint();
+            }
             break;
         case IN_GAME:
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -488,6 +500,9 @@ public void paint(Graphics g) {
             g2d.drawImage(EditorBackground, 0, 0, 16*64, 9*64, this);     
             map.draw(g2d);
             tileSelector.draw(g2d);
+            for(JButton button : MEbuttons){
+                button.repaint();
+            }
     }
 }
     
