@@ -14,6 +14,7 @@ public class Bullet {
     public int bulletId;
     public ArrayList<Image> animationImages = new ArrayList();
     public Animation bulletAnimation;
+    private Image image;
     
     public Bullet(double posX, double posY, double[] direction, double speed, int playerId)
     {
@@ -24,6 +25,8 @@ public class Bullet {
         this.speed = speed;
         this.direction = direction;
         this.playerId = playerId;
+        
+        image = Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), 1, 1);
         
         this.bulletAnimation = new Animation(250,1,4,4,0);// en ms
         
@@ -45,7 +48,8 @@ public class Bullet {
     
     public void draw(Graphics2D g2d, int texturesize, int row)
     {
-        g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage(row, false)),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
+//        g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage(row, false)),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
+        g2d.drawImage(image,(int) posX,(int) posY, texturesize/2, texturesize/2, null);
     }
     
     public boolean checkCollisionWithMap(Map map)

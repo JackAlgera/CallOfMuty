@@ -403,9 +403,11 @@ public class GamePanel extends JPanel{
         player.update(dT, map); // To do : need to place the player into the list of players
         player.healthcheck();
         player.updateBulletImpact(dT, map, listPlayers);
-//        updatePositionPlayerList();
-//        sql.setPosition(player.getPosX(), player.getPosY(), player);
-
+        updatePositionPlayerList();
+        sql.setPosition(player.getPosX(), player.getPosY(), player);
+        
+        
+        
         /*
         //test for the dead state, and the respawn
         if (player.getplayerdeath()){

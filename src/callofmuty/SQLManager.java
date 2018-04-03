@@ -225,10 +225,8 @@ public class SQLManager {
     }
     
     public void addBullet(Bullet bullet){
-        int idBullet;
-        idBullet= bullet.getBulletId(); 
-        int idOwner;
-        idOwner=bullet.getPlayerId(); //voir comment sappelle cette fonction
+        int idBullet = bullet.getBulletId(); 
+        int idOwner = bullet.getPlayerId(); //voir comment sappelle cette fonction
         double abscisseBullet=bullet.getPosX();
         double ordonneBullet=bullet.getPosY(); 
         

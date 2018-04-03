@@ -86,7 +86,8 @@ public class Player {
     }
     
     public void draw(Graphics2D g){
-        g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
+        //g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
+        g.drawImage(image,(int) posX,(int) posY, playerWidth, playerHeight, null);
         g.drawImage(hpbar,(int) posX,(int) posY-12, playerWidth, playerHeight, null);
     }
     
@@ -102,7 +103,7 @@ public class Player {
         if(!this.isdead){
             
             // Update animation
-            this.playerAnimation.update(dT);
+//            this.playerAnimation.update(dT);
             //Calculate speed vector
             speed[0] += acceleration[0]*dT;
             speed[1] += acceleration[1]*dT;
@@ -190,15 +191,14 @@ public class Player {
             speed[0]=0;
             speed[1]=0;
         }
-        if (Math.abs(speed[0]) <= 0.000000001 && Math.abs(speed[1]) <= 0.000000001)
-        {
-            isIdle = true;
-        }
-        else
-        {
-            isIdle = false;
-        }
-        
+//        if (Math.abs(speed[0]) <= 0.000000001 && Math.abs(speed[1]) <= 0.000000001)
+//        {
+//            isIdle = true;
+//        }
+//        else
+//        {
+//            isIdle = false;
+//        }
     }
 
     public void setFacedDirection(int facedDirection) {

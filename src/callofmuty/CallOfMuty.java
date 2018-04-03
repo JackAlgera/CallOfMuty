@@ -61,7 +61,7 @@ public class CallOfMuty {
             if (dT<minUpdateTime){
                 Thread.sleep(minUpdateTime-dT);
             }
-//            game.updatePlayerList(dT);
+            game.updatePlayerList(dT);
             game.repaint();
         }
         game.endGame();
