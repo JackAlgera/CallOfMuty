@@ -117,15 +117,11 @@ public class GamePanel extends JPanel{
         MEbuttons = new ArrayList(); //ME : Map Editor
         
         
-        
         JButton startButton = new JButton("Start");
-        startButton.setVisible(true);
+        startButton.setVisible(false);
         startButton.setBounds(286, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
         //connectButton.setPressedIcon(pressedJoinGameIcon);
         add(startButton);
-        MMbuttons.add(startButton);
-        
-        
         
         
         
@@ -247,6 +243,7 @@ public class GamePanel extends JPanel{
                 {
                     b.setVisible(false);
                 }
+                startButton.setVisible(isHost);
             }
         });
         
@@ -258,6 +255,7 @@ public class GamePanel extends JPanel{
                 {
                     b.setVisible(false);
                 }
+                startButton.setVisible(isHost);
             }
         });
         
@@ -276,6 +274,7 @@ public class GamePanel extends JPanel{
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 gameState = IN_GAME;
+                startButton.setVisible(false);
             }
         });
         
@@ -422,7 +421,7 @@ public class GamePanel extends JPanel{
         player.update(dT, map); // To do : need to place the player into the list of players
         player.healthcheck();
         player.updateBulletImpact(dT, map, listPlayers);
-//        updatePositionPlayerList();
+        updatePositionPlayerList();
         sql.setPosition(player.getPosX(), player.getPosY(), player);
         
         
@@ -464,6 +463,9 @@ public void paint(Graphics g) {
     super.paint(g);
     Graphics2D g2d = (Graphics2D) g;
     switch(gameState) {
+        case PRE_GAME:
+            
+            break;
         case MAIN_MENU:
             g2d.drawImage(MenuBackground, 0, 0, 16*64, 9*64, this);
             g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
@@ -588,36 +590,22 @@ public void paint(Graphics g) {
         }
     }
     
-    public void updatePlayerList(long dT)
-    {
-        playerListUpdateTime += dT;
-        if (playerListUpdateTime > 1000)
-        {
-            playerListUpdateTime -= 1000;
-            int numberOfPlayers = sql.getNumberOfPlayers();
-            listPlayers.clear();;
-            for(int i=0;i<numberOfPlayers;i++)
-            {
-                if (i != player.getPlayerId())
-                {
-                    double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                    Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1],textureSize,textureSize);
-                    newPlayer.setSkin(4);
-                    newPlayer.setPlayerId(i);
-                    listPlayers.add(newPlayer);
-                } 
-                else
-                {
-                    listPlayers.add(player);
-                }
+    public void updatePlayerList() {
+        int numberOfPlayers = sql.getNumberOfPlayers();
+        listPlayers.clear();;
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (i != player.getPlayerId()) {
+                double[] posNewPlayer = sql.getPositionWithPlayerId(i);
+                Player newPlayer = new Player(posNewPlayer[0], posNewPlayer[1], textureSize, textureSize);
+                newPlayer.setSkin(4);
+                newPlayer.setPlayerId(i);
+                listPlayers.add(newPlayer);
+            } else {
+                listPlayers.add(player);
             }
         }
-        else
-        {
-            playerListUpdateTime += dT;
-        }
     }
-    
+
     public int getState(){
         return gameState;
     }

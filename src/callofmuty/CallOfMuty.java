@@ -52,20 +52,19 @@ public class CallOfMuty {
         while(true){
             switch (game.getState()){
                 case GamePanel.PRE_GAME:
-                    game.initialisePlayerList();
+                    game.updatePlayerList();
                     Thread.sleep(50);
                     timer.update();
                 break;
                         
                 case GamePanel.IN_GAME:
-                dT = timer.update();
-                game.updateGame(dT);
-                if (dT<minUpdateTime){
-                    Thread.sleep(minUpdateTime-dT);
-                }
-//                game.updatePlayerList(dT);
-                game.repaint();
-                break;
+                    dT = timer.update();
+                    game.updateGame(dT);
+                    if (dT < minUpdateTime) {
+                        Thread.sleep(minUpdateTime - dT);
+                    }
+                    game.repaint();
+                    break;
                 
                 default:
                     Thread.sleep(50);
