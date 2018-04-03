@@ -244,4 +244,53 @@ public class SQLManager {
             ex.printStackTrace();
         }
     }
+    
+    public Bullet[] getBulletListOfPlayer(Player player){
+         
+        int idPlayer = player.getPlayerId(); //voir comment sappelle cette fonction
+        Bullet[] listBullets = null;
+        int i=0;
+        
+        PreparedStatement requete;
+        
+          try {
+            requete = connexion.prepareStatement("SELECT * FROM Bullet WHERE id="+idPlayer);
+            ResultSet resultat = requete.executeQuery();
+            while (resultat.next()) {
+                listBullets[i] = new Bullet(resultat.getDouble("posX"),resultat.getDouble("posY"),resultat.getDouble("speedX"),resultat.getDouble("speedY"),0.5,resultat.getInt("playerId"));
+                i++;
+            }
+        requete.close();
+              
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return listBullets;
+    }
+    
+    public double[] getBulletListExceptPlayer(Player player){
+         
+        int idPlayer = player.getPlayerId(); //voir comment sappelle cette fonction
+        double[] listPositionBullets = null;
+        int i=0;
+        
+        PreparedStatement requete;
+        
+          try {
+            requete = connexion.prepareStatement("SELECT * FROM Bullet WHERE id!="+idPlayer);
+            ResultSet resultat = requete.executeQuery();
+            while (resultat.next()) {
+                listPositionBullets[2*i] = resultat.getDouble("posX");
+                listPositionBullets[2*i+1] = resultat.getDouble("posY");
+                i++;
+            }
+        requete.close();
+              
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return listPositionBullets;
+    }
 }

@@ -16,6 +16,32 @@ public class Bullet {
     public Animation bulletAnimation;
     private Image image;
     
+    public Bullet(double posX, double posY, double speedX, double speedY, double speed, int playerId)
+    {
+        this.posX = posX;
+        this.posY = posY;
+        ballWidth = 10;
+        ballHeight = 10;
+        this.speed = speed;
+        double[] speedList = new double[2];
+        speedList[0] = posX;
+        speedList[1] = posY;
+        this.direction = speedList;
+        this.playerId = playerId;
+        
+        image = Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), 1, 1);
+        
+        this.bulletAnimation = new Animation(250,1,4,4,0);// en ms
+        
+        for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
+        {
+            for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++)
+            {
+                animationImages.add(Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), i+1, j+1));
+            }
+        }
+    }
+    
     public Bullet(double posX, double posY, double[] direction, double speed, int playerId)
     {
         this.posX = posX;

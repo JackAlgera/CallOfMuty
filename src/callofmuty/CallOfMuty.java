@@ -86,29 +86,3 @@ public class CallOfMuty {
         return frame;
     }
 }
-
-
-//        // Game loop
-////        while (!game.isConnected()){
-////            Thread.sleep(50);
-
-//        
-//        if(game.getState()==GamePanel.MAIN_MENU)
-//            
-//        if(game.getState()==GamePanel.PRE_GAME){
-//            game.initialisePlayerList();
-////            timer.update();
-//            Thread.sleep(50);
-//        }
-//            
-//        if(game.getState()==GamePanel.IN_GAME){
-//            dT = timer.update();
-//            game.updateGame(dT);
-//            if (dT<minUpdateTime){
-//                Thread.sleep(minUpdateTime-dT);
-//            }
-//            game.updatePlayerList(dT);
-//            game.repaint();
-//        }
-//        game.endGame();
-//        }
