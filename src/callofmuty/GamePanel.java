@@ -48,7 +48,7 @@ public class GamePanel extends JPanel{
     
     private int i=0;
     
-    public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW, MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2;
+    public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW, MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3;
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight) throws IOException{
         super();
@@ -115,6 +115,19 @@ public class GamePanel extends JPanel{
         setLayout(null);
         MMbuttons = new ArrayList(); //MM : Main menu
         MEbuttons = new ArrayList(); //ME : Map Editor
+        
+        
+        
+        JButton startButton = new JButton("Start");
+        startButton.setVisible(true);
+        startButton.setBounds(286, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
+        //connectButton.setPressedIcon(pressedJoinGameIcon);
+        add(startButton);
+        MMbuttons.add(startButton);
+        
+        
+        
+        
         
         JButton connectButton = new JButton();
         connectButton.setIcon(joinGameIcon);
@@ -260,6 +273,12 @@ public class GamePanel extends JPanel{
             }
         });
         
+        startButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                gameState = IN_GAME;
+            }
+        });
+        
         rightSkinArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int skinIndex = player.getSkinIndex();
@@ -362,22 +381,22 @@ public class GamePanel extends JPanel{
     public void updateGame(long dT){
         
         if (pressedButtons.contains(KeyEvent.VK_DOWN)){
-            player.setFacedDirection(0);
+//            player.setFacedDirection(0);
             player.setAcceleration(1, 1);
             player.setDirectionOfTravel(1, 1);
         }
         if (pressedButtons.contains(KeyEvent.VK_UP)){
-            player.setFacedDirection(3);
+//            player.setFacedDirection(3);
             player.setAcceleration(1, -1);
             player.setDirectionOfTravel(1, -1);
         }
         if (pressedButtons.contains(KeyEvent.VK_LEFT)){
-            player.setFacedDirection(1);
+//            player.setFacedDirection(1);
             player.setAcceleration(0, -1);
             player.setDirectionOfTravel(0, -1);
         }
         if (pressedButtons.contains(KeyEvent.VK_RIGHT)){
-            player.setFacedDirection(2);
+//            player.setFacedDirection(2);
             player.setAcceleration(0, 1);
             player.setDirectionOfTravel(0, 1);
         }
@@ -403,7 +422,7 @@ public class GamePanel extends JPanel{
         player.update(dT, map); // To do : need to place the player into the list of players
         player.healthcheck();
         player.updateBulletImpact(dT, map, listPlayers);
-        updatePositionPlayerList();
+//        updatePositionPlayerList();
         sql.setPosition(player.getPosX(), player.getPosY(), player);
         
         
@@ -522,7 +541,7 @@ public void paint(Graphics g) {
         this.isHost = isHost;
         sql = new SQLManager();
         isConnected = true;
-        gameState = IN_GAME;
+        gameState = PRE_GAME;
         if (isHost){
             int playerId;
             sql.clearTable(); //Clear previous game on SQL server

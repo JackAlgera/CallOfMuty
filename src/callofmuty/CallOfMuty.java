@@ -44,27 +44,35 @@ public class CallOfMuty {
         game.requestFocusInWindow();
         game.revalidate();
         game.repaint();
-        
-        // Game loop
-        while (!game.isConnected()){
-            Thread.sleep(50);
-        }
-        
         minUpdateTime =(long) 1000/maxFPS;
         
-        game.initialisePlayerList();
+        // Game loop
         timer.update();
         
-        while(game.getState()==GamePanel.IN_GAME){
-            dT = timer.update();
-            game.updateGame(dT);
-            if (dT<minUpdateTime){
-                Thread.sleep(minUpdateTime-dT);
+        while(true){
+            switch (game.getState()){
+                case GamePanel.PRE_GAME:
+                    game.initialisePlayerList();
+                    Thread.sleep(50);
+                    timer.update();
+                break;
+                        
+                case GamePanel.IN_GAME:
+                dT = timer.update();
+                game.updateGame(dT);
+                if (dT<minUpdateTime){
+                    Thread.sleep(minUpdateTime-dT);
+                }
+//                game.updatePlayerList(dT);
+                game.repaint();
+                break;
+                
+                default:
+                    Thread.sleep(50);
+                break;
             }
-            game.updatePlayerList(dT);
-            game.repaint();
         }
-        game.endGame();
+        //game.endGame();
     }
     
     private static JFrame createJFrame(String frameTitle, GamePanel game) {
@@ -79,3 +87,29 @@ public class CallOfMuty {
         return frame;
     }
 }
+
+
+//        // Game loop
+////        while (!game.isConnected()){
+////            Thread.sleep(50);
+
+//        
+//        if(game.getState()==GamePanel.MAIN_MENU)
+//            
+//        if(game.getState()==GamePanel.PRE_GAME){
+//            game.initialisePlayerList();
+////            timer.update();
+//            Thread.sleep(50);
+//        }
+//            
+//        if(game.getState()==GamePanel.IN_GAME){
+//            dT = timer.update();
+//            game.updateGame(dT);
+//            if (dT<minUpdateTime){
+//                Thread.sleep(minUpdateTime-dT);
+//            }
+//            game.updatePlayerList(dT);
+//            game.repaint();
+//        }
+//        game.endGame();
+//        }

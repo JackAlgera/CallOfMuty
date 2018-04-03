@@ -177,14 +177,14 @@ public class Player {
             }
             posX = wantedX;
             posY = wantedY;
-            if (speed[0] == 0 && acceleration[0] == 0)
-            {
-                directionOfTravel[0] = 0;
-            }
-            if (speed[1] == 0 && acceleration[1] == 0)
-            {
-                directionOfTravel[1] = 0;
-            }
+//            if (speed[0] == 0 && acceleration[0] == 0)
+//            {
+//                directionOfTravel[0] = 0;
+//            }
+//            if (speed[1] == 0 && acceleration[1] == 0)
+//            {
+//                directionOfTravel[1] = 0;
+//            }
         }
         else
         {
@@ -317,13 +317,13 @@ public class Player {
             {
                 bulletList.remove(b);
             }
-            for (int j=0; j<listPlayers.size(); j++)
-            {
-                if (j != playerId && b.checkCollisionWithPlayer(listPlayers.get(j)))
-                {
-                    bulletList.remove(b);
-                }
-            }
+//            for (int j=0; j<listPlayers.size(); j++)
+//            {
+//                if (j != playerId && b.checkCollisionWithPlayer(listPlayers.get(j)))
+//                {
+//                    bulletList.remove(b);
+//                }
+//            }
             
         }
     }
