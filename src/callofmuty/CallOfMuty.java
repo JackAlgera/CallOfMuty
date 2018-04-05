@@ -64,7 +64,7 @@ public class CallOfMuty {
                         Thread.sleep(minUpdateTime - dT);
                     }
                     game.repaint();
-                    break;
+                break;
                 
                 default:
                     Thread.sleep(50);

@@ -88,12 +88,23 @@ public class Map{
         map[mapWidth-1][0] = 7;
         map[mapWidth-1][mapHeight-1] = 8;
         map[4][1] = 9 ;map[4][2] = 9;map[1][4] = 9;map[2][4] = 9;map[4][6] = 9;map[4][7] = 9;
-        
     }
     
     public TileType getTile(double x, double y){
         TileType tile;
-        switch (map[(int)x/textureSize][(int)y/textureSize]){
+        int posX = (int)x/textureSize;
+        int posY = (int)y/textureSize;
+        
+        if (posX > mapWidth-1)
+            posX = mapWidth-1;
+        if (posX < 0)
+            posX = 0;
+        if (posY > mapHeight-1)
+            posY = mapHeight-1;
+        if (posY < 0)
+            posY = 0;
+        
+        switch (map[posX][posY]){
             case 1:
                 tile = woodt;
                 break;

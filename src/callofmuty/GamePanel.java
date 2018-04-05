@@ -49,6 +49,7 @@ public class GamePanel extends JPanel{
     private SQLManager sql; 
     private boolean isConnected;
     private ArrayList <JButton> MMbuttons, MEbuttons, PGbuttons;
+    private ArrayList<Bullet> listOtherPlayerBullets;
     
     private int i=0;
     
@@ -73,6 +74,7 @@ public class GamePanel extends JPanel{
         player = new Player(200,200);
         pressedButtons = new ArrayList();
         releasedButtons = new ArrayList();
+        listOtherPlayerBullets = new ArrayList();
         mapKeys();
         
         addMouseListener(new MouseAdapter() {
@@ -368,17 +370,22 @@ public class GamePanel extends JPanel{
     }
     
     public void updateGame(long dT){
+        // Update player parameters 
         updatePlayerMovement();
         player.update(dT, map);
-        player.healthcheck();
-        player.updateBulletImpact(dT, map, listPlayers);
+        sql.setPlayerPosition(player);
+        player.healthcheck(); // Need to load the health bar image only once
+
+        // Other player positions
         updatePositionPlayerList();
-        sql.setPosition(player.getPosX(), player.getPosY(), player);
-        ArrayList<Bullet> listOtherBullets = sql.getBulletListExceptPlayer(player);
-        for(Bullet bullet : player.getBulletList())
+        
+        // Update bullets
+        player.updateBulletImpact(dT, map, listPlayers, sql);
+        for (int i=0; i<player.getBulletList().size(); i++)
         {
-            sql.setPositionBullet(bullet.getPosX(),bullet.getPosY(),bullet);
+            sql.setPositionBullet(player.getBulletList().get(i)); // To do : 1 SQL line to modifie every bullet's position
         }
+        listOtherPlayerBullets = sql.getListOfOtherPlayersBullets(player);
         
         if (pressedButtons.contains(KeyEvent.VK_ESCAPE)){
             int confirm = JOptionPane.showOptionDialog(
@@ -482,6 +489,7 @@ public void paint(Graphics g) {
                 button.repaint();
             }
             break;
+            
         case MAIN_MENU:
             g2d.drawImage(MenuBackground, 0, 0, 16*64, 9*64, this);
             g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
@@ -490,6 +498,7 @@ public void paint(Graphics g) {
                 button.repaint();
             }
             break;
+            
         case IN_GAME:
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
@@ -497,12 +506,17 @@ public void paint(Graphics g) {
             player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
             player.drawBullets(g2d, map.getTextureSize());
 
-            for (Player p : listPlayers) {
-                if (p.getPlayerId() != player.getPlayerId()) {
-                    p.draw(g2d);
+            for (Player player : listPlayers) {
+                if (player.getPlayerId() != player.getPlayerId()) {
+                    player.draw(g2d);
                 }
             }
+            for (int i=0; i<listOtherPlayerBullets.size(); i++)
+            {
+                listOtherPlayerBullets.get(i).draw(g2d, textureSize, 0);// To do : Only 1 SQL line to modifie every bullet's position
+            }
             break;
+            
         case MAP_EDITOR:
             g2d.drawImage(EditorBackground, 0, 0, 16*64, 9*64, this);     
             map.draw(g2d);
@@ -510,6 +524,7 @@ public void paint(Graphics g) {
             for(JButton button : MEbuttons){
                 button.repaint();
             }
+            break;
     }
 }
     
@@ -558,7 +573,6 @@ public void paint(Graphics g) {
             listPlayers.get(i).setPosition(pos); 
             }
         }
-        
     }
     
     public void initialiseGame(boolean isHost){
@@ -615,6 +629,7 @@ public void paint(Graphics g) {
     public void updatePlayerList() {
         int numberOfPlayers = sql.getNumberOfPlayers();
         listPlayers.clear();;
+        
         for (int i = 0; i < numberOfPlayers; i++) {
             if (i != player.getPlayerId()) {
                 double[] posNewPlayer = sql.getPositionWithPlayerId(i);

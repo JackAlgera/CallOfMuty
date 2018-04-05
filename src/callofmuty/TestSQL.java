@@ -13,18 +13,18 @@ public class TestSQL {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SQLException {
-        SQLManager jackscrummaster= new SQLManager();
-        Player player = new Player(100,100,32,32);
-        Player player1 = new Player(50,100,32,32);
-        
-        player1.setPlayerId(6);
-        jackscrummaster.setPosition(60.0,20.0,player1);
-        jackscrummaster.addPlayer(player1);
-        
-        double[] pos = jackscrummaster.getPosition(player1);
-        System.out.println(pos[0]);
-        //jackscrummaster.clearTable();
-        jackscrummaster.getConnection().close();
+//        SQLManager jackscrummaster= new SQLManager();
+//        Player player = new Player(100,100,32,32);
+//        Player player1 = new Player(50,100,32,32);
+//        
+//        player1.setPlayerId(6);
+//        jackscrummaster.setPosition(60.0,20.0,player1);
+//        jackscrummaster.addPlayer(player1);
+//        
+//        double[] pos = jackscrummaster.getPosition(player1);
+//        System.out.println(pos[0]);
+//        //jackscrummaster.clearTable();
+//        jackscrummaster.getConnection().close();
         
         // TODO code application logic here
     }

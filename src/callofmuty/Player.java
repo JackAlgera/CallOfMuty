@@ -13,7 +13,7 @@ public class Player {
     private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health;
-    private boolean isdead, isIdle;  
+    private boolean isDead, isIdle;  
     private int[] skin;
     
     public ArrayList<Image> animationImages = new ArrayList();
@@ -61,7 +61,7 @@ public class Player {
         directionOfTravel[0] = 0; // =-1 -> wants to go left, =+1 -> wants to go right, =0 -> stands still on x axis
         directionOfTravel[1] = 0; // =-1 -> wants to go up, =+1 -> wants to go down, =0 -> stands still on y axis
         this.accelerationValue = 0.002;
-        isdead = false;
+        isDead = false;
         health=100.0;
     }
 
@@ -97,17 +97,18 @@ public class Player {
     
     public void drawBullets(Graphics2D g,int texturesize)
     {
-        for (Bullet b : bulletList)
+        for (int i=0; i<bulletList.size(); i++)
         {
-            b.draw(g,texturesize,0);
+            bulletList.get(i).draw(g, texturesize, 0);
         }
     }
     
     public void update(long dT, Map map){
-        if(!this.isdead){
+        if(!this.isDead){
             
             // Update animation
 //            this.playerAnimation.update(dT);
+
             //Calculate speed vector
             speed[0] += acceleration[0]*dT;
             speed[1] += acceleration[1]*dT;
@@ -243,49 +244,57 @@ public class Player {
     {
         return this.playerId;
     }
+    
     double getPosX(){
         return this.posX ;
     }
+    
     double getPosY(){
         return this.posY;
     }
         
-    void setplayerdeath(boolean isdead){
-        this.isdead=isdead;
-        if (isdead==true){
+    void setPlayerDeath(boolean isDead){
+        this.isDead=isDead;
+        if (isDead==true){
             this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 2, 4);
             this.health=0;
         }else{
-            this.chooseskin(this.skin[0],this.skin[1]);
+            this.chooseSkin(this.skin[0],this.skin[1]);
         }
     }
-    boolean getplayerdeath(){
-        return this.isdead;
+    
+    boolean isPlayerDead(){
+        return this.isDead;
     }
-    void damageplayer(double damage){
-        if (this.health-damage<=0){
-            this.health=0;
-            this.setplayerdeath(true);
+    
+    void damagePlayer(double damage){
+        if (this.health - damage <= 0){
+            this.health = 0;
+            this.setPlayerDeath(true);
         }else{
             this.health-=damage;
         }
     }
-    void setplayerhealth(double life){
-        this.health=life;
-        if (this.getplayerdeath()&& life>0){
-            this.setplayerdeath(false);
+    
+    void setPlayerHealth(double health){
+        this.health = health;
+        if (this.isDead && health>0){
+            this.setPlayerDeath(false);
         }
     }
-    double getplayerhealth(){
+    
+    double getPlayerHealth(){
         return this.health;
     }       
-    void chooseskin(int row, int column){
+    
+    void chooseSkin(int row, int column){
         this.skin[0]=row;
         this.skin[1]=column;
         this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), this.skin[0], this.skin[1]);
     }
+    
     void healthcheck(){
-        if(this.isdead==true){
+        if(this.isDead==true){
             this.hpbar= Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 2, 11);
         }else{
         int cursor = (int)Math.floor(this.health/10)+1;
@@ -300,11 +309,11 @@ public class Player {
 //        {
 //            bulletList.remove(0);
 //        }
-        
-        if (!this.isdead) {
-            Bullet b = new Bullet(initPosX, initPosY, direction, speed, this.playerId);
-            bulletList.add(b);
-            sql.addBullet(b);
+        if (!this.isDead) {
+            Bullet bullet = new Bullet(initPosX, initPosY, direction, speed, this.playerId);
+            bullet.setBulletId(sql.getLastBulletId());
+            bulletList.add(bullet);
+            sql.addBullet(bullet);
         }
     }
     
@@ -312,16 +321,17 @@ public class Player {
         return image;
     }
     
-    public void updateBulletImpact(long dT, Map map, ArrayList <Player> listPlayers)
+    public void updateBulletImpact(long dT, Map map, ArrayList <Player> listPlayers, SQLManager sql)
     {
         // Update bullets
         for (int i=0; i<bulletList.size(); i++)
         {
-            Bullet b = bulletList.get(i);
-            b.update(dT);
-            if (b.checkCollisionWithMap(map))
+            Bullet bullet = bulletList.get(i);
+            bullet.update(dT);
+            if (bullet.checkCollisionWithMap(map))
             {
-                bulletList.remove(b);
+                bulletList.remove(bullet);
+                sql.removeBullet(bullet);
             }
 //            for (int j=0; j<listPlayers.size(); j++)
 //            {
@@ -330,7 +340,6 @@ public class Player {
 //                    bulletList.remove(b);
 //                }
 //            }
-            
         }
     }
 }
