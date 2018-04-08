@@ -41,7 +41,7 @@ public class GamePanel extends JPanel{
     private Map map;
     private TileSelector tileSelector;
     private Player player;
-    private ArrayList <Player> listPlayers = new ArrayList();
+    private ArrayList <Player> otherPlayersList;
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState;
     private ArrayList pressedButtons, releasedButtons;
     private boolean isHost;
@@ -72,6 +72,7 @@ public class GamePanel extends JPanel{
         pressedButtons = new ArrayList();
         releasedButtons = new ArrayList();
         otherPlayersBullets = new ArrayList();
+        otherPlayersList = new ArrayList();
         this.timer = timer;
         mapKeys();
         
@@ -369,20 +370,31 @@ public class GamePanel extends JPanel{
     
     public void updateGame(long dT){
         // Update player parameters 
+        boolean printTime = true;
+        long time = System.currentTimeMillis();
         updatePlayerMovement();
         player.update(dT, map);
-        sql.setPlayerPosition(player);
-
-        // Other player positions
-        updatePositionPlayerList();
-        
+        if(printTime){
+            System.out.println("Player movement & update : " + (System.currentTimeMillis()-time));
+            time = System.currentTimeMillis();
+        }
+        // sql downloads
+        sql.downloadPlayersAndBullets(player, otherPlayersList, otherPlayersBullets);
+        if(printTime){
+            System.out.println("Downloads : " + (System.currentTimeMillis()-time));
+            time = System.currentTimeMillis();
+        }
         // Update bullets
-        player.updateBulletImpact(dT, map, listPlayers, sql);
-        //for (int i=0; i<player.getBulletList().size(); i++) {
-        //    sql.setPositionBullet(player.getBulletList().get(i)); // To do : 1 SQL line to modifie every bullet's position
-        //}
-        sql.setBulletListPosition(player);
-        otherPlayersBullets = sql.getListOfOtherPlayersBullets(player);
+        player.updateBulletImpact(dT, map, otherPlayersList, sql);
+        if(printTime){
+            System.out.println("Bullet updates : " + (System.currentTimeMillis()-time));
+            time = System.currentTimeMillis();
+        }
+        // sql uploads
+        sql.uploadPlayerAndBullets(player);
+        if(printTime){
+            System.out.println("Uploads : " + (System.currentTimeMillis()-time));
+        }
     }
     
     private void updatePlayerMovement(){
@@ -477,7 +489,7 @@ public void paint(Graphics g) {
             player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
             player.drawBullets(g2d, map.getTextureSize());
 
-            for (Player player : listPlayers) {
+            for (Player player : otherPlayersList) {
                 if (player.getPlayerId() != player.getPlayerId()) {
                     player.draw(g2d);
                 }
@@ -552,33 +564,18 @@ public void paint(Graphics g) {
         }
     }
     
-    
-    public void updatePositionPlayerList()
-    {
-        for (int i=0; i<listPlayers.size() ;i++ )
-        {
-            if (i != player.getPlayerId()) {
-            double[] pos = sql.getPositionWithPlayerId(i); // Get position of player with id=i
-            listPlayers.get(i).setPosition(pos); 
-            }
-        }
-    }
-    
     public void initialiseGame(boolean isHost){
         this.isHost = isHost;
         sql = new SQLManager();
         isConnected = true;
         setState(PRE_GAME);
         if (isHost){
-            int playerId;
             sql.clearTable(); //Clear previous game on SQL server
-            playerId = sql.getNumberOfPlayers(); //If host -> playerId = 0
-            player.setPlayerId(playerId);
+            player.setPlayerId(0);
             sql.addPlayer(player);
         } else {
-            int playerId;
-            playerId = sql.getNumberOfPlayers();
-            player.setPlayerId(playerId);
+            otherPlayersList = sql.getPlayerList();
+            player.setPlayerId(otherPlayersList.size()); //ids start at 0;
             sql.addPlayer(player);
         }
     }
@@ -596,41 +593,8 @@ public void paint(Graphics g) {
         setState(MAIN_MENU);
     }
     
-    public void initialisePlayerList()
-    {
-        int numberOfPlayers = sql.getNumberOfPlayers();
-        for(int i=0;i<numberOfPlayers;i++)
-        {
-            if (i != player.getPlayerId())
-            {
-                double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                Player newPlayer = new Player(posNewPlayer[0],posNewPlayer[1]);
-                newPlayer.setPlayerId(i);
-                newPlayer.setSkin(4);
-                listPlayers.add(newPlayer);
-            } 
-            else
-            {
-                listPlayers.add(player);
-            }
-        }
-    }
-    
     public void updatePlayerList() {
-        int numberOfPlayers = sql.getNumberOfPlayers();
-        listPlayers.clear();;
-        
-        for (int i = 0; i < numberOfPlayers; i++) {
-            if (i != player.getPlayerId()) {
-                double[] posNewPlayer = sql.getPositionWithPlayerId(i);
-                Player newPlayer = new Player(posNewPlayer[0], posNewPlayer[1]);
-                newPlayer.setSkin(4);
-                newPlayer.setPlayerId(i);
-                listPlayers.add(newPlayer);
-            } else {
-                listPlayers.add(player);
-            }
-        }
+        sql.updatePlayerList(player, otherPlayersList);
     }
 
     public int getState(){

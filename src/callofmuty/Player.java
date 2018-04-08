@@ -10,9 +10,9 @@ public class Player {
 
     public static Image normalHealthBar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, 2),
             lowHealthBar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, 1);
-    private double maxHealth = 100.0;
+    private static double maxHealth = 100.0;
     
-    private int playerId, playerWidth, playerHeight, facedDirection;
+    private int playerId, playerWidth, playerHeight, facedDirection, playerState;
     private Image image, hpBar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
     private double[] speed, acceleration;
@@ -20,7 +20,7 @@ public class Player {
     private double health;
     private boolean isDead, isIdle;  
     private int[] skin;
-    
+    private String name;
     public ArrayList<Image> animationImages = new ArrayList();
     public Animation playerAnimation;
     
@@ -68,6 +68,24 @@ public class Player {
         isDead = false;
         health=maxHealth;
         hpBar = normalHealthBar;
+        name = "Username";
+        playerState = 0; 
+    }
+
+    public String getName(){
+        return name;
+    }
+    
+    public void setPlayerState(int playerState) {
+        this.playerState = playerState;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getPlayerWidth() {
@@ -302,18 +320,14 @@ public class Player {
         this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), this.skin[0], this.skin[1]);
     }
     
-    void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql)
-    {
-        // Max number of bullets
-//        if (bulletList.size() > 25)
-//        {
-//            bulletList.remove(0);
-//        }
+    void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql){
         if (!this.isDead) {
-            Bullet bullet = new Bullet(initPosX, initPosY, direction, speed, this.playerId);
-            bullet.setBulletId(sql.getLastBulletId());
-            bulletList.add(bullet);
-            sql.addBullet(bullet);
+            Bullet newBullet = new Bullet(initPosX, initPosY, direction, speed, playerId, 0);
+            while(bulletList.contains(newBullet)){
+                newBullet.incrementId();
+            }
+            bulletList.add(newBullet);
+            sql.addBullet(newBullet);
         }
     }
     
@@ -321,25 +335,40 @@ public class Player {
         return image;
     }
     
-    public void updateBulletImpact(long dT, Map map, ArrayList <Player> listPlayers, SQLManager sql)
-    {
-        // Update bullets
-        for (int i=0; i<bulletList.size(); i++)
-        {
-            Bullet bullet = bulletList.get(i);
+    public void updateBulletImpact(long dT, Map map, ArrayList<Player> otherPlayersList, SQLManager sql) {
+        ArrayList<Integer> bulletsToRemove = new ArrayList();
+        Bullet bullet;
+        for (int i = 0; i<bulletList.size(); i++) {
+            bullet = bulletList.get(i);
             bullet.update(dT);
-            if (bullet.checkCollisionWithMap(map))
-            {
-                bulletList.remove(bullet);
+            if (bullet.checkCollisionWithMap(map)) {
+                bulletsToRemove.add(i);
                 sql.removeBullet(bullet);
+            } else {
+                for (Player otherPlayer : otherPlayersList) {
+                    if (bullet.checkCollisionWithPlayer(otherPlayer)) {
+                        bulletsToRemove.add(i);
+                        sql.removeBullet(bullet);
+                    }
+                }
             }
-//            for (int j=0; j<listPlayers.size(); j++)
-//            {
-//                if (j != playerId && b.checkCollisionWithPlayer(listPlayers.get(j)))
-//                {
-//                    bulletList.remove(b);
-//                }
-//            }
         }
+        for(int index : bulletsToRemove){
+            bulletList.remove(index);
+        }
+    }
+    
+    public Player(int playerId){ //usefull constructor for SQL updates
+        this.playerId = playerId;
+    }
+    
+    @Override
+    public boolean equals(Object object) {
+        boolean test = false;
+
+        if (object != null && object instanceof Player) { // compare 2 Players by their playerId
+            test = playerId == ((Player) object).getPlayerId();
+        }
+        return test;
     }
 }

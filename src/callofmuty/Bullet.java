@@ -14,30 +14,15 @@ public class Bullet {
     public Animation bulletAnimation;
     private Image image;
     
-    public Bullet(double posX, double posY)
-    {
-        this.posX = posX;
-        this.posY = posY;
-        ballWidth = 10;
-        ballHeight = 10;
-        this.speed = 0;
-        this.direction = new double[2];
-        this.playerId = 0;
-        
-        image = Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), 1, 1);
-        
-//        this.bulletAnimation = new Animation(250,1,4,4,0);// en ms
-        
-        for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
-        {
-            for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++)
-            {
-                animationImages.add(Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), i+1, j+1));
-            }
-        }
+    public Bullet(int playerId, int bulletId) { //usefull constructor for SQL updates
+        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId);
     }
     
-    public Bullet(double posX, double posY, double[] direction, double speed, int playerId)
+    public Bullet(double posX, double posY, int playerId, int bulletId){
+        this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId );
+    }
+    
+    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId)
     {
         this.posX = posX;
         this.posY = posY;
@@ -89,6 +74,14 @@ public class Bullet {
         return posY;
     }
 
+    public void setPosX(double posX) {
+        this.posX = posX;
+    }
+
+    public void setPosY(double posY) {
+        this.posY = posY;
+    }
+
     public int getBallWidth() {
         return ballWidth;
     }
@@ -111,5 +104,20 @@ public class Bullet {
 
     public void setBulletId(int bulletId){
         this.bulletId = bulletId;
+    }
+    
+    public void incrementId(){ //used to find first free id for a new bullet
+        bulletId++;
+    }
+    
+    @Override
+    public boolean equals(Object object) {
+        boolean test = false;
+
+        if (object != null && object instanceof Bullet) {
+            test = (playerId == ((Bullet) object).getPlayerId()) && (bulletId ==((Bullet) object).getBulletId());
+        }
+
+        return test;
     }
 }

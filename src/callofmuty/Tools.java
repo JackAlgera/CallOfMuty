@@ -105,7 +105,6 @@ public class Tools {
                                 && objX < (p.getPosX() + p.getPlayerWidth())
                                 && (objY + objectHeight) > p.getPosY()
                                 && objY < (p.getPosY() + p.getPlayerHeight());
-        
         return playerIsHit;
     }
 }

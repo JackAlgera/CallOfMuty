@@ -50,7 +50,7 @@ public class CallOfMuty {
             switch (game.getState()){
                 case GamePanel.PRE_GAME:
                     game.updatePlayerList();
-                    Thread.sleep(50);
+                    Thread.sleep(200);
                     timer.update();
                 break;
                         
