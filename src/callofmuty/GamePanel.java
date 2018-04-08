@@ -229,7 +229,7 @@ public class GamePanel extends JPanel{
                 {
                     b.setVisible(false);
                 }
-                startButton.setVisible(isHost);
+                startButton.setVisible(true); //set this to false when gameState variable is added to SQL
             }
         });
         
@@ -378,9 +378,10 @@ public class GamePanel extends JPanel{
         
         // Update bullets
         player.updateBulletImpact(dT, map, listPlayers, sql);
-        for (int i=0; i<player.getBulletList().size(); i++) {
-            sql.setPositionBullet(player.getBulletList().get(i)); // To do : 1 SQL line to modifie every bullet's position
-        }
+        //for (int i=0; i<player.getBulletList().size(); i++) {
+        //    sql.setPositionBullet(player.getBulletList().get(i)); // To do : 1 SQL line to modifie every bullet's position
+        //}
+        sql.setBulletListPosition(player);
         otherPlayersBullets = sql.getListOfOtherPlayersBullets(player);
     }
     

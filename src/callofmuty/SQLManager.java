@@ -228,11 +228,31 @@ public class SQLManager {
         }    
     }
     
+    public void setBulletListPosition(Player player){
+        ArrayList<Bullet> bulletList = player.getBulletList();
+        if (!bulletList.isEmpty()) {
+            String xStatement = "", yStatement = "";
+            for (Bullet bullet : bulletList) {
+                xStatement += "WHEN " + bullet.getBulletId() + " THEN " + bullet.getPosX() + " ";
+                yStatement += "WHEN " + bullet.getBulletId() + " THEN " + bullet.getPosY() + " ";
+            }
+            PreparedStatement requete;
+            try {
+                requete = connexion.prepareStatement("UPDATE bullet SET posX = CASE idBullet " + xStatement + "END, posY = CASE idBullet " + yStatement + "END WHERE idPlayer = " + player.getPlayerId());
+                requete.executeUpdate();
+                requete.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("ça marche pas ton truc : " + ex);
+            }
+        }
+    }
+    
     public void addBullet(Bullet bullet){        
         PreparedStatement requete;
         
         try {
-            requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?)");//
+            requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?)");
             requete.setInt(1, bullet.getBulletId());
             requete.setInt(2, bullet.getPlayerId());
             requete.setDouble(3, bullet.getPosX());

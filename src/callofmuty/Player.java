@@ -37,7 +37,6 @@ public class Player {
         facedDirection = 0;
         this.posX=x;
         this.posY=y;
-        this.image=image;
         this.playerWidth=35;
         this.playerHeight=55;
         skin = new int[2];
