@@ -1,14 +1,19 @@
 package callofmuty;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
 import java.util.ArrayList;
 
 public class Player {
+
+    public static Image normalHealthBar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, 2),
+            lowHealthBar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, 1);
+    private double maxHealth = 100.0;
     
     private int playerId, playerWidth, playerHeight, facedDirection;
-    private Image image, hpbar;
+    private Image image, hpBar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
     private double[] speed, acceleration;
     private int[] directionOfTravel;
@@ -62,7 +67,8 @@ public class Player {
         directionOfTravel[1] = 0; // =-1 -> wants to go up, =+1 -> wants to go down, =0 -> stands still on y axis
         this.accelerationValue = 0.002;
         isDead = false;
-        health=100.0;
+        health=maxHealth;
+        hpBar = normalHealthBar;
     }
 
     public int getPlayerWidth() {
@@ -92,7 +98,9 @@ public class Player {
     public void draw(Graphics2D g){
         //g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
         g.drawImage(image,(int) posX+playerWidth/2-image.getWidth(null),(int) posY+playerHeight/2-image.getHeight(null), image.getWidth(null)*2, image.getHeight(null)*2, null);
-        g.drawImage(hpbar,(int) posX+playerWidth/2-image.getWidth(null),(int) posY+playerHeight/2-image.getHeight(null)-12, image.getWidth(null)*2, image.getHeight(null)*2, null);
+        g.drawImage(hpBar,(int) posX+playerWidth/2-image.getWidth(null),(int) posY+playerHeight/2-image.getHeight(null)-12, image.getWidth(null)*2, image.getHeight(null)*2, null);
+        g.setColor(Color.RED);
+        g.fillRect((int) posX+playerWidth/2-image.getWidth(null)+12, (int) posY+playerHeight/2-image.getHeight(null)-6,(int)((int)(image.getWidth(null)*2-6)*health/maxHealth)-18, 2);
     }
     
     public void drawBullets(Graphics2D g,int texturesize)
@@ -104,7 +112,7 @@ public class Player {
     }
     
     public void update(long dT, Map map){
-        if(!this.isDead){
+        if(!isDead){
             
             // Update animation
 //            this.playerAnimation.update(dT);
@@ -116,18 +124,14 @@ public class Player {
             double speedNorm = Math.sqrt(Math.pow(speed[0], 2) + Math.pow(speed[1], 2));
             double angle;
 
-            if (speedNorm == 0)
-            {
+            if (speedNorm == 0) {
                 angle = 0;
-            }
-            else 
-            {
+            } else {
                 angle = Math.acos(speed[0]/speedNorm); //Angle between speed vector and [1,0]+
             }
             if (speedNorm>maxSpeed ){
 
-                if (directionOfTravel[1] == -1)
-                {
+                if (directionOfTravel[1] == -1) {
                     angle = -angle;
                 }
                 speed[0] = maxSpeed*Math.cos(angle);
@@ -190,9 +194,7 @@ public class Player {
 //            {
 //                directionOfTravel[1] = 0;
 //            }
-        }
-        else
-        {
+        } else {
             speed[0]=0;
             speed[1]=0;
         }
@@ -268,11 +270,14 @@ public class Player {
     }
     
     void damagePlayer(double damage){
-        if (this.health - damage <= 0){
-            this.health = 0;
-            this.setPlayerDeath(true);
+        if (health - damage <= 0){
+            health = 0;
+            setPlayerDeath(true);
         }else{
-            this.health-=damage;
+            health -= damage;
+            if(health < 0.1*maxHealth){
+                hpBar = lowHealthBar;
+            }
         }
     }
     
@@ -280,6 +285,11 @@ public class Player {
         this.health = health;
         if (this.isDead && health>0){
             this.setPlayerDeath(false);
+        }
+        if (health < 0.1*maxHealth){
+            hpBar = lowHealthBar;
+        } else {
+            hpBar = normalHealthBar;
         }
     }
     
@@ -291,15 +301,6 @@ public class Player {
         this.skin[0]=row;
         this.skin[1]=column;
         this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), this.skin[0], this.skin[1]);
-    }
-    
-    void healthcheck(){
-        if(this.isDead==true){
-            this.hpbar= Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 2, 11);
-        }else{
-        int cursor = (int)Math.floor(this.health/10)+1;
-        this.hpbar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, cursor);
-        }
     }
     
     void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql)

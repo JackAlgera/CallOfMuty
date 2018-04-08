@@ -21,17 +21,17 @@ public class CallOfMuty {
         long dT, minUpdateTime;
         
         // Game variables   
-        maxFPS = 60; 
+        maxFPS = 60;
+        String frameTitle = "Call of µty";
         
         // Map dimensions
         textureSize=64;
         mapWidth= 16;
         mapHeight= 9;
-        String frameTitle = "Call of µty";
         
         // Game initialisation
         GameTimer timer = new GameTimer();
-        GamePanel game = new GamePanel(textureSize, mapWidth, mapHeight);
+        GamePanel game = new GamePanel(textureSize, mapWidth, mapHeight, timer);
         JFrame frame = createJFrame(frameTitle, game);
         WindowListener exitListener = new WindowAdapter() {
             @Override
@@ -45,9 +45,6 @@ public class CallOfMuty {
         game.revalidate();
         game.repaint();
         minUpdateTime =(long) 1000/maxFPS;
-        
-        // Game loop
-        timer.update();
         
         while(true){
             switch (game.getState()){

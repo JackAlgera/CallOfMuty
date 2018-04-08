@@ -10,10 +10,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,10 +22,10 @@ import javax.swing.KeyStroke;
 
 public class GamePanel extends JPanel{
 
-    public static BufferedImage MenuBackground = Tools.loadImage("image/MenuBackground");
-    public static BufferedImage EditorBackground = Tools.loadImage("image/EditorBackground");
+    public static BufferedImage MenuBackground = Tools.loadImage("images/MenuBackground.png"),
+            EditorBackground = Tools.loadImage("images/EditorBackground.png");
 
-    ImageIcon joinGameIcon = new ImageIcon("images/Buttons/JoinGame.png"),
+    public static ImageIcon joinGameIcon = new ImageIcon("images/Buttons/JoinGame.png"),
             createGameIcon = new ImageIcon("images/Buttons/CreateGame.png"),
             leftArrowIcon = new ImageIcon("images/Buttons/LeftArrow.png"),
             rightArrowIcon = new ImageIcon("images/Buttons/rightArrow.png"),
@@ -38,6 +36,8 @@ public class GamePanel extends JPanel{
             doneIcon = new ImageIcon("images/buttons/Done.png"),
             gameModeIcon = new ImageIcon("images/Buttons/GameMode.png");
 
+    private double bulletSpeed = 0.5;
+    
     private Map map;
     private TileSelector tileSelector;
     private Player player;
@@ -49,17 +49,14 @@ public class GamePanel extends JPanel{
     private SQLManager sql; 
     private boolean isConnected;
     private ArrayList <JButton> MMbuttons, MEbuttons, PGbuttons;
-    private ArrayList<Bullet> listOtherPlayerBullets;
-    
-    private int i=0;
+    private ArrayList<Bullet> otherPlayersBullets;
+    GameTimer timer;
     
     public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW, MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3;
     
-    public GamePanel(int textureSize, int mapWidth, int mapHeight) throws IOException{
+    public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer) throws IOException{
         super();
         gameState = MAIN_MENU;
-        MenuBackground = ImageIO.read(new File("images/MenuBackground.png"));
-        EditorBackground = ImageIO.read(new File("images/EditorBackground.png"));
         playerListUpdateTime = 0;
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
@@ -74,7 +71,8 @@ public class GamePanel extends JPanel{
         player = new Player(200,200);
         pressedButtons = new ArrayList();
         releasedButtons = new ArrayList();
-        listOtherPlayerBullets = new ArrayList();
+        otherPlayersBullets = new ArrayList();
+        this.timer = timer;
         mapKeys();
         
         addMouseListener(new MouseAdapter() {
@@ -96,7 +94,7 @@ public class GamePanel extends JPanel{
                     directionOfFire[0] = directionOfFire[0] / norme;
                     directionOfFire[1] = directionOfFire[1] / norme;
 
-                    player.addBullet(player.getPosX() + textureSize / 4, player.getPosY() + textureSize / 4, directionOfFire, 0.5, sql);
+                    player.addBullet(player.getPosX() + textureSize / 4, player.getPosY() + textureSize / 4, directionOfFire, bulletSpeed, sql);
                     break;
                 case MAP_EDITOR:
                     int[] mapClicked = map.clickedTile(e.getX(), e.getY());
@@ -374,44 +372,16 @@ public class GamePanel extends JPanel{
         updatePlayerMovement();
         player.update(dT, map);
         sql.setPlayerPosition(player);
-        player.healthcheck(); // Need to load the health bar image only once
 
         // Other player positions
         updatePositionPlayerList();
         
         // Update bullets
         player.updateBulletImpact(dT, map, listPlayers, sql);
-        for (int i=0; i<player.getBulletList().size(); i++)
-        {
+        for (int i=0; i<player.getBulletList().size(); i++) {
             sql.setPositionBullet(player.getBulletList().get(i)); // To do : 1 SQL line to modifie every bullet's position
         }
-        listOtherPlayerBullets = sql.getListOfOtherPlayersBullets(player);
-        
-        if (pressedButtons.contains(KeyEvent.VK_ESCAPE)){
-            int confirm = JOptionPane.showOptionDialog(
-                null, "Do you want to disconnect from the game ?",
-                "Disconnecting", JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, null, null);
-            if (confirm == 0) {
-                endGame();
-                setState(MAIN_MENU);
-                if (pressedButtons.contains(KeyEvent.VK_ESCAPE)){
-                    pressedButtons.remove(KeyEvent.VK_ESCAPE);
-                }
-            }
-        }
-        
-        
-        /*
-        //test for the dead state, and the respawn
-        if (player.getplayerdeath()){
-            i+=1;
-        }
-        if(player.getplayerhealth()==0 && i==100){
-            player.setplayerhealth(100);
-            i=0;
-        }
-        player.damageplayer(0.5);*/
+        otherPlayersBullets = sql.getListOfOtherPlayersBullets(player);
     }
     
     private void updatePlayerMovement(){
@@ -476,7 +446,7 @@ public class GamePanel extends JPanel{
         this.getActionMap().put("rightPressed", new KeyPressed(KeyEvent.VK_RIGHT));
         this.getActionMap().put("rightReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
         this.getActionMap().put("escapePressed", new KeyPressed(KeyEvent.VK_ESCAPE));
-        this.getActionMap().put("escapeReleased", new KeyReleased(KeyEvent.VK_ESCAPE) );
+        this.getActionMap().put("escapeReleased", new EscapePressed() );
     }
     
 @Override
@@ -511,9 +481,9 @@ public void paint(Graphics g) {
                     player.draw(g2d);
                 }
             }
-            for (int i=0; i<listOtherPlayerBullets.size(); i++)
+            for (int i=0; i<otherPlayersBullets.size(); i++)
             {
-                listOtherPlayerBullets.get(i).draw(g2d, textureSize, 0);// To do : Only 1 SQL line to modifie every bullet's position
+                otherPlayersBullets.get(i).draw(g2d, textureSize, 0);// To do : Only 1 SQL line to modifie every bullet's position
             }
             break;
             
@@ -563,12 +533,30 @@ public void paint(Graphics g) {
         }
     }
     
+    private class EscapePressed extends AbstractAction{
+        
+        @Override
+        public void actionPerformed( ActionEvent tf ){
+            int confirm = JOptionPane.showOptionDialog(
+                null, "Do you want to disconnect from the game ?",
+                "Disconnecting", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (confirm == 0) {
+                setState(MAIN_MENU);
+                endGame();
+                if (pressedButtons.contains(KeyEvent.VK_ESCAPE)){
+                    pressedButtons.remove(KeyEvent.VK_ESCAPE);
+                }
+            }
+        }
+    }
+    
+    
     public void updatePositionPlayerList()
     {
         for (int i=0; i<listPlayers.size() ;i++ )
         {
-            if (i != player.getPlayerId())
-            {
+            if (i != player.getPlayerId()) {
             double[] pos = sql.getPositionWithPlayerId(i); // Get position of player with id=i
             listPlayers.get(i).setPosition(pos); 
             }
@@ -603,6 +591,7 @@ public void paint(Graphics g) {
             sql.removePlayer(player);
             sql.disconnect();
         }
+        isConnected = false;
         setState(MAIN_MENU);
     }
     
@@ -709,6 +698,7 @@ public void paint(Graphics g) {
                 for (JButton button : PGbuttons){
                     button.setVisible(false);
                 }
+                timer.update();
         }
         repaint();
     }

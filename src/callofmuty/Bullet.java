@@ -49,7 +49,7 @@ public class Bullet {
         
         image = Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), 1, 1);
         
-        this.bulletAnimation = new Animation(250,1,4,4,0);// en ms
+        this.bulletAnimation = new Animation(250,1,4,4,0);// in ms
         
         for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
         {
@@ -73,22 +73,12 @@ public class Bullet {
         g2d.drawImage(image,(int) posX,(int) posY, texturesize/2, texturesize/2, null);
     }
     
-    public boolean checkCollisionWithMap(Map map)
-    {
-        if(!Tools.isMapCrossable(posX, posY, ballWidth, ballHeight, map))
-        {
-            return true;
-        }
-        else return false;
+    public boolean checkCollisionWithMap(Map map){
+        return !Tools.isMapCrossable(posX, posY, ballWidth, ballHeight, map);
     }
     
-    public boolean checkCollisionWithPlayer(Player p)
-    {
-        if(!Tools.isPlayerHit(posX, posY, ballWidth, ballHeight, p))
-        {
-            return true;
-        }
-        else return false;
+    public boolean checkCollisionWithPlayer(Player player){
+        return !Tools.isPlayerHit(posX, posY, ballWidth, ballHeight, player);
     }
 
     public double getPosX() {
@@ -115,12 +105,11 @@ public class Bullet {
         this.playerId = playerId;
     }
     
-    public int getBulletId()
-    {
+    public int getBulletId(){
         return bulletId;
     }
 
-    public void setBulletId(int bulletId) {
+    public void setBulletId(int bulletId){
         this.bulletId = bulletId;
     }
 }
