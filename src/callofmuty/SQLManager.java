@@ -13,9 +13,10 @@ public class SQLManager {
     private Connection connexion;
 
 /* SQL table structure
-    bullet : idBullet (int) ; idPlayer (int) ; posX (double); posY (double)
+    bullet : idBullet (int) ; idPlayer (int) ; posX (int); posY (int); active (boolean)
     grid : x (int) ; y (int) ; tileType (int) ; grid (varchar)
-    players : id (int) ; name (varchar(50)) ; playerHp (double) ; posX (int) ; posY (int) : skinId (int) ; statePlayer (int);
+    players : id (int) ; name (String(50)) ; playerHp (double) ; posX (int) ; posY (int) : skinId (int) ; statePlayer (int);
+    game : id (int)(useless, primaryKey), gameState (int)
 */
     public SQLManager(){         
         try {
@@ -27,16 +28,20 @@ public class SQLManager {
     
     public void uploadPlayerAndBullets(Player player){
         PreparedStatement requete;
+        String xStatement = "";
+        String yStatement = "";
+        String isActiveStatement = "";
         ArrayList<Bullet> bulletList = player.getBulletList();
-        if (!bulletList.isEmpty()) {
-            String xStatement = "";
-            String yStatement = "";
-            for (Bullet bullet : bulletList) {
-                xStatement += "WHEN " + bullet.getBulletId() + " THEN " + bullet.getPosX() + " ";
-                yStatement += "WHEN " + bullet.getBulletId() + " THEN " + bullet.getPosY() + " ";
+        for (Bullet bullet : bulletList) {
+            if (bullet.isActive()) {
+                xStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int)bullet.getPosX() + " \n";
+                yStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int)bullet.getPosY() + " \n";
+                isActiveStatement += "WHEN " + bullet.getBulletId() + " THEN 1 \n";
             }
+        }
+        if (!xStatement.isEmpty()) {
             try {
-                requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.posX = CASE bullet.idBullet " + xStatement + "END, bullet.posY = CASE bullet.idBullet " + yStatement + "END WHERE players.id = " + player.getPlayerId());
+                requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.posX = CASE bullet.idBullet " + xStatement + " ELSE 0 END, bullet.posY = CASE bullet.idBullet " + yStatement + " ELSE 0 END, bullet.isActive = CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END WHERE players.id = " + player.getPlayerId());
                 requete.executeUpdate();
                 requete.close();
             } catch (SQLException ex) {
@@ -44,7 +49,7 @@ public class SQLManager {
             }
         } else {
             try {
-                requete = connexion.prepareStatement("UPDATE players SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + " WHERE players.id = " + player.getPlayerId());
+                requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.isActive = 0 WHERE players.id = " + player.getPlayerId());
                 requete.executeUpdate();
                 requete.close();
             } catch (SQLException ex) {
@@ -62,42 +67,63 @@ public class SQLManager {
         int bulletId;
         int bulletIndex;
         double[] position = new double[2];
+        ArrayList<Bullet> updatedBullets = new ArrayList<>(); //saves which bullets were updated, others will be erased
         try {
-            requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, bullet.idBullet, bullet.posX, bullet.posY FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer WHERE NOT players.id="+ player.getPlayerId() +" ORDER BY players.id");
+            requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, bullet.idBullet, bullet.posX, bullet.posY FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer AND bullet.isActive=1 AND NOT players.id="+ player.getPlayerId() +" ORDER BY players.id");
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
-                if(resultat.getInt("players.id")!=playerId){ //this player's position was not yet updated
-                    // getting player to update
-                    playerId = resultat.getInt("players.id");
-                    playerIndex = otherPlayersList.indexOf(new Player(playerId)); //finding the right id in the list
-                    // update player
-                    position[0] = resultat.getInt("players.posX");
-                    position[1] = resultat.getInt("players.posY");
-                    otherPlayersList.get(playerIndex).setPosition(position);
-                    otherPlayersList.get(playerIndex).setHealth(resultat.getDouble("players.playerHp"));
-                    // update bullet
-                    bulletId = resultat.getInt("bullet.idBullet");
-                    bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
-                    if (bulletIndex==-1){
-                        otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
-                    } else {
-                        otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
-                        otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
+                if (otherPlayersList.contains(new Player(resultat.getInt("players.id")))) { // check if the player is "known"
+                    if (resultat.getInt("players.id") != playerId) { //this player's position was not yet updated
+                        // getting player to update
+                        playerId = resultat.getInt("players.id");
+                        playerIndex = otherPlayersList.indexOf(new Player(playerId)); //finding the right id in the list
+                        // update player
+                        position[0] = resultat.getInt("players.posX");
+                        position[1] = resultat.getInt("players.posY");
+                        otherPlayersList.get(playerIndex).setPosition(position);
+                        otherPlayersList.get(playerIndex).setHealth(resultat.getDouble("players.playerHp"));
+                        // update bullet
+                        bulletId = resultat.getInt("bullet.idBullet");
+                        if (bulletId > 0) { // 0 means null
+                            bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
+                            updatedBullets.add(new Bullet(playerId, bulletId));
+                            if (bulletIndex == -1) { // bullet was not already in the list
+                                otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
+                                otherBulletsList.get(otherBulletsList.size()-1).setActive(true);
+                            } else { // bullet was already in the list
+                                otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
+                                otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
+                            }
+                        } else {
+                        }
+                    } else { // this player's position was already updated, update only the bullet
+                        bulletId = resultat.getInt("bullet.idBullet");
+                        if (bulletId > 0) { // 0 means null
+                            bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
+                            updatedBullets.add(new Bullet(playerId, bulletId));
+                            if (bulletIndex == -1) {
+                                otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
+                                otherBulletsList.get(otherBulletsList.size()-1).setActive(true);
+                            } else {
+                                otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
+                                otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
+                            }
+                        }
                     }
-                } else { // this player's position was already updated, update only the bullet
-                    bulletId = resultat.getInt("bullet.idBullet");
-                    bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
-                    if (bulletIndex==-1){
-                        otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
-                    } else {
-                        otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
-                        otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
-                    }
+                } else { // if player was not "known" : isn't supposed to happen, deal with it here if it does
                 }
             }
             requete.close();
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        int index = 0;
+        while (index<otherBulletsList.size()){ //remove bullets that were not updated (ie are no longer active)
+            if (!updatedBullets.contains(otherBulletsList.get(index))){
+                otherBulletsList.remove(index);
+            } else {
+                index++;
+            }
         }
     }
     
@@ -108,13 +134,13 @@ public class SQLManager {
             requete = connexion.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?,?,?)"); // Check Hp & Skin work
             requete.setInt(1,player.getPlayerId());
             requete.setString(2, player.getName());
-            requete.setDouble(3, player.getPlayerHeight());
-            requete.setDouble(4, player.getPosX());
-            requete.setDouble(5, player.getPosY());
+            requete.setDouble(3, player.getPlayerHealth());
+            requete.setInt(4, (int) player.getPosX());
+            requete.setInt(5, (int) player.getPosY());
             requete.setInt(6, player.getSkinIndex());
             requete.setInt(7, 0);
             requete.executeUpdate();
-            requete.close();  
+            requete.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -157,9 +183,43 @@ public class SQLManager {
             requete = connexion.prepareStatement("DELETE FROM grid" );
             requete.executeUpdate();
             requete.close();
+            requete = connexion.prepareStatement("DELETE FROM game" );
+            requete.executeUpdate();
+            requete.close();
+            requete = connexion.prepareStatement("INSERT INTO game VALUES (1,"+ GamePanel.PRE_GAME +")");
+            requete.executeUpdate();
+            requete.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public void setGameState(int gameState){               
+        PreparedStatement requete;
+        
+        try {
+            requete = connexion.prepareStatement("UPDATE game SET gameState = "+gameState);
+            requete.executeUpdate();
+            requete.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }    
+    }
+    
+    public int getGameState(){               
+        PreparedStatement requete;
+        int gameState = -1;
+        try {
+            requete = connexion.prepareStatement("SELECT gameState FROM game");
+            ResultSet resultat = requete.executeQuery();
+            while (resultat.next()) { 
+                gameState = resultat.getInt("gameState");
+            }
+            requete.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return gameState;
     }
     
     public Connection getConnection(){
@@ -191,13 +251,20 @@ public class SQLManager {
         PreparedStatement requete;
         
         try {
-            requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?)");
+            requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?,?)");
             requete.setInt(1, bullet.getBulletId());
             requete.setInt(2, bullet.getPlayerId());
             requete.setDouble(3, bullet.getPosX());
             requete.setDouble(4, bullet.getPosY());
+            int isActive;
+            if(bullet.isActive()){
+                isActive = 1;
+            } else {
+                isActive = 0;
+            }
+            requete.setInt(5, isActive);
             requete.executeUpdate();
-            requete.close();  
+            requete.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

@@ -3,7 +3,6 @@ package callofmuty;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.io.File;
 import java.util.ArrayList;
 
 public class Bullet {
@@ -13,6 +12,7 @@ public class Bullet {
     public ArrayList<Image> animationImages = new ArrayList<Image>();
     public Animation bulletAnimation;
     private Image image;
+    private boolean isActive;
     
     public Bullet(int playerId, int bulletId) { //usefull constructor for SQL updates
         this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId);
@@ -22,8 +22,7 @@ public class Bullet {
         this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId );
     }
     
-    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId)
-    {
+    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId){
         this.posX = posX;
         this.posY = posY;
         ballWidth = 10;
@@ -31,7 +30,8 @@ public class Bullet {
         this.speed = speed;
         this.direction = direction;
         this.playerId = playerId;
-        
+        this.bulletId = bulletId;
+        isActive = false;
         image = Tools.selectTile(Tools.bulletTileset, 1, 1);
         
         this.bulletAnimation = new Animation(250,1,4,4,0);// in ms
@@ -45,29 +45,39 @@ public class Bullet {
         }
     }
     
-    public void update(double dT)
-    {
-        posX += direction[0]*dT*speed;
-        posY += direction[1]*dT*speed;
-//        bulletAnimation.update(dT);
+    public boolean isActive(){
+        return isActive;
     }
     
-    public void draw(Graphics2D g2d, int texturesize, int row)
-    {
-//        g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage(row, false)),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
-        g2d.drawImage(image,(int) posX,(int) posY, texturesize/2, texturesize/2, null);
+    public void update(double dT) {
+        if (isActive) {
+            posX += direction[0] * dT * speed;
+            posY += direction[1] * dT * speed;
+    //        bulletAnimation.update(dT);
+        }
+    }
+    
+    public void draw(Graphics2D g2d, int texturesize, int row){
+        if (isActive) {
+    //        g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage(row, false)),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
+            g2d.drawImage(image, (int) posX, (int) posY, texturesize / 2, texturesize / 2, null);
+        }
     }
     
     public boolean checkCollisionWithMap(Map map){
         return !Tools.isMapCrossable(posX, posY, ballWidth, ballHeight, map);
     }
-    
-    public boolean checkCollisionWithPlayer(Player player){
-        return !Tools.isPlayerHit(posX, posY, ballWidth, ballHeight, player);
-    }
 
     public double getPosX() {
         return posX;
+    }
+    
+    public void setActive(boolean isActive){
+        this.isActive = isActive;
+    }
+
+    public void setDirection(double[] direction) {
+        this.direction = direction;
     }
 
     public double getPosY() {
@@ -98,6 +108,10 @@ public class Bullet {
         this.playerId = playerId;
     }
     
+    public void setSpeed(double speed){
+        this.speed = speed;
+    }
+    
     public int getBulletId(){
         return bulletId;
     }
@@ -115,7 +129,7 @@ public class Bullet {
         boolean test = false;
 
         if (object != null && object instanceof Bullet) {
-            test = (playerId == ((Bullet) object).getPlayerId()) && (bulletId ==((Bullet) object).getBulletId());
+            test = ((playerId == ((Bullet) object).getPlayerId()) && (bulletId ==((Bullet) object).getBulletId()));
         }
 
         return test;

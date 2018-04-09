@@ -122,16 +122,7 @@ public class GamePanel extends JPanel{
         MEbuttons = new ArrayList<JButton>(); //ME : Map Editor
         PGbuttons = new ArrayList<JButton>(); // Pre game
         
-        
-        JButton startButton = new JButton("Start");
-        startButton.setVisible(false);
-        startButton.setBounds(286, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
-        //connectButton.setPressedIcon(pressedJoinGameIcon);
-        add(startButton);
-        PGbuttons.add(startButton);
-        
-        
-        
+        // Main menu interface
         JButton connectButton = new JButton();
         connectButton.setIcon(joinGameIcon);
         connectButton.setVisible(true);
@@ -225,24 +216,12 @@ public class GamePanel extends JPanel{
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 initialiseGame(false);
-                map.setDrawingParameters(IN_GAME);
-                for (JButton b : MMbuttons)
-                {
-                    b.setVisible(false);
-                }
-                startButton.setVisible(true); //set this to false when gameState variable is added to SQL
             }
         });
         
         gameCreateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 initialiseGame(true);
-                map.setDrawingParameters(IN_GAME);
-                for (JButton b : MMbuttons)
-                {
-                    b.setVisible(false);
-                }
-                startButton.setVisible(isHost);
             }
         });
         
@@ -255,12 +234,6 @@ public class GamePanel extends JPanel{
         gameModeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // to do
-            }
-        });
-        
-        startButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setState(IN_GAME);
             }
         });
         
@@ -304,7 +277,6 @@ public class GamePanel extends JPanel{
         });
         
         // Map Editor interface
-        
         JButton saveMapButton = new JButton();
         saveMapButton.setIcon(saveMapIcon);
         saveMapButton.setBounds(7, 212, saveMapIcon.getIconWidth(), saveMapIcon.getIconHeight());
@@ -366,12 +338,27 @@ public class GamePanel extends JPanel{
                 setState(MAIN_MENU);
             }
         });
+        
+        //Pre game interface
+        JButton startButton = new JButton("Start");
+        startButton.setVisible(false);
+        startButton.setBounds(286, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
+        //connectButton.setPressedIcon(pressedJoinGameIcon);
+        add(startButton);
+        PGbuttons.add(startButton);
+        
+        startButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sql.setGameState(IN_GAME);
+                setState(IN_GAME);
+            }
+        });
     }
     
     public void updateGame(long dT){
-        // Update player parameters 
-        boolean printTime = true;
+        boolean printTime = false;
         long time = System.currentTimeMillis();
+        // Update player movement 
         updatePlayerMovement();
         player.update(dT, map);
         if(printTime){
@@ -385,7 +372,7 @@ public class GamePanel extends JPanel{
             time = System.currentTimeMillis();
         }
         // Update bullets
-        player.updateBulletImpact(dT, map, otherPlayersList, sql);
+        player.updateBulletList(dT, map, otherPlayersList);
         if(printTime){
             System.out.println("Bullet updates : " + (System.currentTimeMillis()-time));
             time = System.currentTimeMillis();
@@ -468,8 +455,8 @@ public void paint(Graphics g) {
     Graphics2D g2d = (Graphics2D) g;
     switch(gameState) {
         case PRE_GAME:
-            for(JButton button : PGbuttons){
-                button.repaint();
+            for (int i=0; i<otherPlayersList.size(); i++){
+                g2d.drawString(otherPlayersList.get(i).getName(), 100, 100+i*50);
             }
             break;
             
@@ -477,25 +464,19 @@ public void paint(Graphics g) {
             g2d.drawImage(MenuBackground, 0, 0, 16*64, 9*64, this);
             g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
             map.draw(g2d);
-            for(JButton button : MMbuttons){
-                button.repaint();
-            }
             break;
             
         case IN_GAME:
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
             map.draw(g2d);
-            player.draw(g2d); // To do : Need to put this player into the playerList then draw using the for loop 
+            player.draw(g2d);
             player.drawBullets(g2d, map.getTextureSize());
 
-            for (Player player : otherPlayersList) {
-                if (player.getPlayerId() != player.getPlayerId()) {
-                    player.draw(g2d);
-                }
+            for (Player otherPlayer : otherPlayersList) {
+                otherPlayer.draw(g2d);
             }
-            for (int i=0; i<otherPlayersBullets.size(); i++)
-            {
+            for (int i=0; i<otherPlayersBullets.size(); i++){
                 otherPlayersBullets.get(i).draw(g2d, textureSize, 0);// To do : Only 1 SQL line to modifie every bullet's position
             }
             break;
@@ -504,9 +485,6 @@ public void paint(Graphics g) {
             g2d.drawImage(EditorBackground, 0, 0, 16*64, 9*64, this);     
             map.draw(g2d);
             tileSelector.draw(g2d);
-            for(JButton button : MEbuttons){
-                button.repaint();
-            }
             break;
     }
 }
@@ -522,7 +500,6 @@ public void paint(Graphics g) {
         
         @Override
         public void actionPerformed( ActionEvent tf ){
-//            System.out.println(key);
             if(!pressedButtons.contains(key)){
                 pressedButtons.add(key);
             }
@@ -538,7 +515,6 @@ public void paint(Graphics g) {
         
         @Override
         public void actionPerformed( ActionEvent tf ){
-//            System.out.println(key);
             if(pressedButtons.contains(key)){
                 pressedButtons.remove((Integer)key);
                 releasedButtons.add(key);
@@ -571,13 +547,17 @@ public void paint(Graphics g) {
         setState(PRE_GAME);
         if (isHost){
             sql.clearTable(); //Clear previous game on SQL server
-            player.setPlayerId(0);
+            player.setPlayerId(1);
             sql.addPlayer(player);
         } else {
             otherPlayersList = sql.getPlayerList();
-            player.setPlayerId(otherPlayersList.size()); //ids start at 0;
+            player.setPlayerId(1); // 0 means "null", ids start at 1
+            while(otherPlayersList.contains(player)){
+                player.incrementId();
+            }
             sql.addPlayer(player);
         }
+        player.initializeBulletList(sql);
     }
     
     public boolean isConnected(){
@@ -593,8 +573,14 @@ public void paint(Graphics g) {
         setState(MAIN_MENU);
     }
     
-    public void updatePlayerList() {
+    public void preGameUpdate() {
         sql.updatePlayerList(player, otherPlayersList);
+        if(!isHost){
+            int newGameState = sql.getGameState();
+            if (newGameState!=gameState){
+                setState(newGameState);
+            }
+        }
     }
 
     public int getState(){

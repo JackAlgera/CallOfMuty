@@ -12,6 +12,7 @@ public class Player {
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     private static double maxHealth = 100.0;
+    private static int initialBulletNumber = 5;
     
     private int playerId, playerWidth, playerHeight, facedDirection, playerState;
     private Image image, hpBar;
@@ -25,7 +26,7 @@ public class Player {
     public ArrayList<Image> animationImages = new ArrayList<Image>();
     public Animation playerAnimation;
     
-    private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+    private ArrayList<Bullet> bulletList;
 
     public ArrayList<Bullet> getBulletList() {
         return bulletList;
@@ -121,11 +122,9 @@ public class Player {
         g.fillRect((int) posX+playerWidth/2-image.getWidth(null)+12, (int) posY+playerHeight/2-image.getHeight(null)-6,(int)((int)(image.getWidth(null)*2-6)*health/maxHealth)-18, 2);
     }
     
-    public void drawBullets(Graphics2D g,int texturesize)
-    {
-        for (int i=0; i<bulletList.size(); i++)
-        {
-            bulletList.get(i).draw(g, texturesize, 0);
+    public void drawBullets(Graphics2D g,int texturesize) {
+        for (Bullet bullet : bulletList) {
+            bullet.draw(g, texturesize, 0);
         }
     }
     
@@ -313,12 +312,24 @@ public class Player {
     
     void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql){
         if (!this.isDead) {
-            Bullet newBullet = new Bullet(initPosX, initPosY, direction, speed, playerId, 0);
-            while(bulletList.contains(newBullet)){
-                newBullet.incrementId();
+            boolean inactiveBulletFound = false;
+            int bulletIndex = 0;
+            while(bulletIndex < bulletList.size() && !inactiveBulletFound){
+                inactiveBulletFound = !bulletList.get(bulletIndex).isActive();
+                bulletIndex++;
             }
-            bulletList.add(newBullet);
-            sql.addBullet(newBullet);
+            if(!inactiveBulletFound){
+                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1));
+                bulletList.get(bulletIndex).setActive(true);
+                sql.addBullet(bulletList.get(bulletIndex));
+            } else {
+                Bullet bullet = bulletList.get(bulletIndex-1);
+                bullet.setActive(true);
+                bullet.setSpeed(speed);
+                bullet.setDirection(direction);
+                bullet.setPosX(initPosX);
+                bullet.setPosY(initPosY);
+            }
         }
     }
     
@@ -326,31 +337,31 @@ public class Player {
         return image;
     }
     
-    public void updateBulletImpact(long dT, Map map, ArrayList<Player> otherPlayersList, SQLManager sql) {
-        ArrayList<Integer> bulletsToRemove = new ArrayList<Integer>();
+    public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList) {
         Bullet bullet;
         for (int i = 0; i<bulletList.size(); i++) {
             bullet = bulletList.get(i);
-            bullet.update(dT);
-            if (bullet.checkCollisionWithMap(map)) {
-                bulletsToRemove.add(i);
-                sql.removeBullet(bullet);
-            } else {
-                for (Player otherPlayer : otherPlayersList) {
-                    if (bullet.checkCollisionWithPlayer(otherPlayer)) {
-                        bulletsToRemove.add(i);
-                        sql.removeBullet(bullet);
+            if (bullet.isActive()) {
+                bullet.update(dT);
+                if (bullet.checkCollisionWithMap(map)) {
+                    bullet.setActive(false);
+                } else {
+                    for (Player otherPlayer : otherPlayersList) {
+                        if (Tools.isPlayerHit(otherPlayer, bullet)) {
+                            bullet.setActive(false);
+                        }
                     }
                 }
             }
-        }
-        for(int index : bulletsToRemove){
-            bulletList.remove(index);
         }
     }
     
     public Player(int playerId){ //usefull constructor for SQL updates
         this.playerId = playerId;
+    }
+    
+    public void incrementId(){
+        playerId++;
     }
     
     @Override
@@ -361,5 +372,13 @@ public class Player {
             test = playerId == ((Player) object).getPlayerId();
         }
         return test;
+    }
+    
+    public void initializeBulletList(SQLManager sql){
+        bulletList = new ArrayList<Bullet>();
+        for (int i = 1; i<=initialBulletNumber; i++){ //bulletId starts at 1, 0 is SQL's "null"
+            bulletList.add(new Bullet(playerId, i));
+            sql.addBullet(new Bullet(playerId, i));
+        }
     }
 }

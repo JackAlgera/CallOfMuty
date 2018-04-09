@@ -49,8 +49,9 @@ public class CallOfMuty {
         while(true){
             switch (game.getState()){
                 case GamePanel.PRE_GAME:
-                    game.updatePlayerList();
-                    Thread.sleep(200);
+                    game.preGameUpdate();
+                    game.repaint();
+                    Thread.sleep(50);
                     timer.update();
                 break;
                         

@@ -1,14 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package callofmuty;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -99,12 +93,11 @@ public class Tools {
         return mapIsCrossable;
     }
     
-    public static boolean isPlayerHit(double objX, double objY, int objectWidth, int objectHeight, Player p) {
-        
-        boolean playerIsHit = (objX + objectWidth) > p.getPosX()
-                                && objX < (p.getPosX() + p.getPlayerWidth())
-                                && (objY + objectHeight) > p.getPosY()
-                                && objY < (p.getPosY() + p.getPlayerHeight());
-        return playerIsHit;
+    public static boolean isPlayerHit(Player player, Bullet bullet){
+        boolean test = bullet.posX < player.getPosX() + player.getPlayerWidth()
+                        && bullet.posX + bullet.getBallWidth() > player.getPosX()
+                        && bullet.posY < player.getPosY() + player.getPlayerHeight()
+                        && bullet.posY + bullet.getBallHeight() > player.getPosY();
+        return test;
     }
 }
