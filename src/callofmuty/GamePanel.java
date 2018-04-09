@@ -28,7 +28,7 @@ public class GamePanel extends JPanel{
     public static ImageIcon joinGameIcon = Tools.loadIcon("JoinGame.png"),
             createGameIcon = Tools.loadIcon("CreateGame.png"),
             leftArrowIcon = Tools.loadIcon("LeftArrow.png"),
-            rightArrowIcon = Tools.loadIcon("rightArrow.png"),
+            rightArrowIcon = Tools.loadIcon("RightArrow.png"),
             exitIcon = Tools.loadIcon("Exit.png"),
             mapEditorIcon = Tools.loadIcon("EditMaps.png"),
             saveMapIcon = Tools.loadIcon("Save.png"),
@@ -43,7 +43,7 @@ public class GamePanel extends JPanel{
     private Player player;
     private ArrayList <Player> otherPlayersList;
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState;
-    private ArrayList pressedButtons, releasedButtons;
+    private ArrayList<Integer> pressedButtons, releasedButtons;
     private boolean isHost;
     private long playerListUpdateTime;
     private SQLManager sql; 
@@ -69,10 +69,10 @@ public class GamePanel extends JPanel{
         tileSelector = new TileSelector(textureSize);
         map.setDrawingParameters(MAIN_MENU); // small map in main menu
         player = new Player(200,200);
-        pressedButtons = new ArrayList();
-        releasedButtons = new ArrayList();
-        otherPlayersBullets = new ArrayList();
-        otherPlayersList = new ArrayList();
+        pressedButtons = new ArrayList<Integer>();
+        releasedButtons = new ArrayList<Integer>();
+        otherPlayersBullets = new ArrayList<Bullet>();
+        otherPlayersList = new ArrayList<Player>();
         this.timer = timer;
         mapKeys();
         
@@ -118,9 +118,9 @@ public class GamePanel extends JPanel{
     
     private void buildInterface(){
         setLayout(null);
-        MMbuttons = new ArrayList(); //MM : Main menu
-        MEbuttons = new ArrayList(); //ME : Map Editor
-        PGbuttons = new ArrayList(); // Pre game
+        MMbuttons = new ArrayList<JButton>(); //MM : Main menu
+        MEbuttons = new ArrayList<JButton>(); //ME : Map Editor
+        PGbuttons = new ArrayList<JButton>(); // Pre game
         
         
         JButton startButton = new JButton("Start");

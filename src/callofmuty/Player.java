@@ -22,10 +22,10 @@ public class Player {
     private boolean isDead, isIdle;  
     private int[] skin;
     private String name;
-    public ArrayList<Image> animationImages = new ArrayList();
+    public ArrayList<Image> animationImages = new ArrayList<Image>();
     public Animation playerAnimation;
     
-    private ArrayList<Bullet> bulletList = new ArrayList();
+    private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
 
     public ArrayList<Bullet> getBulletList() {
         return bulletList;
@@ -327,7 +327,7 @@ public class Player {
     }
     
     public void updateBulletImpact(long dT, Map map, ArrayList<Player> otherPlayersList, SQLManager sql) {
-        ArrayList<Integer> bulletsToRemove = new ArrayList();
+        ArrayList<Integer> bulletsToRemove = new ArrayList<Integer>();
         Bullet bullet;
         for (int i = 0; i<bulletList.size(); i++) {
             bullet = bulletList.get(i);

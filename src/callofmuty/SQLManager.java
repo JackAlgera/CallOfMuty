@@ -204,7 +204,7 @@ public class SQLManager {
     }
     
     public ArrayList<Player> getPlayerList(){ // used only before adding local player to database, when connecting to the game
-        ArrayList<Player> players = new ArrayList();
+        ArrayList<Player> players = new ArrayList<Player>();
         PreparedStatement requete;
         Player newPlayer;
         try {

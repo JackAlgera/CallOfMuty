@@ -10,7 +10,7 @@ public class Bullet {
     public double posX, posY, speed;
     public int ballWidth, ballHeight, playerId, bulletId;
     public double[] direction;
-    public ArrayList<Image> animationImages = new ArrayList();
+    public ArrayList<Image> animationImages = new ArrayList<Image>();
     public Animation bulletAnimation;
     private Image image;
     
