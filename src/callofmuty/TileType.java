@@ -9,13 +9,12 @@ public class TileType {
     private final int colone;
     private final int line;  
     private BufferedImage image;
-    File tileset = new File("images/Tileset.png");
 
     TileType( boolean isCrossable, int column, int row){
         this.crossable = isCrossable;
         this.colone=column;
         this.line=row;
-        image = Tools.loadAndSelectaTile(new File("images/Tileset.png"), column, row);
+        image = Tools.selectTile(Tools.tileset, column, row);
     }
 
     public boolean isCrossable() {

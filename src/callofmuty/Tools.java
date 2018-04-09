@@ -13,37 +13,37 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
-/**
- *
- * @author tlaurend
- */
 public class Tools {
+
+    // Load every TileSet only once
+    public static BufferedImage tileset = loadImage("Tileset.png"),
+                hudTileset = loadImage("HudTileset.png"),
+                bulletTileset = loadImage("BulletTileset.png"),
+                playerTileset = loadImage("PlayerTileset.png");
+    public static int tileSize = 32; //Size of a tile in a tileset image
+
     
-    public static BufferedImage loadAndSelectaTile(File tilesetfile, int column, int row){
-        BufferedImage image = null;
-        try {
-            BufferedImage imageFull;
-            imageFull = ImageIO.read(tilesetfile);      
-            int y =32*(column-1);
-            int x =32*(row-1);
-            image = imageFull.getSubimage(x, y, 32, 32);
-        } catch (IOException error) {
-            System.out.println("Error: cannot read tileset image.");  
-        }
-        return image;
+    public static BufferedImage selectTile(BufferedImage tileset, int column, int row){
+        return tileset.getSubimage(tileSize*(row-1),tileSize*(column-1), tileSize, tileSize);
     }
    
-   public static BufferedImage loadImage(String address){
+   public static BufferedImage loadImage(String name){
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File(address));
+            image = ImageIO.read(Tools.class.getResource("/resources/images/"+name));
         } catch (IOException error) {
-            System.out.println("Error: cannot read image : "+ address + " : "+ error);  
+            System.out.println("Error: cannot read image : /resources/images/"+ name + " : "+ error);  
         }
         return image;
     } 
     
+   public static ImageIcon loadIcon(String name){
+        BufferedImage image = loadImage(name);
+        return new ImageIcon(image);
+    }
+   
     public static int[][] textFileToIntMap(String address){
         int [][] intMap = null;
         try {

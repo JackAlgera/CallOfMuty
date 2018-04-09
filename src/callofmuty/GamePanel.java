@@ -22,19 +22,19 @@ import javax.swing.KeyStroke;
 
 public class GamePanel extends JPanel{
 
-    public static BufferedImage MenuBackground = Tools.loadImage("images/MenuBackground.png"),
-            EditorBackground = Tools.loadImage("images/EditorBackground.png");
+    public static BufferedImage MenuBackground = Tools.loadImage("MenuBackground.png"),
+            EditorBackground = Tools.loadImage("EditorBackground.png");
 
-    public static ImageIcon joinGameIcon = new ImageIcon("images/Buttons/JoinGame.png"),
-            createGameIcon = new ImageIcon("images/Buttons/CreateGame.png"),
-            leftArrowIcon = new ImageIcon("images/Buttons/LeftArrow.png"),
-            rightArrowIcon = new ImageIcon("images/Buttons/rightArrow.png"),
-            exitIcon = new ImageIcon("images/Buttons/Exit.png"),
-            mapEditorIcon = new ImageIcon("images/Buttons/EditMaps.png"),
-            saveMapIcon = new ImageIcon("images/buttons/Save.png"),
-            loadMapIcon = new ImageIcon("images/buttons/Load.png"),
-            doneIcon = new ImageIcon("images/buttons/Done.png"),
-            gameModeIcon = new ImageIcon("images/Buttons/GameMode.png");
+    public static ImageIcon joinGameIcon = Tools.loadIcon("JoinGame.png"),
+            createGameIcon = Tools.loadIcon("CreateGame.png"),
+            leftArrowIcon = Tools.loadIcon("LeftArrow.png"),
+            rightArrowIcon = Tools.loadIcon("rightArrow.png"),
+            exitIcon = Tools.loadIcon("Exit.png"),
+            mapEditorIcon = Tools.loadIcon("EditMaps.png"),
+            saveMapIcon = Tools.loadIcon("Save.png"),
+            loadMapIcon = Tools.loadIcon("Load.png"),
+            doneIcon = Tools.loadIcon("Done.png"),
+            gameModeIcon = Tools.loadIcon("GameMode.png");
 
     private double bulletSpeed = 0.5;
     
@@ -135,7 +135,7 @@ public class GamePanel extends JPanel{
         JButton connectButton = new JButton();
         connectButton.setIcon(joinGameIcon);
         connectButton.setVisible(true);
-        connectButton.setBounds(286, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
+        connectButton.setBounds(287, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
         //connectButton.setPressedIcon(pressedJoinGameIcon);
         connectButton.setContentAreaFilled(false);
         connectButton.setBorderPainted(false);
@@ -144,7 +144,7 @@ public class GamePanel extends JPanel{
         
         JButton gameCreateButton = new JButton();
         gameCreateButton.setIcon(createGameIcon);
-        gameCreateButton.setBounds(286, 227, createGameIcon.getIconWidth(), createGameIcon.getIconHeight());
+        gameCreateButton.setBounds(287, 227, createGameIcon.getIconWidth(), createGameIcon.getIconHeight());
         //gameCreateButton.setPressedIcon(pressedcreateGameIcon);
         gameCreateButton.setVisible(true);
         gameCreateButton.setContentAreaFilled(false);
@@ -154,7 +154,7 @@ public class GamePanel extends JPanel{
         
         JButton exitButton = new JButton();
         exitButton.setIcon(exitIcon);
-        exitButton.setBounds(286, 373, exitIcon.getIconWidth(), exitIcon.getIconHeight());
+        exitButton.setBounds(287, 373, exitIcon.getIconWidth(), exitIcon.getIconHeight());
         //exitButton.setPressedIcon(pressedExitIcon);
         exitButton.setVisible(true);
         exitButton.setContentAreaFilled(false);
@@ -164,7 +164,7 @@ public class GamePanel extends JPanel{
         
         JButton gameModeButton = new JButton();
         gameModeButton.setIcon(gameModeIcon);
-        gameModeButton.setBounds(286, 154, gameModeIcon.getIconWidth(), gameModeIcon.getIconHeight());
+        gameModeButton.setBounds(287, 154, gameModeIcon.getIconWidth(), gameModeIcon.getIconHeight());
         //gameModeButton.setPressedIcon(pressedGameModeIcon);
         gameModeButton.setVisible(true);
         gameModeButton.setContentAreaFilled(false);
@@ -174,7 +174,7 @@ public class GamePanel extends JPanel{
         
         JButton rightSkinArrow = new JButton();
         rightSkinArrow.setIcon(rightArrowIcon);
-        rightSkinArrow.setBounds(181, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
+        rightSkinArrow.setBounds(182, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
         //rightSkinArrow.setPressedIcon(pressedrightArrowIcon);
         rightSkinArrow.setVisible(true);
         rightSkinArrow.setContentAreaFilled(false);
@@ -184,7 +184,7 @@ public class GamePanel extends JPanel{
         
         JButton leftSkinArrow = new JButton();
         leftSkinArrow.setIcon(leftArrowIcon);
-        leftSkinArrow.setBounds(55, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
+        leftSkinArrow.setBounds(54, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
         //leftSkinArrow.setPressedIcon(pressedleftArrowIcon);
         leftSkinArrow.setVisible(true);
         leftSkinArrow.setContentAreaFilled(false);
@@ -194,7 +194,7 @@ public class GamePanel extends JPanel{
         
         JButton rightMapArrow = new JButton();
         rightMapArrow.setIcon(rightArrowIcon);
-        rightMapArrow.setBounds(820, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
+        rightMapArrow.setBounds(824, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
         //rightMapArrow.setPressedIcon(pressedrightArrowIcon);
         rightMapArrow.setVisible(true);
         rightMapArrow.setContentAreaFilled(false);
@@ -204,7 +204,7 @@ public class GamePanel extends JPanel{
         
         JButton leftMapArrow = new JButton();
         leftMapArrow.setIcon(leftArrowIcon);
-        leftMapArrow.setBounds(640, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
+        leftMapArrow.setBounds(637, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
         //leftMapArrow.setPressedIcon(pressedleftArrowIcon);
         leftMapArrow.setVisible(true);
         leftMapArrow.setContentAreaFilled(false);
@@ -317,7 +317,7 @@ public class GamePanel extends JPanel{
         
         JButton loadMapButton = new JButton();
         loadMapButton.setIcon(loadMapIcon);
-        loadMapButton.setBounds(7, 162, loadMapIcon.getIconWidth(), loadMapIcon.getIconHeight());
+        loadMapButton.setBounds(7, 163, loadMapIcon.getIconWidth(), loadMapIcon.getIconHeight());
         //loadMapButton.setPressedIcon(pressedLoadMapIcon);
         loadMapButton.setVisible(false);
         //loadMapButton.setContentAreaFilled(false);
@@ -327,7 +327,7 @@ public class GamePanel extends JPanel{
         
         JButton doneButton = new JButton();
         doneButton.setIcon(doneIcon);
-        doneButton.setBounds(7, 280, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        doneButton.setBounds(7, 279, doneIcon.getIconWidth(), doneIcon.getIconHeight());
         //doneButton.setPressedIcon(presseddoneIcon);
         doneButton.setVisible(false);
         //doneButton.setContentAreaFilled(false);

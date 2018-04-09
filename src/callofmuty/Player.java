@@ -3,13 +3,14 @@ package callofmuty;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 
 public class Player {
 
-    public static Image normalHealthBar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, 2),
-            lowHealthBar = Tools.loadAndSelectaTile(new File("images/HudTileset.png"), 1, 1);
+    public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
+            lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     private static double maxHealth = 100.0;
     
     private int playerId, playerWidth, playerHeight, facedDirection, playerState;
@@ -42,15 +43,15 @@ public class Player {
         skin = new int[2];
         this.skin[0]= 1;
         this.skin[1]= 1;
-        image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
+        image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
         
         this.playerAnimation = new Animation(135,8,12,4,0); // en ms
         
-        for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++)
-        {
-            for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++)
-            {
-                animationImages.add(Tools.loadAndSelectaTile(new File("images/man.png"), i+1, j+1));
+        BufferedImage manTileset = Tools.loadImage("man.png"); // Temporary image, animations need to be put in playerTileset
+        for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
+            for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++){
+                
+                animationImages.add(Tools.selectTile(manTileset, i+1, j+1));
             }
         }
         
@@ -98,7 +99,7 @@ public class Player {
     
     public void setSkin(int skinIndex){
         skin[1]=skinIndex;
-        image=Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), skin[0], skin[1]);
+        image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
     }
     
     public int getSkinIndex(){
@@ -271,16 +272,6 @@ public class Player {
     double getPosY(){
         return this.posY;
     }
-        
-    void setPlayerDeath(boolean isDead){
-        this.isDead=isDead;
-        if (isDead==true){
-            this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), 2, 4);
-            this.health=0;
-        }else{
-            this.chooseSkin(this.skin[0],this.skin[1]);
-        }
-    }
     
     boolean isPlayerDead(){
         return this.isDead;
@@ -289,7 +280,7 @@ public class Player {
     void damagePlayer(double damage){
         if (health - damage <= 0){
             health = 0;
-            setPlayerDeath(true);
+            isDead = true;
         }else{
             health -= damage;
             if(health < 0.1*maxHealth){
@@ -300,8 +291,8 @@ public class Player {
     
     void setPlayerHealth(double health){
         this.health = health;
-        if (this.isDead && health>0){
-            this.setPlayerDeath(false);
+        if (health>0){
+            isDead = false;
         }
         if (health < 0.1*maxHealth){
             hpBar = lowHealthBar;
@@ -317,7 +308,7 @@ public class Player {
     void chooseSkin(int row, int column){
         this.skin[0]=row;
         this.skin[1]=column;
-        this.image = Tools.loadAndSelectaTile(new File("images/PlayerTileset.png"), this.skin[0], this.skin[1]);
+        this.image = Tools.selectTile(Tools.playerTileset, this.skin[0], this.skin[1]);
     }
     
     void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql){

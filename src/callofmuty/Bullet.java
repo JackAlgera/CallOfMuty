@@ -32,7 +32,7 @@ public class Bullet {
         this.direction = direction;
         this.playerId = playerId;
         
-        image = Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), 1, 1);
+        image = Tools.selectTile(Tools.bulletTileset, 1, 1);
         
         this.bulletAnimation = new Animation(250,1,4,4,0);// in ms
         
@@ -40,7 +40,7 @@ public class Bullet {
         {
             for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++)
             {
-                animationImages.add(Tools.loadAndSelectaTile(new File("images/BulletsTileset.png"), i+1, j+1));
+                animationImages.add(Tools.selectTile(Tools.bulletTileset, i+1, j+1));
             }
         }
     }
