@@ -1,6 +1,8 @@
 package callofmuty;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -15,9 +17,11 @@ import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 public class GamePanel extends JPanel{
@@ -48,7 +52,7 @@ public class GamePanel extends JPanel{
     private long playerListUpdateTime;
     private SQLManager sql; 
     private boolean isConnected;
-    private ArrayList <JButton> MMbuttons, MEbuttons, PGbuttons;
+    private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons;
     private ArrayList<Bullet> otherPlayersBullets;
     GameTimer timer;
     
@@ -118,9 +122,9 @@ public class GamePanel extends JPanel{
     
     private void buildInterface(){
         setLayout(null);
-        MMbuttons = new ArrayList<JButton>(); //MM : Main menu
-        MEbuttons = new ArrayList<JButton>(); //ME : Map Editor
-        PGbuttons = new ArrayList<JButton>(); // Pre game
+        MMbuttons = new ArrayList<JComponent>(); //MM : Main menu
+        MEbuttons = new ArrayList<JComponent>(); //ME : Map Editor
+        PGbuttons = new ArrayList<JComponent>(); // Pre game
         
         // Main menu interface
         JButton connectButton = new JButton();
@@ -213,6 +217,18 @@ public class GamePanel extends JPanel{
         add(mapEditorButton);
         MMbuttons.add(mapEditorButton);
         
+        JTextField usernameField = new JTextField("Username");
+        usernameField.setBounds(56, 140, 172, mapEditorIcon.getIconHeight()+1);
+        usernameField.setEditable(true);
+        usernameField.setHorizontalAlignment(JTextField.CENTER);
+        usernameField.setFont(new Font("TimesRoman", Font.BOLD+Font.ITALIC, 18));
+        usernameField.setBackground(new Color(230,226,211));//(new Color(221,214,192));
+        usernameField.setForeground(Color.DARK_GRAY);
+        usernameField.setBorder(null);
+        usernameField.setVisible(true);
+        add(usernameField);
+        MMbuttons.add(usernameField);
+        
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 initialiseGame(false);
@@ -273,6 +289,12 @@ public class GamePanel extends JPanel{
         mapEditorButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setState(MAP_EDITOR);
+            }
+        });
+        
+        usernameField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                player.setName(usernameField.getText());
             }
         });
         
@@ -533,9 +555,6 @@ public void paint(Graphics g) {
             if (confirm == 0) {
                 setState(MAIN_MENU);
                 endGame();
-                if (pressedButtons.contains(KeyEvent.VK_ESCAPE)){
-                    pressedButtons.remove(KeyEvent.VK_ESCAPE);
-                }
             }
         }
     }
@@ -607,47 +626,47 @@ public void paint(Graphics g) {
         map.setDrawingParameters(gameState);
         switch(gameState){
             case MAIN_MENU:
-                for (JButton button : MMbuttons){
-                    button.setVisible(true);
+                for (JComponent component : MMbuttons){
+                    component.setVisible(true);
                 }
-                for (JButton button : MEbuttons){
-                    button.setVisible(false);
+                for (JComponent component : MEbuttons){
+                    component.setVisible(false);
                 }
-                for (JButton button : PGbuttons){
-                    button.setVisible(false);
+                for (JComponent component : PGbuttons){
+                    component.setVisible(false);
                 }
                 break;
             case MAP_EDITOR:
-                for (JButton button : MMbuttons){
-                    button.setVisible(false);
+                for (JComponent component : MMbuttons){
+                    component.setVisible(false);
                 }
-                for (JButton button : MEbuttons){
-                    button.setVisible(true);
+                for (JComponent component : MEbuttons){
+                    component.setVisible(true);
                 }
-                for (JButton button : PGbuttons){
-                    button.setVisible(false);
+                for (JComponent component : PGbuttons){
+                    component.setVisible(false);
                 }
                 break;
             case PRE_GAME:
-                for (JButton button : MMbuttons){
-                    button.setVisible(false);
+                for (JComponent component : MMbuttons){
+                    component.setVisible(false);
                 }
-                for (JButton button : MEbuttons){
-                    button.setVisible(false);
+                for (JComponent component : MEbuttons){
+                    component.setVisible(false);
                 }
-                for (JButton button : PGbuttons){
-                    button.setVisible(isHost);
+                for (JComponent component : PGbuttons){
+                    component.setVisible(isHost);
                 }
                 break;
             case IN_GAME:
-                for (JButton button : MMbuttons){
-                    button.setVisible(false);
+                for (JComponent component : MMbuttons){
+                    component.setVisible(false);
                 }
-                for (JButton button : MEbuttons){
-                    button.setVisible(false);
+                for (JComponent component : MEbuttons){
+                    component.setVisible(false);
                 }
-                for (JButton button : PGbuttons){
-                    button.setVisible(false);
+                for (JComponent component : PGbuttons){
+                    component.setVisible(false);
                 }
                 timer.update();
         }
