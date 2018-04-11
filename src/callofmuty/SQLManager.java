@@ -80,54 +80,56 @@ public class SQLManager {
         try {
             requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, bullet.idBullet, bullet.posX, bullet.posY FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer AND bullet.isActive=1 AND NOT players.id="+ player.getPlayerId() +" WHERE players.playerState = "+ Player.PLAYING +" ORDER BY players.id");
             ResultSet resultat = requete.executeQuery();
-            while (resultat.next()) {
-                if (otherPlayersList.contains(new Player(resultat.getInt("players.id")))) { // check if the player is "known"
-                    if (resultat.getInt("players.id") != playerId) { //this player's position was not yet updated
-                        // getting player to update
-                        playerId = resultat.getInt("players.id");
-                        playerIndex = otherPlayersList.indexOf(new Player(playerId)); //finding the right id in the list
-                        // update player
-                        position[0] = resultat.getInt("players.posX");
-                        position[1] = resultat.getInt("players.posY");
-                        otherPlayersList.get(playerIndex).setPosition(position);
-                        otherPlayersList.get(playerIndex).setHealth(resultat.getDouble("players.playerHp"));
-                        updatedPlayers.add(new Player(playerId));
-                        // update bullet
-                        bulletId = resultat.getInt("bullet.idBullet");
-                        if (bulletId > 0) { // 0 means null
-                            bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
-                            updatedBullets.add(new Bullet(playerId, bulletId));
-                            if (bulletIndex == -1) { // bullet was not already in the list
-                                otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
-                                otherBulletsList.get(otherBulletsList.size()-1).setActive(true);
-                            } else { // bullet was already in the list
-                                otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
-                                otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
-                            }
-                        } else {
-                        }
-                    } else { // this player's position was already updated, update only the bullet
-                        bulletId = resultat.getInt("bullet.idBullet");
-                        if (bulletId > 0) { // 0 means null
-                            bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
-                            updatedBullets.add(new Bullet(playerId, bulletId));
-                            if (bulletIndex == -1) {
-                                otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
-                                otherBulletsList.get(otherBulletsList.size()-1).setActive(true);
+            if (resultat!=null) {
+                while (resultat.next()) {
+                    if (otherPlayersList.contains(new Player(resultat.getInt("players.id")))) { // check if the player is "known"
+                        if (resultat.getInt("players.id") != playerId) { //this player's position was not yet updated
+                            // getting player to update
+                            playerId = resultat.getInt("players.id");
+                            playerIndex = otherPlayersList.indexOf(new Player(playerId)); //finding the right id in the list
+                            // update player
+                            position[0] = resultat.getInt("players.posX");
+                            position[1] = resultat.getInt("players.posY");
+                            otherPlayersList.get(playerIndex).setPosition(position);
+                            otherPlayersList.get(playerIndex).setHealth(resultat.getDouble("players.playerHp"));
+                            updatedPlayers.add(new Player(playerId));
+                            // update bullet
+                            bulletId = resultat.getInt("bullet.idBullet");
+                            if (bulletId > 0) { // 0 means null
+                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
+                                updatedBullets.add(new Bullet(playerId, bulletId));
+                                if (bulletIndex == -1) { // bullet was not already in the list
+                                    otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
+                                    otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
+                                } else { // bullet was already in the list
+                                    otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
+                                    otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
+                                }
                             } else {
-                                otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
-                                otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
+                            }
+                        } else { // this player's position was already updated, update only the bullet
+                            bulletId = resultat.getInt("bullet.idBullet");
+                            if (bulletId > 0) { // 0 means null
+                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
+                                updatedBullets.add(new Bullet(playerId, bulletId));
+                                if (bulletIndex == -1) {
+                                    otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
+                                    otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
+                                } else {
+                                    otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
+                                    otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
+                                }
                             }
                         }
-                    }
-                } else {
-                    if (resultat.getInt("players.id")==player.getPlayerId()){ // update local player's health
-                        player.setHealth(resultat.getDouble("players.playerHp"));
-                        if (player.isPlayerDead()){
-                            setPlayerDead(player);
+                    } else {
+                        if (resultat.getInt("players.id") == player.getPlayerId()) { // update local player's health
+                            player.setHealth(resultat.getDouble("players.playerHp"));
+                            if (player.isPlayerDead()) {
+                                setPlayerDead(player);
+                            }
+                        } else { // if player was not "known" : isn't supposed to happen, deal with it here if it does
+
                         }
-                    } else { // if player was not "known" : isn't supposed to happen, deal with it here if it does
-                        
                     }
                 }
             }
@@ -153,10 +155,9 @@ public class SQLManager {
     }
     
     public void addPlayer(Player player){
-        PreparedStatement requete;
-        
+        PreparedStatement requete;    
         try {
-            requete = connexion.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?,?,?)"); // Check Hp & Skin work
+            requete = connexion.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?,?,?)");
             requete.setInt(1,player.getPlayerId());
             requete.setString(2, player.getName());
             requete.setDouble(3, player.getPlayerHealth());
@@ -168,6 +169,27 @@ public class SQLManager {
             requete.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        }
+    }
+    
+    public void addBulletList(ArrayList<Bullet> bulletList){ //removes a player and his bullets from database
+        if (!bulletList.isEmpty()) {
+            PreparedStatement requete;
+            String values = "";
+            Bullet bullet;
+            for (int i = 0; i<bulletList.size()-1; i++) {
+                bullet = bulletList.get(i);
+                values += "("+bullet.getBulletId()+","+bullet.getPlayerId()+","+bullet.getPosX()+","+bullet.getPosY()+",0), ";
+            }
+            bullet = bulletList.get(bulletList.size()-1);
+            values += "("+bullet.getBulletId()+","+bullet.getPlayerId()+","+bullet.getPosX()+","+bullet.getPosY()+",0)";
+            try {
+                requete = connexion.prepareStatement("INSERT INTO bullet VALUES "+values);
+                requete.executeUpdate();
+                requete.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
     
@@ -197,6 +219,14 @@ public class SQLManager {
             requete = connexion.prepareStatement("DELETE FROM game" );
             requete.executeUpdate();
             requete.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void createGame(){
+        PreparedStatement requete;
+        try {
             requete = connexion.prepareStatement("INSERT INTO game VALUES (1,"+ GamePanel.PRE_GAME +")");
             requete.executeUpdate();
             requete.close();
@@ -242,10 +272,6 @@ public class SQLManager {
         }
         return gameState;
     }
-    
-    public Connection getConnection(){
-        return this.connexion;
-    }
      
     public void disconnect(){
         try {
@@ -253,19 +279,6 @@ public class SQLManager {
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    public void setPlayerHp(double playerHp, Player player){               
-        PreparedStatement requete;
-        
-        try {
-            requete = connexion.prepareStatement("UPDATE players SET playerHp=?,  WHERE id=" + player.getPlayerId());
-            requete.setDouble(1, player.getPlayerHealth()); 
-            requete.executeUpdate();
-            requete.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
-        }    
     }
     
     public void addBullet(Bullet bullet){        
@@ -319,12 +332,14 @@ public class SQLManager {
         PreparedStatement requete;
         Player newPlayer;
         int index;
+        ArrayList<Player> updatedPlayers = new ArrayList<>(); // Used to remove players that disconnect
         try {
             requete = connexion.prepareStatement("SELECT * FROM players WHERE NOT id ="+ player.getPlayerId());
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
                 newPlayer = new Player(resultat.getDouble("posX"),resultat.getDouble("posY"));
                 newPlayer.setPlayerId(resultat.getInt("id"));
+                updatedPlayers.add(newPlayer);
                 index = otherPlayersList.indexOf(newPlayer);
                 if (index > -1){ // Player is already in the list, update variables
                     newPlayer = otherPlayersList.get(index);
@@ -342,6 +357,14 @@ public class SQLManager {
             requete.close();
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        int i=0;
+        while (i<otherPlayersList.size()){ //remove players that were not updated (ie died)
+            if (!updatedPlayers.contains(otherPlayersList.get(i))){
+                otherPlayersList.remove(i);
+            } else {
+                i++;
+            }
         }
     }
 }

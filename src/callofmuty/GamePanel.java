@@ -373,12 +373,13 @@ public class GamePanel extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 sql.setGameState(IN_GAME);
                 setState(IN_GAME);
+                repaint();
             }
         });
     }
     
     public void updateGame(long dT){
-        boolean printTime = false;
+        boolean printTime = false; // Set to true if you want to print the time taken by each method in updateGame
         long time = System.currentTimeMillis();
         // Update player movement 
         updatePlayerMovement();
@@ -403,6 +404,13 @@ public class GamePanel extends JPanel{
         sql.uploadPlayerAndBullets(player);
         if(printTime){
             System.out.println("Uploads : " + (System.currentTimeMillis()-time));
+        }
+        if(otherPlayersList.isEmpty()){ // Game is ended
+            if (!player.isPlayerDead()){ // Local player won
+                endGame();
+            } else {
+                endGame();
+            }
         }
     }
     
@@ -458,7 +466,6 @@ public class GamePanel extends JPanel{
         this.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "rightPressed");
         this.getInputMap().put(KeyStroke.getKeyStroke("released RIGHT"), "rightReleased");
         this.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escapePressed");
-        this.getInputMap().put(KeyStroke.getKeyStroke("released ESCAPE"), "escapeReleased");
         this.getActionMap().put("upPressed", new KeyPressed(KeyEvent.VK_UP));
         this.getActionMap().put("upReleased", new KeyReleased(KeyEvent.VK_UP) );
         this.getActionMap().put("downPressed", new KeyPressed(KeyEvent.VK_DOWN));
@@ -467,8 +474,7 @@ public class GamePanel extends JPanel{
         this.getActionMap().put("leftReleased", new KeyReleased(KeyEvent.VK_LEFT) );
         this.getActionMap().put("rightPressed", new KeyPressed(KeyEvent.VK_RIGHT));
         this.getActionMap().put("rightReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
-        this.getActionMap().put("escapePressed", new KeyPressed(KeyEvent.VK_ESCAPE));
-        this.getActionMap().put("escapeReleased", new EscapePressed() );
+        this.getActionMap().put("escapePressed", new EscapePressed());
     }
     
 @Override
@@ -547,36 +553,104 @@ public void paint(Graphics g) {
     private class EscapePressed extends AbstractAction{
         
         @Override
-        public void actionPerformed( ActionEvent tf ){
-            int confirm = JOptionPane.showOptionDialog(
-                null, "Do you want to disconnect from the game ?",
-                "Disconnecting", JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, null, null);
-            if (confirm == 0) {
-                setState(MAIN_MENU);
-                endGame();
+        public void actionPerformed(ActionEvent tf) {
+            if (gameState == IN_GAME || (gameState == PRE_GAME && !isHost)) {
+                int confirm = JOptionPane.showOptionDialog(
+                        null, "Do you want to disconnect from the game ?",
+                        "Disconnecting", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, null, null);
+                if (confirm == 0) {
+                    endGame();
+                }
+            } else {
+                if (gameState == PRE_GAME && isHost) {
+                    int confirm = JOptionPane.showOptionDialog(
+                            null, "Do you want to cancel this game ?",
+                            "Cancelling", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, null, null);
+                    if (confirm == 0) {
+                        endGame();
+                    }
+                }
             }
         }
     }
     
-    public void initialiseGame(boolean isHost){
+    public void initialiseGame(boolean isHost) {
         this.isHost = isHost;
         sql = new SQLManager();
-        isConnected = true;
-        setState(PRE_GAME);
-        if (isHost){
-            sql.clearTable(); //Clear previous game on SQL server
-            player.setPlayerId(1);
-            sql.addPlayer(player);
-        } else {
-            otherPlayersList = sql.getPlayerList();
-            player.setPlayerId(1); // 0 means "null", ids start at 1
-            while(otherPlayersList.contains(player)){
-                player.incrementId();
+        int currentGameState = sql.getGameState();
+        if (isHost) { // Try to create a game
+            if (sql.getPlayerList().isEmpty()) { // No game is currently on
+                sql.clearTable(); //Clear previous game on SQL server
+                sql.createGame();
+                player.setPlayerId(1);
+                sql.addPlayer(player);
+                isConnected = true;
+                setState(PRE_GAME);
+            } else {
+                if (currentGameState == PRE_GAME) {
+                    int confirm = JOptionPane.showOptionDialog(
+                            null, "A game is already being created, to you want to join it ?",
+                            "Join the game ?", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, null, null);
+                    if (confirm == 0) {
+                        initialiseGame(false);
+                    } else {
+                        sql.disconnect();
+                    }
+                } else { // A game is already on
+                    int confirm = JOptionPane.showOptionDialog(
+                            null, "A game is already on, do you want to spectate it ?",
+                            "Spectate the game ?", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, null, null);
+                    if (confirm == 0) {
+                        otherPlayersList = sql.getPlayerList();
+                        player.setHealth(0);
+                        setState(IN_GAME);
+                        isConnected = true;
+                    } else {
+                        sql.disconnect();
+                    }
+                }
             }
-            sql.addPlayer(player);
+        } else { // Try to join a Pre_game
+            if (currentGameState == PRE_GAME) {
+                otherPlayersList = sql.getPlayerList();
+                player.setPlayerId(1); // 0 means "null", ids start at 1
+                while (otherPlayersList.contains(player)) {
+                    player.incrementId();
+                }
+                sql.addPlayer(player);
+                isConnected = true;
+                setState(PRE_GAME);
+            } else {
+                if(sql.getPlayerList().isEmpty()){ // No game created
+                    int confirm = JOptionPane.showOptionDialog(
+                            null, "There is no game to join, do you want to create one ?",
+                            "Create the game ?", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, null, null);
+                    if (confirm == 0) {
+                        initialiseGame(true);
+                    } else {
+                        sql.disconnect();
+                    }
+                } else { // game already started
+                    int confirm = JOptionPane.showOptionDialog(
+                            null, "A game is already on, do you want to spectate it ?",
+                            "Spectate the game ?", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, null, null);
+                    if (confirm == 0) {
+                        otherPlayersList = sql.getPlayerList();
+                        player.setHealth(0);
+                        setState(IN_GAME);
+                        isConnected = true;
+                    } else {
+                        sql.disconnect();
+                    }
+                }
+            }
         }
-        player.initializeBulletList(sql);
     }
     
     public boolean isConnected(){
@@ -584,20 +658,34 @@ public void paint(Graphics g) {
     }
     
     public void endGame() {
+        int formerGameState = gameState;
+        setState(MAIN_MENU);
         if (isConnected){
-            sql.removePlayer(player);
+            if(!player.isPlayerDead()){
+                sql.removePlayer(player);
+            }
+            if(sql.getPlayerList().isEmpty() || (isHost && formerGameState==PRE_GAME) ){
+                sql.clearTable();
+            }
             sql.disconnect();
         }
         isConnected = false;
-        setState(MAIN_MENU);
     }
     
     public void preGameUpdate() {
         sql.updatePlayerList(player, otherPlayersList);
         if(!isHost){
             int newGameState = sql.getGameState();
-            if (newGameState!=gameState){
-                setState(newGameState);
+            if (newGameState==IN_GAME){
+                setState(IN_GAME);
+            } else {
+                if(newGameState==-1){ // Host cancelled the game
+                    JOptionPane.showOptionDialog(
+                        null, "The host cancelled this game",
+                        "Game was cancelled", JOptionPane.OK_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                    endGame();
+                }
             }
         }
     }

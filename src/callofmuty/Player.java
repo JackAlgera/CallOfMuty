@@ -69,6 +69,7 @@ public class Player {
         name = "Username";
         playerState = 0; 
         hurtPlayers = new ArrayList<Player>();
+        bulletList = new ArrayList<>();
     }
 
     public String getName(){
@@ -77,6 +78,14 @@ public class Player {
     
     public ArrayList<Player> getHurtPlayers(){
         return hurtPlayers;
+    }
+
+    public void addPlayer(SQLManager sql){
+        bulletList = new ArrayList<Bullet>();
+        for (int i = 1; i<=initialBulletNumber; i++){ //bulletId starts at 1, 0 is SQL's "null"
+            bulletList.add(new Bullet(playerId, i));
+        }
+        sql.addPlayer(this);
     }
     
     public void resetHurtPlayers(){
@@ -360,13 +369,5 @@ public class Player {
             test = playerId == ((Player) object).getPlayerId();
         }
         return test;
-    }
-    
-    public void initializeBulletList(SQLManager sql){
-        bulletList = new ArrayList<Bullet>();
-        for (int i = 1; i<=initialBulletNumber; i++){ //bulletId starts at 1, 0 is SQL's "null"
-            bulletList.add(new Bullet(playerId, i));
-            sql.addBullet(new Bullet(playerId, i));
-        }
     }
 }
