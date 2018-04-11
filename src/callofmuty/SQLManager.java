@@ -15,7 +15,7 @@ public class SQLManager {
 /* SQL table structure
     bullet : idBullet (int) ; idPlayer (int) ; posX (int); posY (int); active (boolean)
     grid : x (int) ; y (int) ; tileType (int) ; grid (varchar)
-    players : id (int) ; name (String(50)) ; playerHp (double) ; posX (int) ; posY (int) : skinId (int) ; statePlayer (int);
+    players : id (int) ; name (String(50)) ; playerHp (double) ; posX (int) ; posY (int) : skinId (int) ; playerState (int);
     game : id (int)(useless, primaryKey), gameState (int)
 */
     public SQLManager(){         
@@ -27,41 +27,43 @@ public class SQLManager {
     }
     
     public void uploadPlayerAndBullets(Player player) { //updates player's position & bullets + hurt players' health
-        PreparedStatement requete;
-        String xStatement = "";
-        String yStatement = "";
-        String isActiveStatement = "";
-        String healthStatement = "";
-        ArrayList<Bullet> bulletList = player.getBulletList();
-        for (Bullet bullet : bulletList) {
-            if (bullet.isActive()) {
-                xStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosX() + " \n";
-                yStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosY() + " \n";
-                isActiveStatement += "WHEN " + bullet.getBulletId() + " THEN 1 \n";
-            }
-        }
-        for (Player hurtPlayer : player.getHurtPlayers()) {
-            healthStatement += "WHEN " + hurtPlayer.getPlayerId() + " THEN players.playerHp - " + hurtPlayer.getPlayerHealth() + " \n";
-        }
-        player.resetHurtPlayers();
-        try {
-            if (xStatement.isEmpty()) { //there are no bullets to update
-                if (healthStatement.isEmpty()) { //there are no players to hurt
-                    requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.isActive = 0 WHERE players.id = " + player.getPlayerId());
-                } else { //there are players to hurt
-                    requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
-                }
-            } else { //there are bullets to update
-                if (healthStatement.isEmpty()) { //there are no players to hurt
-                    requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.posX = CASE bullet.idBullet " + xStatement + " ELSE 0 END, bullet.posY = CASE bullet.idBullet " + yStatement + " ELSE 0 END, bullet.isActive = CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END WHERE players.id = " + player.getPlayerId());
-                } else { //there are players to hurt
-                    requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET bullet.posX = CASE players.id WHEN "+player.getPlayerId()+" THEN CASE bullet.idBullet " + xStatement + " ELSE 0 END ELSE bullet.posX END, bullet.posY = CASE players.id WHEN "+player.getPlayerId()+" THEN CASE bullet.idBullet " + yStatement + " ELSE 0 END ELSE bullet.posY END, bullet.isActive = CASE players.id WHEN "+player.getPlayerId()+" THEN CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END ELSE bullet.isActive END, players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
+        if (!player.isPlayerDead()) {
+            PreparedStatement requete;
+            String xStatement = "";
+            String yStatement = "";
+            String isActiveStatement = "";
+            String healthStatement = "";
+            ArrayList<Bullet> bulletList = player.getBulletList();
+            for (Bullet bullet : bulletList) {
+                if (bullet.isActive()) {
+                    xStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosX() + " \n";
+                    yStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosY() + " \n";
+                    isActiveStatement += "WHEN " + bullet.getBulletId() + " THEN 1 \n";
                 }
             }
-            requete.executeUpdate();
-            requete.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            for (Player hurtPlayer : player.getHurtPlayers()) {
+                healthStatement += "WHEN " + hurtPlayer.getPlayerId() + " THEN players.playerHp - " + hurtPlayer.getPlayerHealth() + " \n";
+            }
+            player.resetHurtPlayers();
+            try {
+                if (xStatement.isEmpty()) { //there are no bullets to update
+                    if (healthStatement.isEmpty()) { //there are no players to hurt
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.isActive = 0 WHERE players.id = " + player.getPlayerId());
+                    } else { //there are players to hurt
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
+                    }
+                } else { //there are bullets to update
+                    if (healthStatement.isEmpty()) { //there are no players to hurt
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.posX = CASE bullet.idBullet " + xStatement + " ELSE 0 END, bullet.posY = CASE bullet.idBullet " + yStatement + " ELSE 0 END, bullet.isActive = CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END WHERE players.id = " + player.getPlayerId());
+                    } else { //there are players to hurt
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET bullet.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + xStatement + " ELSE 0 END ELSE bullet.posX END, bullet.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + yStatement + " ELSE 0 END ELSE bullet.posY END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END ELSE bullet.isActive END, players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
+                    }
+                }
+                requete.executeUpdate();
+                requete.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
@@ -74,8 +76,9 @@ public class SQLManager {
         int bulletIndex;
         double[] position = new double[2];
         ArrayList<Bullet> updatedBullets = new ArrayList<>(); //saves which bullets were updated, others will be erased
+        ArrayList<Player> updatedPlayers = new ArrayList<>(); //same
         try {
-            requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, bullet.idBullet, bullet.posX, bullet.posY FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer AND bullet.isActive=1 AND NOT players.id="+ player.getPlayerId() +" ORDER BY players.id");
+            requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, bullet.idBullet, bullet.posX, bullet.posY FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer AND bullet.isActive=1 AND NOT players.id="+ player.getPlayerId() +" WHERE players.playerState = "+ Player.PLAYING +" ORDER BY players.id");
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
                 if (otherPlayersList.contains(new Player(resultat.getInt("players.id")))) { // check if the player is "known"
@@ -88,6 +91,7 @@ public class SQLManager {
                         position[1] = resultat.getInt("players.posY");
                         otherPlayersList.get(playerIndex).setPosition(position);
                         otherPlayersList.get(playerIndex).setHealth(resultat.getDouble("players.playerHp"));
+                        updatedPlayers.add(new Player(playerId));
                         // update bullet
                         bulletId = resultat.getInt("bullet.idBullet");
                         if (bulletId > 0) { // 0 means null
@@ -119,6 +123,9 @@ public class SQLManager {
                 } else {
                     if (resultat.getInt("players.id")==player.getPlayerId()){ // update local player's health
                         player.setHealth(resultat.getDouble("players.playerHp"));
+                        if (player.isPlayerDead()){
+                            setPlayerDead(player);
+                        }
                     } else { // if player was not "known" : isn't supposed to happen, deal with it here if it does
                         
                     }
@@ -136,6 +143,13 @@ public class SQLManager {
                 index++;
             }
         }
+        while (index<otherPlayersList.size()){ //remove players that were not updated (ie died)
+            if (!updatedPlayers.contains(otherPlayersList.get(index))){
+                otherPlayersList.remove(index);
+            } else {
+                index++;
+            }
+        }
     }
     
     public void addPlayer(Player player){
@@ -149,7 +163,7 @@ public class SQLManager {
             requete.setInt(4, (int) player.getPosX());
             requete.setInt(5, (int) player.getPosY());
             requete.setInt(6, player.getSkinIndex());
-            requete.setInt(7, 0);
+            requete.setInt(7, Player.PLAYING);
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {
@@ -157,23 +171,10 @@ public class SQLManager {
         }
     }
     
-    public void removePlayer(Player player){
-        PreparedStatement requete;
-        
+    public void removePlayer(Player player){ //removes a player and his bullets from database
+        PreparedStatement requete;        
         try {
-            requete = connexion.prepareStatement("DELETE FROM players WHERE id=" + player.getPlayerId());
-            requete.executeUpdate();
-            requete.close();  
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-    
-    public void removeBullet(Bullet bullet){
-        PreparedStatement requete;
-        
-        try {
-            requete = connexion.prepareStatement("DELETE FROM bullet WHERE idBullet=" + bullet.getBulletId());
+            requete = connexion.prepareStatement("DELETE players, bullet FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer WHERE players.id=" + player.getPlayerId());
             requete.executeUpdate();
             requete.close();  
         } catch (SQLException ex) {
@@ -183,7 +184,6 @@ public class SQLManager {
     
     public void clearTable(){
         PreparedStatement requete;
-        
         try {
             requete = connexion.prepareStatement("DELETE FROM players" );
             requete.executeUpdate();
@@ -205,16 +205,26 @@ public class SQLManager {
         }
     }
     
+    public void setPlayerDead(Player player){               
+        PreparedStatement requete;
+        try {
+            requete = connexion.prepareStatement("UPDATE players SET playerState = " + Player.DEAD + " WHERE id = "+player.getPlayerId());
+            requete.executeUpdate();
+            requete.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void setGameState(int gameState){               
         PreparedStatement requete;
-        
         try {
             requete = connexion.prepareStatement("UPDATE game SET gameState = "+gameState);
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
-        }    
+        }
     }
     
     public int getGameState(){               
@@ -293,7 +303,7 @@ public class SQLManager {
                 newPlayer.setPlayerId(resultat.getInt("id"));
                 newPlayer.setSkin(resultat.getInt("skinId"));
                 newPlayer.setName(resultat.getString("name"));
-                newPlayer.setPlayerState(resultat.getInt("statePlayer"));
+                newPlayer.setPlayerState(resultat.getInt("playerState"));
                 newPlayer.setHealth(resultat.getDouble("playerHp"));
                 players.add(newPlayer);
             }
@@ -320,11 +330,11 @@ public class SQLManager {
                     newPlayer = otherPlayersList.get(index);
                     newPlayer.setSkin(resultat.getInt("skinId"));
                     newPlayer.setName(resultat.getString("name"));
-                    newPlayer.setPlayerState(resultat.getInt("statePlayer"));
+                    newPlayer.setPlayerState(resultat.getInt("playerState"));
                 } else { // Player was not yet in the list
                     newPlayer.setSkin(resultat.getInt("skinId"));
                     newPlayer.setName(resultat.getString("name"));
-                    newPlayer.setPlayerState(resultat.getInt("statePlayer"));
+                    newPlayer.setPlayerState(resultat.getInt("playerState"));
                     newPlayer.setHealth(resultat.getDouble("playerHp"));
                     otherPlayersList.add(newPlayer);
                 }

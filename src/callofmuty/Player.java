@@ -12,6 +12,7 @@ public class Player {
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     private static double maxHealth = 100.0;
     private static int initialBulletNumber = 5;
+    public static int PLAYING = 1,DEAD = 2;
     
     private int playerId, playerWidth, playerHeight, facedDirection, playerState;
     private Image image, hpBar;
@@ -27,12 +28,7 @@ public class Player {
     private ArrayList<Player> hurtPlayers;
     
     private ArrayList<Bullet> bulletList;
-
-    public ArrayList<Bullet> getBulletList() {
-        return bulletList;
-    }
     private Guns Gun;
-
         
     public Player(double x,double y){
         isIdle = true;
@@ -93,14 +89,18 @@ public class Player {
 
     public void setHealth(double health) {
         this.health = health;
-        if (health>0){
-            isDead = false;
+        if (health<=0){
+            isDead = true;
         }
         if (health < 0.15*maxHealth){
             hpBar = lowHealthBar;
         } else {
             hpBar = normalHealthBar;
         }
+    }
+    
+    public ArrayList<Bullet> getBulletList() {
+        return bulletList;
     }
 
     public void setName(String name) {
@@ -131,12 +131,14 @@ public class Player {
         posY += speed[1]*dT;
     }
     
-    public void draw(Graphics2D g){
-        //g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
-        g.drawImage(image,(int) posX+playerWidth/2-image.getWidth(null),(int) posY+playerHeight/2-image.getHeight(null), image.getWidth(null)*2, image.getHeight(null)*2, null);
-        g.drawImage(hpBar,(int) posX+playerWidth/2-image.getWidth(null),(int) posY+playerHeight/2-image.getHeight(null)-12, image.getWidth(null)*2, image.getHeight(null)*2, null);
-        g.setColor(Color.RED);
-        g.fillRect((int) posX+playerWidth/2-image.getWidth(null)+12, (int) posY+playerHeight/2-image.getHeight(null)-6,(int)((int)(image.getWidth(null)*2-24)*health/maxHealth), 2);
+    public void draw(Graphics2D g) {
+        if (!isDead) {
+            //g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
+            g.drawImage(image, (int) posX + playerWidth / 2 - image.getWidth(null), (int) posY + playerHeight / 2 - image.getHeight(null), image.getWidth(null) * 2, image.getHeight(null) * 2, null);
+            g.drawImage(hpBar, (int) posX + playerWidth / 2 - image.getWidth(null), (int) posY + playerHeight / 2 - image.getHeight(null) - 12, image.getWidth(null) * 2, image.getHeight(null) * 2, null);
+            g.setColor(Color.RED);
+            g.fillRect((int) posX + playerWidth / 2 - image.getWidth(null) + 12, (int) posY + playerHeight / 2 - image.getHeight(null) - 6, (int) ((int) (image.getWidth(null) * 2 - 24) * health / maxHealth), 2);
+        }
     }
     
     public void drawBullets(Graphics2D g,int texturesize) {
@@ -228,18 +230,7 @@ public class Player {
 //            {
 //                directionOfTravel[1] = 0;
 //            }
-        } else {
-            speed[0]=0;
-            speed[1]=0;
         }
-//        if (Math.abs(speed[0]) <= 0.000000001 && Math.abs(speed[1]) <= 0.000000001)
-//        {
-//            isIdle = true;
-//        }
-//        else
-//        {
-//            isIdle = false;
-//        }
     }
 
     public void setFacedDirection(int facedDirection) {
