@@ -6,7 +6,7 @@ import java.awt.Image;
 import java.util.ArrayList;
 
 public class Bullet {
-    public double posX, posY, speed;
+    public double posX, posY, speed, damage;
     public int ballWidth, ballHeight, playerId, bulletId;
     public double[] direction;
     public ArrayList<Image> animationImages = new ArrayList<Image>();
@@ -23,6 +23,7 @@ public class Bullet {
     }
     
     public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId){
+        damage = 22.0;
         this.posX = posX;
         this.posY = posY;
         ballWidth = 10;
@@ -47,6 +48,10 @@ public class Bullet {
     
     public boolean isActive(){
         return isActive;
+    }
+    
+    public double getDamage(){
+        return damage;
     }
     
     public void update(double dT) {

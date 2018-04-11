@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 
 public class Player {
@@ -25,6 +24,7 @@ public class Player {
     private String name;
     public ArrayList<Image> animationImages = new ArrayList<Image>();
     public Animation playerAnimation;
+    private ArrayList<Player> hurtPlayers;
     
     private ArrayList<Bullet> bulletList;
 
@@ -72,10 +72,19 @@ public class Player {
         hpBar = normalHealthBar;
         name = "Username";
         playerState = 0; 
+        hurtPlayers = new ArrayList<Player>();
     }
 
     public String getName(){
         return name;
+    }
+    
+    public ArrayList<Player> getHurtPlayers(){
+        return hurtPlayers;
+    }
+    
+    public void resetHurtPlayers(){
+        hurtPlayers = new ArrayList<Player>();
     }
     
     public void setPlayerState(int playerState) {
@@ -84,6 +93,14 @@ public class Player {
 
     public void setHealth(double health) {
         this.health = health;
+        if (health>0){
+            isDead = false;
+        }
+        if (health < 0.15*maxHealth){
+            hpBar = lowHealthBar;
+        } else {
+            hpBar = normalHealthBar;
+        }
     }
 
     public void setName(String name) {
@@ -119,7 +136,7 @@ public class Player {
         g.drawImage(image,(int) posX+playerWidth/2-image.getWidth(null),(int) posY+playerHeight/2-image.getHeight(null), image.getWidth(null)*2, image.getHeight(null)*2, null);
         g.drawImage(hpBar,(int) posX+playerWidth/2-image.getWidth(null),(int) posY+playerHeight/2-image.getHeight(null)-12, image.getWidth(null)*2, image.getHeight(null)*2, null);
         g.setColor(Color.RED);
-        g.fillRect((int) posX+playerWidth/2-image.getWidth(null)+12, (int) posY+playerHeight/2-image.getHeight(null)-6,(int)((int)(image.getWidth(null)*2-6)*health/maxHealth)-18, 2);
+        g.fillRect((int) posX+playerWidth/2-image.getWidth(null)+12, (int) posY+playerHeight/2-image.getHeight(null)-6,(int)((int)(image.getWidth(null)*2-24)*health/maxHealth), 2);
     }
     
     public void drawBullets(Graphics2D g,int texturesize) {
@@ -276,30 +293,6 @@ public class Player {
         return this.isDead;
     }
     
-    void damagePlayer(double damage){
-        if (health - damage <= 0){
-            health = 0;
-            isDead = true;
-        }else{
-            health -= damage;
-            if(health < 0.1*maxHealth){
-                hpBar = lowHealthBar;
-            }
-        }
-    }
-    
-    void setPlayerHealth(double health){
-        this.health = health;
-        if (health>0){
-            isDead = false;
-        }
-        if (health < 0.1*maxHealth){
-            hpBar = lowHealthBar;
-        } else {
-            hpBar = normalHealthBar;
-        }
-    }
-    
     double getPlayerHealth(){
         return this.health;
     }       
@@ -339,6 +332,7 @@ public class Player {
     
     public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList) {
         Bullet bullet;
+        Player hurtPlayer;
         for (int i = 0; i<bulletList.size(); i++) {
             bullet = bulletList.get(i);
             if (bullet.isActive()) {
@@ -349,6 +343,9 @@ public class Player {
                     for (Player otherPlayer : otherPlayersList) {
                         if (Tools.isPlayerHit(otherPlayer, bullet)) {
                             bullet.setActive(false);
+                            hurtPlayer = new Player(otherPlayer.getPlayerId());
+                            hurtPlayer.setHealth(bullet.getDamage());
+                            hurtPlayers.add(hurtPlayer);
                         }
                     }
                 }

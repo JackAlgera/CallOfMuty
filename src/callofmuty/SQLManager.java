@@ -26,40 +26,46 @@ public class SQLManager {
         }
     }
     
-    public void uploadPlayerAndBullets(Player player){
+    public void uploadPlayerAndBullets(Player player) { //updates player's position & bullets + hurt players' health
         PreparedStatement requete;
         String xStatement = "";
         String yStatement = "";
         String isActiveStatement = "";
+        String healthStatement = "";
         ArrayList<Bullet> bulletList = player.getBulletList();
         for (Bullet bullet : bulletList) {
             if (bullet.isActive()) {
-                xStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int)bullet.getPosX() + " \n";
-                yStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int)bullet.getPosY() + " \n";
+                xStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosX() + " \n";
+                yStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosY() + " \n";
                 isActiveStatement += "WHEN " + bullet.getBulletId() + " THEN 1 \n";
             }
         }
-        if (!xStatement.isEmpty()) {
-            try {
-                requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.posX = CASE bullet.idBullet " + xStatement + " ELSE 0 END, bullet.posY = CASE bullet.idBullet " + yStatement + " ELSE 0 END, bullet.isActive = CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END WHERE players.id = " + player.getPlayerId());
-                requete.executeUpdate();
-                requete.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            try {
-                requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.isActive = 0 WHERE players.id = " + player.getPlayerId());
-                requete.executeUpdate();
-                requete.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        for (Player hurtPlayer : player.getHurtPlayers()) {
+            healthStatement += "WHEN " + hurtPlayer.getPlayerId() + " THEN players.playerHp - " + hurtPlayer.getPlayerHealth() + " \n";
         }
-        
+        player.resetHurtPlayers();
+        try {
+            if (xStatement.isEmpty()) { //there are no bullets to update
+                if (healthStatement.isEmpty()) { //there are no players to hurt
+                    requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.isActive = 0 WHERE players.id = " + player.getPlayerId());
+                } else { //there are players to hurt
+                    requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
+                }
+            } else { //there are bullets to update
+                if (healthStatement.isEmpty()) { //there are no players to hurt
+                    requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.posX = CASE bullet.idBullet " + xStatement + " ELSE 0 END, bullet.posY = CASE bullet.idBullet " + yStatement + " ELSE 0 END, bullet.isActive = CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END WHERE players.id = " + player.getPlayerId());
+                } else { //there are players to hurt
+                    requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET bullet.posX = CASE players.id WHEN "+player.getPlayerId()+" THEN CASE bullet.idBullet " + xStatement + " ELSE 0 END ELSE bullet.posX END, bullet.posY = CASE players.id WHEN "+player.getPlayerId()+" THEN CASE bullet.idBullet " + yStatement + " ELSE 0 END ELSE bullet.posY END, bullet.isActive = CASE players.id WHEN "+player.getPlayerId()+" THEN CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END ELSE bullet.isActive END, players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
+                }
+            }
+            requete.executeUpdate();
+            requete.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-    // Downloads other players' positions, health and bullet positions
+    // Downloads other players' positions, health and bullet positions and local player's health
     public void downloadPlayersAndBullets(Player player, ArrayList<Player> otherPlayersList, ArrayList<Bullet> otherBulletsList) {
         PreparedStatement requete;
         int playerId = -1;
@@ -110,7 +116,12 @@ public class SQLManager {
                             }
                         }
                     }
-                } else { // if player was not "known" : isn't supposed to happen, deal with it here if it does
+                } else {
+                    if (resultat.getInt("players.id")==player.getPlayerId()){ // update local player's health
+                        player.setHealth(resultat.getDouble("players.playerHp"));
+                    } else { // if player was not "known" : isn't supposed to happen, deal with it here if it does
+                        
+                    }
                 }
             }
             requete.close();
