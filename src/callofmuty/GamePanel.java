@@ -14,6 +14,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -351,10 +353,22 @@ public class GamePanel extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser("");
 	
-                if (fileChooser.showOpenDialog(null)== 
-                    JFileChooser.APPROVE_OPTION) {
-                    String adresse = fileChooser.getSelectedFile().getPath() + ".txt";
-                    Tools.mapToTextFile(map, adresse);
+                if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+                    String address = fileChooser.getSelectedFile().getPath();
+                    if (!address.endsWith(".txt")){
+                        address+=".txt";
+                    }
+                    if (Files.exists(Paths.get(address))) {
+                        int confirm = JOptionPane.showOptionDialog(
+                                null, address + " already exists, do you want to replace it ?",
+                                "File already exists", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE, null, null, null);
+                        if (confirm == 0) {
+                            Tools.mapToTextFile(map, address);
+                        }
+                    } else {
+                        Tools.mapToTextFile(map, address);
+                    }
                 }
             }
         });
@@ -366,7 +380,7 @@ public class GamePanel extends JPanel{
                 if (fileChooser.showOpenDialog(null)== 
                     JFileChooser.APPROVE_OPTION) {
                     String adresse = fileChooser.getSelectedFile().getPath();
-                    map = new Map(Tools.textFileToIntMap(adresse), textureSize);
+                    map = Tools.textFileToMap(adresse, textureSize);
                     map.setDrawingParameters(MAP_EDITOR);
                 }
                 repaint();

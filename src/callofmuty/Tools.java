@@ -38,21 +38,23 @@ public class Tools {
         return new ImageIcon(image);
     }
    
-    public static int[][] textFileToIntMap(String address){
+    public static Map textFileToMap(String address, int textureSize){
         int [][] intMap = null;
+        int[] startingTile = null;
         try {
             BufferedReader file = new BufferedReader (new FileReader(address));
             String[] line = file.readLine().split(" ");
             file.close();
             int mapWidth, mapHeight;
-            if (line.length > 1) {
+            if (line.length > 3) {
                 mapWidth = Integer.parseInt(line[0]);
                 mapHeight = Integer.parseInt(line[1]);
+                startingTile = new int[]{Integer.parseInt(line[2]),Integer.parseInt(line[3])};
                 intMap = new int[mapWidth][mapHeight];
-                if (line.length == 2 + mapWidth * mapHeight) {
+                if (line.length == 4 + mapWidth * mapHeight) {
                     for (int i = 0; i < mapWidth; i++) {
                         for (int j = 0; j < mapHeight; j++) {
-                            intMap[i][j] = Integer.parseInt(line[i*mapHeight + j+2]);
+                            intMap[i][j] = Integer.parseInt(line[i*mapHeight + j+4]);
                         }
                     }
                 } else {
@@ -66,14 +68,16 @@ public class Tools {
             e.printStackTrace();
             System.out.println("Cannot load the map : unreadable file");
         }
-        return intMap;
+        Map map = new Map(intMap, textureSize);
+        map.setStartTile(startingTile);
+        return map;
     }
     
     public static void mapToTextFile(Map map, String address){
         int[][] intMap = map.getMap();
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(address));
-            writer.write("" + map.getMapWidth()+ " " + map.getMapHeight());
+            writer.write("" + map.getMapWidth()+ " " + map.getMapHeight() + " " + map.getStartTile()[0]+ " " + map.getStartTile()[1]);
             for (int i = 0; i < map.getMapWidth(); i++) {
                 for (int j = 0; j < map.getMapHeight(); j++) {
                     writer.write(" "+intMap[i][j]);
