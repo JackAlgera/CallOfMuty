@@ -583,9 +583,11 @@ public void paint(Graphics g) {
         if (isHost) { // Try to create a game
             if (sql.getPlayerList().isEmpty()) { // No game is currently on
                 sql.clearTable(); //Clear previous game on SQL server
-                sql.createGame();
+                sql.createGame(map);
                 player.setPlayerId(1);
-                sql.addPlayer(player);
+                player.setMaxHealth();
+                player.setPosition(map.getStartTile());
+                player.addPlayer(sql);
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -607,6 +609,7 @@ public void paint(Graphics g) {
                     if (confirm == 0) {
                         otherPlayersList = sql.getPlayerList();
                         player.setHealth(0);
+                        map = sql.getMap(textureSize);
                         setState(IN_GAME);
                         isConnected = true;
                     } else {
@@ -617,11 +620,14 @@ public void paint(Graphics g) {
         } else { // Try to join a Pre_game
             if (currentGameState == PRE_GAME) {
                 otherPlayersList = sql.getPlayerList();
+                player.setMaxHealth();
                 player.setPlayerId(1); // 0 means "null", ids start at 1
                 while (otherPlayersList.contains(player)) {
                     player.incrementId();
                 }
-                sql.addPlayer(player);
+                player.addPlayer(sql);
+                map = sql.getMap(textureSize);
+                player.setPosition(map.getStartTile());
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -643,6 +649,7 @@ public void paint(Graphics g) {
                     if (confirm == 0) {
                         otherPlayersList = sql.getPlayerList();
                         player.setHealth(0);
+                        map = sql.getMap(textureSize);
                         setState(IN_GAME);
                         isConnected = true;
                     } else {

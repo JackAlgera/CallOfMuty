@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,8 +14,8 @@ public class SQLManager {
     private Connection connexion;
 
 /* SQL table structure
-    bullet : idBullet (int) ; idPlayer (int) ; posX (int); posY (int); active (boolean)
-    grid : x (int) ; y (int) ; tileType (int) ; grid (varchar)
+    bullet : idBullet (int) ; idPlayer (int) ; posX (int); posY (int); active (tinyint)
+    grid : x (int) ; y (int) ; tileType (int) ; startingTile (tinyint)
     players : id (int) ; name (String(50)) ; playerHp (double) ; posX (int) ; posY (int) : skinId (int) ; playerState (int);
     game : id (int)(useless, primaryKey), gameState (int)
 */
@@ -224,7 +225,66 @@ public class SQLManager {
         }
     }
     
-    public void createGame(){
+    public void createMap(Map map){
+        PreparedStatement requete;
+        String values = "";
+        int[][] intMap = map.getMap();
+        int[] startTile = map.getStartTile();
+        if (Arrays.equals(startTile, new int[]{0, 0})) {
+            values += "(0,0," + intMap[0][0] + ",1)";
+        } else {
+            values += "(0,0," + intMap[0][0] + ",0)";
+        }
+        for (int i = 0 ; i<map.getMapWidth() ; i++){
+            for (int j = 0; j<map.getMapHeight(); j++){
+                if (i != 0 || j != 0) {
+                    if (Arrays.equals(startTile, new int[]{i, j})) {
+                        values += ", (" + i + "," + j + "," + intMap[i][j] + ",1)";
+                    } else {
+                        values += ", (" + i + "," + j + "," + intMap[i][j] + ",0)";
+                    }
+                }
+            }
+        }
+        try {
+            requete = connexion.prepareStatement("INSERT INTO grid VALUES " + values);
+            requete.executeUpdate();
+            requete.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public Map getMap(int textureSize){
+        Map map = null;
+        int[] startingTile = new int[]{1,1};
+        PreparedStatement requete;
+        try {
+            requete = connexion.prepareStatement("SELECT * FROM grid ORDER BY i DESC, j DESC");
+            ResultSet resultat = requete.executeQuery();
+            if(resultat.next()){ // first result is used to set map dimensions, hence the "desc" order
+                int[][] intMap = new int[resultat.getInt("i")+1][resultat.getInt("j")+1];
+                intMap[resultat.getInt("i")][resultat.getInt("j")] = resultat.getInt("tileType");
+                if (resultat.getInt("tileType")==1){
+                    startingTile = new int[]{resultat.getInt("i"),resultat.getInt("j")};
+                }
+                while (resultat.next()) {
+                    intMap[resultat.getInt("i")][resultat.getInt("j")] = resultat.getInt("tileType");
+                    if (resultat.getInt("tileType") == 1) {
+                        startingTile = new int[]{resultat.getInt("i"), resultat.getInt("j")};
+                    }
+                }
+                map = new Map(intMap, textureSize);
+                map.setStartTile(startingTile);
+            }
+            requete.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return map;
+    }
+    
+    public void createGame(Map map){
         PreparedStatement requete;
         try {
             requete = connexion.prepareStatement("INSERT INTO game VALUES (1,"+ GamePanel.PRE_GAME +")");
@@ -233,6 +293,7 @@ public class SQLManager {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        createMap(map);
     }
     
     public void setPlayerDead(Player player){               

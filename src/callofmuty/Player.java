@@ -28,7 +28,7 @@ public class Player {
     private ArrayList<Player> hurtPlayers;
     
     private ArrayList<Bullet> bulletList;
-    private Guns Gun;
+    private Gun Gun;
         
     public Player(double x,double y){
         isIdle = true;
@@ -79,6 +79,10 @@ public class Player {
     public ArrayList<Player> getHurtPlayers(){
         return hurtPlayers;
     }
+    
+    public void setMaxHealth(){
+        health = maxHealth;
+    }
 
     public void addPlayer(SQLManager sql){
         bulletList = new ArrayList<Bullet>();
@@ -86,6 +90,7 @@ public class Player {
             bulletList.add(new Bullet(playerId, i));
         }
         sql.addPlayer(this);
+        sql.addBulletList(bulletList);
     }
     
     public void resetHurtPlayers(){
@@ -250,60 +255,68 @@ public class Player {
         return playerAnimation;
     }
     
-    void setDirectionOfTravel(int axis, int direction)
+    public void setDirectionOfTravel(int axis, int direction)
     {
         this.directionOfTravel[axis] = direction;
     }
     
-    void reverseAcceleration(int axis)
+    public void reverseAcceleration(int axis)
     {
         this.acceleration[axis] = -this.acceleration[axis];
     }
     
-    void setAcceleration(int axis, double accelerationSign)
+    public void setAcceleration(int axis, double accelerationSign)
     {
         this.acceleration[axis] = accelerationSign*this.accelerationValue;
     }
     
-    void setPosition(double[] newPos)
-    {
-        posX = newPos[0];
-        posY = newPos[1];
+    public void setPosition(double[] newPosition){
+        if(newPosition.length==2){
+            posX = newPosition[0];
+            posY = newPosition[1];
+        }
     }
     
-    void setPlayerId(int playerId)
+    public void setPosition(int[] newPosition){
+        if(newPosition.length==2){
+            posX = (double)newPosition[0];
+            posY = (double)newPosition[1];
+        }
+    }
+    
+    public void setPlayerId(int playerId)
     {
         this.playerId = playerId;
     }
     
-    int getPlayerId()
+    public int getPlayerId()
     {
         return this.playerId;
     }
     
-    double getPosX(){
+    public double getPosX(){
         return this.posX ;
     }
     
-    double getPosY(){
+    public double getPosY(){
         return this.posY;
     }
     
-    boolean isPlayerDead(){
+    public boolean isPlayerDead(){
         return this.isDead;
     }
     
-    double getPlayerHealth(){
+    public double getPlayerHealth(){
         return this.health;
     }       
     
-    void chooseSkin(int row, int column){
+    public void chooseSkin(int row, int column){
         this.skin[0]=row;
         this.skin[1]=column;
         this.image = Tools.selectTile(Tools.playerTileset, this.skin[0], this.skin[1]);
     }
     
-    void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql){
+    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql){
         if (!this.isDead) {
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;

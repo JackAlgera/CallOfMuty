@@ -6,7 +6,7 @@ public class Map{
     
     private int[][] map;
     private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
-    private static TileType grass = new TileType(true,1,1);
+    private int[] startTile;
     private static TileType dirt = new TileType(true,1,1);
     private static TileType woodt= new TileType(false,1,12), woodb= new TileType(false,3,12), woodl= new TileType(false,2,11), woodr= new TileType(false,2,13), woodtl= new TileType(false,1,11), woodbl= new TileType(false,3,11), woodtr= new TileType(false,1,13), woodbr= new TileType(false,3,13);
     private static TileType box = new TileType(false,2,6);
@@ -20,6 +20,16 @@ public class Map{
         yPos=0;
         drawWidth = mapWidth*textureSize;
         drawHeight = mapHeight*textureSize;
+    }
+    
+    public void setStartTile(int[] startTile){
+        if (startTile.length==2){
+            this.startTile = startTile;
+        }
+    }
+    
+    public int[] getStartTile(){
+        return startTile;
     }
     
     public int getMapHeight(){
@@ -88,6 +98,7 @@ public class Map{
         map[mapWidth-1][0] = 7;
         map[mapWidth-1][mapHeight-1] = 8;
         map[4][1] = 9 ;map[4][2] = 9;map[1][4] = 9;map[2][4] = 9;map[4][6] = 9;map[4][7] = 9;
+        startTile = new int[]{2,2};
     }
     
     public TileType getTile(double x, double y){
