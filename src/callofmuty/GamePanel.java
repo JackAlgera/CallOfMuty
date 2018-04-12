@@ -1,5 +1,6 @@
 package callofmuty;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -48,7 +49,7 @@ public class GamePanel extends JPanel{
     private ArrayList <Player> otherPlayersList;
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState;
     private ArrayList<Integer> pressedButtons, releasedButtons;
-    private boolean isHost;
+    private boolean isHost, setStartingTile;
     private long playerListUpdateTime;
     private SQLManager sql; 
     private boolean isConnected;
@@ -103,10 +104,16 @@ public class GamePanel extends JPanel{
                     break;
                 case MAP_EDITOR:
                     int[] mapClicked = map.clickedTile(e.getX(), e.getY());
-                    if (mapClicked[0]>-1){
-                        map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
-                    } else {
-                        tileSelector.clickedTile(e.getX(), e.getY());
+                    if (mapClicked[0]>-1){ // map was clicked
+                        if(!setStartingTile){
+                            map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
+                        } else {
+                            map.setStartTile(new int[]{mapClicked[1], mapClicked[2]});
+                        }
+                    } else { // check if tileSelector was clicked and select the tile if so
+                        if(tileSelector.clickedTile(e.getX(), e.getY())[0]>-1){
+                            setStartingTile = false;
+                        }
                     }
                     repaint();
                     break;
@@ -329,6 +336,17 @@ public class GamePanel extends JPanel{
         add(doneButton);
         MEbuttons.add(doneButton);
         
+        JButton setStartingTileButton = new JButton("Set starting tile");
+        setStartingTileButton.setName("setStartingTileButton");
+        //setStartingTileButton.setIcon(startingTileIcon);
+        setStartingTileButton.setBounds(700, 30, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        //setStartingTileButton.setPressedIcon(presseddoneIcon);
+        setStartingTileButton.setVisible(false);
+        //setStartingTileButton.setContentAreaFilled(false);
+        //setStartingTileButton.setBorderPainted(false);
+        add(setStartingTileButton);
+        MEbuttons.add(setStartingTileButton);
+        
         saveMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser("");
@@ -358,6 +376,12 @@ public class GamePanel extends JPanel{
         doneButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setState(MAIN_MENU);
+            }
+        });
+        
+        setStartingTileButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setStartingTile = true;
             }
         });
         
@@ -491,13 +515,13 @@ public void paint(Graphics g) {
         case MAIN_MENU:
             g2d.drawImage(MenuBackground, 0, 0, 16*64, 9*64, this);
             g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
-            map.draw(g2d);
+            map.draw(g2d, false);
             break;
             
         case IN_GAME:
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-            map.draw(g2d);
+            map.draw(g2d, false);
             player.draw(g2d);
             player.drawBullets(g2d, map.getTextureSize());
 
@@ -511,8 +535,19 @@ public void paint(Graphics g) {
             
         case MAP_EDITOR:
             g2d.drawImage(EditorBackground, 0, 0, 16*64, 9*64, this);     
-            map.draw(g2d);
-            tileSelector.draw(g2d);
+            map.draw(g2d, true);
+            tileSelector.draw(g2d, setStartingTile);
+            if (setStartingTile) { // draw a rectangle around setStartingTileButton
+                int index = MEbuttons.size()-1;
+                while(!MEbuttons.get(index).getName().equals("setStartingTileButton")){ //find the button
+                    index--;
+                }
+                if(index>-1){ // else, something went wrong, do nothing
+                    g2d.setStroke(new BasicStroke(5));
+                    g2d.setColor(Color.lightGray);
+                    g2d.drawRect(MEbuttons.get(index).getX(), MEbuttons.get(index).getY(), MEbuttons.get(index).getWidth(), MEbuttons.get(index).getHeight());
+                }
+            }
             break;
     }
 }
@@ -586,7 +621,7 @@ public void paint(Graphics g) {
                 sql.createGame(map);
                 player.setPlayerId(1);
                 player.setMaxHealth();
-                player.setPosition(map.getStartTile());
+                player.setPosition(map);
                 player.addPlayer(sql);
                 isConnected = true;
                 setState(PRE_GAME);
@@ -621,13 +656,13 @@ public void paint(Graphics g) {
             if (currentGameState == PRE_GAME) {
                 otherPlayersList = sql.getPlayerList();
                 player.setMaxHealth();
+                map = sql.getMap(textureSize);
+                player.setPosition(map);
                 player.setPlayerId(1); // 0 means "null", ids start at 1
                 while (otherPlayersList.contains(player)) {
                     player.incrementId();
                 }
                 player.addPlayer(sql);
-                map = sql.getMap(textureSize);
-                player.setPosition(map.getStartTile());
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -687,10 +722,7 @@ public void paint(Graphics g) {
                 setState(IN_GAME);
             } else {
                 if(newGameState==-1){ // Host cancelled the game
-                    JOptionPane.showOptionDialog(
-                        null, "The host cancelled this game",
-                        "Game was cancelled", JOptionPane.OK_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                    JOptionPane.showMessageDialog(null, "The host cancelled this game");
                     endGame();
                 }
             }
@@ -741,6 +773,7 @@ public void paint(Graphics g) {
                 for (JComponent component : PGbuttons){
                     component.setVisible(false);
                 }
+                setStartingTile = false;
                 break;
             case PRE_GAME:
                 for (JComponent component : MMbuttons){

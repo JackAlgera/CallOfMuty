@@ -264,13 +264,13 @@ public class SQLManager {
             ResultSet resultat = requete.executeQuery();
             if(resultat.next()){ // first result is used to set map dimensions, hence the "desc" order
                 int[][] intMap = new int[resultat.getInt("i")+1][resultat.getInt("j")+1];
-                intMap[resultat.getInt("i")][resultat.getInt("j")] = resultat.getInt("tileType");
-                if (resultat.getInt("tileType")==1){
+                intMap[resultat.getInt("i")][resultat.getInt("j")] = resultat.getInt("tileType");                
+                if (resultat.getInt("startingTile")==1){
                     startingTile = new int[]{resultat.getInt("i"),resultat.getInt("j")};
                 }
                 while (resultat.next()) {
                     intMap[resultat.getInt("i")][resultat.getInt("j")] = resultat.getInt("tileType");
-                    if (resultat.getInt("tileType") == 1) {
+                    if (resultat.getInt("startingTile") == 1) {
                         startingTile = new int[]{resultat.getInt("i"), resultat.getInt("j")};
                     }
                 }

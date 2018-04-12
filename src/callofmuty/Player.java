@@ -277,11 +277,9 @@ public class Player {
         }
     }
     
-    public void setPosition(int[] newPosition){
-        if(newPosition.length==2){
-            posX = (double)newPosition[0];
-            posY = (double)newPosition[1];
-        }
+    public void setPosition(Map map){
+        posX = map.getStartTile()[0]*map.getTextureSize();
+        posY = map.getStartTile()[1]*map.getTextureSize();
     }
     
     public void setPlayerId(int playerId)

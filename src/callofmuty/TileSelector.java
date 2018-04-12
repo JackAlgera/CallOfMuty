@@ -17,12 +17,14 @@ public class TileSelector extends Map {
         super.setDrawingParameters(10,10, textureSize*getMapWidth(), textureSize*getMapHeight());
     }
     
-    public void draw(Graphics2D g2d){
-        super.draw(g2d);
+    public void draw(Graphics2D g2d, boolean setStartingTile){
+        super.draw(g2d, false);
         int newXTextureSize = getDrawWidth()/getMapWidth(), newYTextureSize = getDrawHeight()/getMapHeight();
-        g2d.setStroke(new BasicStroke(5));
-        g2d.setColor(Color.lightGray);
-        g2d.drawRect(getxPos()+selectedTile*newXTextureSize, getyPos(), newXTextureSize, newYTextureSize);
+        if (!setStartingTile) { // do not draw the selection rectangle when setting the starting tile
+            g2d.setStroke(new BasicStroke(5));
+            g2d.setColor(Color.lightGray);
+            g2d.drawRect(getxPos() + selectedTile * newXTextureSize, getyPos(), newXTextureSize, newYTextureSize);
+        }
     }
     
     @Override

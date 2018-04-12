@@ -1,6 +1,10 @@
 package callofmuty;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.Arrays;
+import javax.swing.JOptionPane;
 
 public class Map{
     
@@ -24,7 +28,11 @@ public class Map{
     
     public void setStartTile(int[] startTile){
         if (startTile.length==2){
-            this.startTile = startTile;
+            if(getTile(startTile[0],startTile[1]).isCrossable()){
+                this.startTile = startTile;
+            } else {
+                JOptionPane.showMessageDialog(null, "The starting tile must not be an obstacle");
+            }
         }
     }
     
@@ -98,24 +106,16 @@ public class Map{
         map[mapWidth-1][0] = 7;
         map[mapWidth-1][mapHeight-1] = 8;
         map[4][1] = 9 ;map[4][2] = 9;map[1][4] = 9;map[2][4] = 9;map[4][6] = 9;map[4][7] = 9;
-        startTile = new int[]{2,2};
+        startTile = new int[]{1,1};
     }
     
-    public TileType getTile(double x, double y){
+    public TileType getTile(int i, int j){
+        return getTile(map[i][j]);
+    }
+    
+    public TileType getTile(int tileType){
         TileType tile;
-        int posX = (int)x/textureSize;
-        int posY = (int)y/textureSize;
-        
-        if (posX > mapWidth-1)
-            posX = mapWidth-1;
-        if (posX < 0)
-            posX = 0;
-        if (posY > mapHeight-1)
-            posY = mapHeight-1;
-        if (posY < 0)
-            posY = 0;
-        
-        switch (map[posX][posY]){
+        switch (tileType){
             case 1:
                 tile = woodt;
                 break;
@@ -149,11 +149,26 @@ public class Map{
         return tile;
     }
     
+    public TileType getTile(double x, double y){
+        int i = (int)x/textureSize;
+        int j = (int)y/textureSize;
+        
+        if (i > mapWidth-1)
+            i = mapWidth-1;
+        if (i < 0)
+            i = 0;
+        if (j > mapHeight-1)
+            j = mapHeight-1;
+        if (j < 0)
+            j = 0;
+        return getTile(i,j);
+    }
+    
     public int[][] getMap(){
         return map;
     }
     
-        public void draw(Graphics2D g2d){
+        public void draw(Graphics2D g2d, boolean drawStartingTile){
         int newXTextureSize = drawWidth/mapWidth, newYTextureSize = drawHeight/mapHeight;
         for (int i = 0 ; i<mapWidth ; i++){
             for (int j = 0; j<mapHeight; j++){
@@ -193,6 +208,11 @@ public class Map{
                 }
             }
         }
+        if(drawStartingTile){
+            g2d.setStroke(new BasicStroke(5));
+            g2d.setColor(Color.lightGray);
+            g2d.drawRect(xPos+startTile[0]*newXTextureSize, yPos+startTile[1]*newYTextureSize, newXTextureSize, newYTextureSize);
+        }
     }
 
     public int getxPos() {
@@ -212,7 +232,15 @@ public class Map{
     }
     
     public void setTile(int i, int j, int tileType){
-        map[i][j] = tileType;
+        if (Arrays.equals(startTile, new int[]{i,j})){
+            if (getTile(tileType).isCrossable()){
+                map[i][j] = tileType;
+            } else {
+                JOptionPane.showMessageDialog(null, "The starting tile must not be an obstacle");
+            }
+        } else {
+            map[i][j] = tileType;
+        }
     }
     
     public int[] clickedTile(int clickedX, int clickedY){
