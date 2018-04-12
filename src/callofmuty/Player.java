@@ -28,7 +28,7 @@ public class Player {
     private ArrayList<Player> hurtPlayers;
     
     private ArrayList<Bullet> bulletList;
-    private Gun Gun;
+    private Gun gun;
         
     public Player(double x,double y){
         isIdle = true;
@@ -70,10 +70,19 @@ public class Player {
         playerState = 0; 
         hurtPlayers = new ArrayList<Player>();
         bulletList = new ArrayList<>();
+        gun = new Gun();
     }
 
     public String getName(){
         return name;
+    }
+    
+    public void setGunId(int gunId){
+        gun.setId(gunId);
+    }
+    
+    public int getGunId(){
+        return gun.getId();
     }
     
     public ArrayList<Player> getHurtPlayers(){

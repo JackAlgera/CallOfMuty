@@ -49,15 +49,15 @@ public class SQLManager {
             try {
                 if (xStatement.isEmpty()) { //there are no bullets to update
                     if (healthStatement.isEmpty()) { //there are no players to hurt
-                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.isActive = 0 WHERE players.id = " + player.getPlayerId());
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", players.gunId = " + player.getGunId() + ", bullet.isActive = 0 WHERE players.id = " + player.getPlayerId());
                     } else { //there are players to hurt
-                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.gunId = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getGunId() + " ELSE players.gunId END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
                     }
                 } else { //there are bullets to update
                     if (healthStatement.isEmpty()) { //there are no players to hurt
-                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", bullet.posX = CASE bullet.idBullet " + xStatement + " ELSE 0 END, bullet.posY = CASE bullet.idBullet " + yStatement + " ELSE 0 END, bullet.isActive = CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END WHERE players.id = " + player.getPlayerId());
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", players.gunId = " + player.getGunId() + ", bullet.posX = CASE bullet.idBullet " + xStatement + " ELSE 0 END, bullet.posY = CASE bullet.idBullet " + yStatement + " ELSE 0 END, bullet.isActive = CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END WHERE players.id = " + player.getPlayerId());
                     } else { //there are players to hurt
-                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET bullet.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + xStatement + " ELSE 0 END ELSE bullet.posX END, bullet.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + yStatement + " ELSE 0 END ELSE bullet.posY END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END ELSE bullet.isActive END, players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET bullet.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + xStatement + " ELSE 0 END ELSE bullet.posX END, bullet.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + yStatement + " ELSE 0 END ELSE bullet.posY END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END ELSE bullet.isActive END, players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.gunId = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getGunId() + " ELSE players.gunId END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
                     }
                 }
                 requete.executeUpdate();
@@ -79,7 +79,7 @@ public class SQLManager {
         ArrayList<Bullet> updatedBullets = new ArrayList<>(); //saves which bullets were updated, others will be erased
         ArrayList<Player> updatedPlayers = new ArrayList<>(); //same
         try {
-            requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, bullet.idBullet, bullet.posX, bullet.posY FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer AND bullet.isActive=1 AND NOT players.id="+ player.getPlayerId() +" WHERE players.playerState = "+ Player.PLAYING +" ORDER BY players.id");
+            requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, players.gunId, bullet.idBullet, bullet.posX, bullet.posY FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer AND bullet.isActive=1 AND NOT players.id="+ player.getPlayerId() +" WHERE players.playerState = "+ Player.PLAYING +" ORDER BY players.id");
             ResultSet resultat = requete.executeQuery();
             if (resultat!=null) {
                 while (resultat.next()) {
@@ -93,6 +93,7 @@ public class SQLManager {
                             position[1] = resultat.getInt("players.posY");
                             otherPlayersList.get(playerIndex).setPosition(position);
                             otherPlayersList.get(playerIndex).setHealth(resultat.getDouble("players.playerHp"));
+                            otherPlayersList.get(playerIndex).setGunId(resultat.getInt("players.gunId"));
                             updatedPlayers.add(new Player(playerId));
                             // update bullet
                             bulletId = resultat.getInt("bullet.idBullet");
@@ -156,16 +157,12 @@ public class SQLManager {
     }
     
     public void addPlayer(Player player){
-        PreparedStatement requete;    
+        PreparedStatement requete;
+        String value = "("+player.getPlayerId()+",'"+player.getName()+"',"+player.getPlayerHealth()+","
+                    +(int)player.getPosX()+","+(int)player.getPosY()+","+player.getSkinIndex()+","
+                    +Player.PLAYING+","+player.getGunId()+")";
         try {
-            requete = connexion.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?,?,?)");
-            requete.setInt(1,player.getPlayerId());
-            requete.setString(2, player.getName());
-            requete.setDouble(3, player.getPlayerHealth());
-            requete.setInt(4, (int) player.getPosX());
-            requete.setInt(5, (int) player.getPosY());
-            requete.setInt(6, player.getSkinIndex());
-            requete.setInt(7, Player.PLAYING);
+            requete = connexion.prepareStatement("INSERT INTO players VALUES " + value);
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {

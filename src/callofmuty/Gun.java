@@ -34,6 +34,10 @@ public class Gun {
         }
     }
     
+    public int getId(){
+        return id;
+    }
+    
     public void draw(Graphics2D g2d, Player player){
         switch(id){
             case NO_GUN: //draw nothing
