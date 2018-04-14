@@ -4,7 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javazoom.jl.decoder.JavaLayerException;
 
 public class Player {
 
@@ -29,8 +34,12 @@ public class Player {
     
     private ArrayList<Bullet> bulletList;
     private Gun gun;
+    private SoundPlayer shootingSoundPlayer, hurtSoundPlayer, dyingSoundPlayer;
         
-    public Player(double x,double y){
+    public Player(double x,double y) throws IOException, JavaLayerException{
+        shootingSoundPlayer = new SoundPlayer("shootingSound.mp3", false);
+        hurtSoundPlayer = new SoundPlayer("hurtSound.mp3", false);
+        dyingSoundPlayer = new SoundPlayer("dyingSound.mp3", false);
         isIdle = true;
         facedDirection = 0;
         this.posX=x;
@@ -110,12 +119,25 @@ public class Player {
         this.playerState = playerState;
     }
 
-    public void setHealth(double health) {
+    public void setHealth(double health) throws JavaLayerException, IOException {
+        double formerHealth = this.health;
         this.health = health;
-        if (health<=0){
+        if (health <= 0) {
             isDead = true;
+            try {
+                dyingSoundPlayer.play();
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             isDead = false;
+            if (formerHealth > health) {
+                try {
+                    hurtSoundPlayer.play();
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         if (health < 0.15*maxHealth){
             hpBar = lowHealthBar;
@@ -354,7 +376,7 @@ public class Player {
         return image;
     }
     
-    public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList) {
+    public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList) throws JavaLayerException, IOException {
         Bullet bullet;
         Player hurtPlayer;
         for (int i = 0; i<bulletList.size(); i++) {
@@ -401,9 +423,14 @@ public class Player {
         }
     }
     
-    public void shoot(double[] directionOfFire, double bulletSpeed, SQLManager sql, boolean unlimitedBullets){
+    public void shoot(double[] directionOfFire, double bulletSpeed, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
         if (gun.shoot(unlimitedBullets)){
             addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, bulletSpeed, sql, gun.getDamage());
+            try {
+                shootingSoundPlayer.play();
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }

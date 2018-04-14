@@ -1,5 +1,6 @@
 package callofmuty;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javazoom.jl.decoder.JavaLayerException;
 
 public class SQLManager {
     private Connection connexion;
@@ -69,7 +71,7 @@ public class SQLManager {
     }
     
     // Downloads other players' positions, health and bullet positions and local player's health
-    public void downloadPlayersAndBullets(Player player, ArrayList<Player> otherPlayersList, ArrayList<Bullet> otherBulletsList) {
+    public void downloadPlayersAndBullets(Player player, ArrayList<Player> otherPlayersList, ArrayList<Bullet> otherBulletsList) throws JavaLayerException, IOException {
         PreparedStatement requete;
         int playerId = -1;
         int playerIndex;
@@ -362,7 +364,7 @@ public class SQLManager {
         }
     }
     
-    public ArrayList<Player> getPlayerList(){ // used only before adding local player to database, when connecting to the game
+    public ArrayList<Player> getPlayerList() throws IOException, JavaLayerException{ // used only before adding local player to database, when connecting to the game
         ArrayList<Player> players = new ArrayList<Player>();
         PreparedStatement requete;
         Player newPlayer;
@@ -386,7 +388,7 @@ public class SQLManager {
         return players;
     }
     
-    public void updatePlayerList(Player player, ArrayList<Player> otherPlayersList){ //used while PRE_GAME state
+    public void updatePlayerList(Player player, ArrayList<Player> otherPlayersList) throws IOException, JavaLayerException{ //used while PRE_GAME state
         PreparedStatement requete;
         Player newPlayer;
         int index;

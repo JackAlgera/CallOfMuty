@@ -18,15 +18,16 @@ public class SoundPlayer {
     private long pauseLocation, totalSongLength;
     private String name;
     
-    public SoundPlayer(String name) throws IOException, JavaLayerException{
+    public SoundPlayer(String name, boolean repeat) throws IOException, JavaLayerException{
         this.name = name;
-        inputStream = this.getClass().getResourceAsStream("/resources/audio/"+name);
-        totalSongLength = inputStream.available();
-        player = new Player(inputStream);
+        this.repeat = repeat;
     }
 
     public void play() throws FileNotFoundException, JavaLayerException, IOException, URISyntaxException {
-
+        inputStream = this.getClass().getResourceAsStream("/resources/audio/"+name);
+        totalSongLength = inputStream.available();
+        player = new Player(inputStream);
+        
         new Thread() {
             @Override
             public void run() {
@@ -37,7 +38,7 @@ public class SoundPlayer {
                         play();
                     }
                 } catch (JavaLayerException | IOException ex) {
-                    System.err.println("::: there was an error to play " + "/resources/audio/"+name);
+                    System.err.println("There was an error to play /resources/audio/"+name);
                 } catch (URISyntaxException ex) {
                     Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -64,7 +65,6 @@ public class SoundPlayer {
 
     public void stop() {
         paused = false;
-
         if (null != player) {
             player.close();
 
@@ -74,14 +74,13 @@ public class SoundPlayer {
     }
 
     public void pause() {
-
         paused = true;
         if (null != player) {
             try {
                 pauseLocation = inputStream.available();
                 player.close();
             } catch (IOException ex) {
-                System.out.println("::: error when song is paused");
+                System.out.println("Error when song is paused");
             }
         }
     }

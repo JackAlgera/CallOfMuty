@@ -13,7 +13,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -56,7 +55,7 @@ public class GamePanel extends JPanel{
     
     private static long gunGenerationTime = 1000; //in milliseconds
     
-    private SoundPlayer menuMusicPlayer;
+    private SoundPlayer menuMusicPlayer, gameMusicPlayer;
     
     private Map map;
     private TileSelector tileSelector;
@@ -74,7 +73,8 @@ public class GamePanel extends JPanel{
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer) throws IOException, JavaLayerException{
         super();
-        menuMusicPlayer = new SoundPlayer("menuMusic.mp3");
+        menuMusicPlayer = new SoundPlayer("menuMusic.mp3", true);
+        gameMusicPlayer = new SoundPlayer("gameMusic.mp3", true);
         try {
             menuMusicPlayer.play();
         } catch (URISyntaxException ex) {
@@ -787,6 +787,7 @@ public void paint(Graphics g) {
     }
     
     public void setState(int newGameState){
+        int formerGameState = gameState;
         gameState = newGameState;
         map.setDrawingParameters(gameState);
         switch(gameState){
@@ -797,8 +798,16 @@ public void paint(Graphics g) {
                 for (JComponent component : MEbuttons){
                     component.setVisible(false);
                 }
-                for (JComponent component : PGbuttons){
+                for (JComponent component : PGbuttons) {
                     component.setVisible(false);
+                }
+                if (formerGameState==IN_GAME) {
+                    try {
+                        gameMusicPlayer.stop();
+                        menuMusicPlayer.play();
+                    } catch (JavaLayerException | IOException | URISyntaxException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 break;
             case MAP_EDITOR:
@@ -833,6 +842,12 @@ public void paint(Graphics g) {
                 }
                 for (JComponent component : PGbuttons){
                     component.setVisible(false);
+                }
+                menuMusicPlayer.stop();
+                try {
+                    gameMusicPlayer.play();
+                } catch (JavaLayerException | IOException | URISyntaxException ex) {
+                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 timer.update();
         }
