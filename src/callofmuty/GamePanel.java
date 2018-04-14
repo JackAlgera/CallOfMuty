@@ -45,26 +45,31 @@ public class GamePanel extends JPanel{
 
     private double bulletSpeed = 0.5;
     
+    public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
+            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3,
+            RANDOMLY_GIVEN_GUNS = 0;
+    
+    private static long gunGenerationTime = 1000; //in milliseconds
+    
     private Map map;
     private TileSelector tileSelector;
     private Player player;
     private ArrayList <Player> otherPlayersList;
-    private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState;
+    private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState, gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
     private boolean isHost, setStartingTile;
-    private long playerListUpdateTime;
+    private long lastGunGeneration;
     private SQLManager sql; 
     private boolean isConnected;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons;
     private ArrayList<Bullet> otherPlayersBullets;
-    GameTimer timer;
-    
-    public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW, MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3;
+    private GameTimer timer;
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer) throws IOException{
         super();
         gameState = MAIN_MENU;
-        playerListUpdateTime = 0;
+        gameMode = RANDOMLY_GIVEN_GUNS;
+        lastGunGeneration = System.currentTimeMillis();
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
@@ -102,7 +107,7 @@ public class GamePanel extends JPanel{
                     directionOfFire[0] = directionOfFire[0] / norme;
                     directionOfFire[1] = directionOfFire[1] / norme;
 
-                    player.addBullet(player.getPosX() + textureSize / 4, player.getPosY() + textureSize / 4, directionOfFire, bulletSpeed, sql);
+                    player.shoot(directionOfFire, bulletSpeed, sql, false);
                     break;
                 case MAP_EDITOR:
                     int[] mapClicked = map.clickedTile(e.getX(), e.getY());
@@ -438,6 +443,12 @@ public class GamePanel extends JPanel{
             System.out.println("Bullet updates : " + (System.currentTimeMillis()-time));
             time = System.currentTimeMillis();
         }
+        // gun generation
+        if(System.currentTimeMillis()-gunGenerationTime > lastGunGeneration){
+            lastGunGeneration = System.currentTimeMillis();
+            player.generateGun(otherPlayersList.size()+1); // has a probability to give local player a gun that decreases with number of players
+        }
+        
         // sql uploads
         sql.uploadPlayerAndBullets(player);
         if(printTime){

@@ -159,6 +159,7 @@ public class Player {
             //g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
             g.drawImage(image, (int) posX + playerWidth / 2 - image.getWidth(null), (int) posY + playerHeight / 2 - image.getHeight(null), image.getWidth(null) * 2, image.getHeight(null) * 2, null);
             g.drawImage(hpBar, (int) posX + playerWidth / 2 - image.getWidth(null), (int) posY + playerHeight / 2 - image.getHeight(null) - 12, image.getWidth(null) * 2, image.getHeight(null) * 2, null);
+            gun.draw(g, this);
             g.setColor(Color.RED);
             g.fillRect((int) posX + playerWidth / 2 - image.getWidth(null) + 12, (int) posY + playerHeight / 2 - image.getHeight(null) - 6, (int) ((int) (image.getWidth(null) * 2 - 24) * health / maxHealth), 2);
         }
@@ -323,8 +324,8 @@ public class Player {
         this.image = Tools.selectTile(Tools.playerTileset, this.skin[0], this.skin[1]);
     }
     
-    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql){
-        if (!this.isDead) {
+    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage){
+        if (!isDead) {
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;
             while(bulletIndex < bulletList.size() && !inactiveBulletFound){
@@ -332,7 +333,7 @@ public class Player {
                 bulletIndex++;
             }
             if(!inactiveBulletFound){
-                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1));
+                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1, damage));
                 bulletList.get(bulletIndex).setActive(true);
                 sql.addBullet(bulletList.get(bulletIndex));
             } else {
@@ -342,6 +343,7 @@ public class Player {
                 bullet.setDirection(direction);
                 bullet.setPosX(initPosX);
                 bullet.setPosY(initPosY);
+                bullet.setDamage(damage);
             }
         }
     }
@@ -389,5 +391,17 @@ public class Player {
             test = playerId == ((Player) object).getPlayerId();
         }
         return test;
+    }
+
+    void generateGun(int numberOfPlayers) {
+        if (gun.getId() == 0 && Math.random()<1.0/(4*numberOfPlayers)){ // One player gets a gun every 4 seconds
+            gun.setId(Gun.PISTOL);
+        }
+    }
+    
+    public void shoot(double[] directionOfFire, double bulletSpeed, SQLManager sql, boolean unlimitedBullets){
+        if (gun.shoot(unlimitedBullets)){
+            addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, bulletSpeed, sql, gun.getDamage());
+        }
     }
 }

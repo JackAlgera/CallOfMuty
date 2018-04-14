@@ -367,7 +367,7 @@ public class SQLManager {
         PreparedStatement requete;
         Player newPlayer;
         try {
-            requete = connexion.prepareStatement("SELECT * FROM players ORDER BY id");
+            requete = connexion.prepareStatement("SELECT * FROM players WHERE playerState = "+Player.PLAYING+" ORDER BY id");
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
                 newPlayer = new Player(resultat.getDouble("posX"),resultat.getDouble("posY"));
@@ -392,7 +392,7 @@ public class SQLManager {
         int index;
         ArrayList<Player> updatedPlayers = new ArrayList<>(); // Used to remove players that disconnect
         try {
-            requete = connexion.prepareStatement("SELECT * FROM players WHERE NOT id ="+ player.getPlayerId());
+            requete = connexion.prepareStatement("SELECT * FROM players WHERE playerState = "+Player.PLAYING+" AND NOT id ="+ player.getPlayerId());
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) {
                 newPlayer = new Player(resultat.getDouble("posX"),resultat.getDouble("posY"));

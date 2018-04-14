@@ -15,15 +15,15 @@ public class Bullet {
     private boolean isActive;
     
     public Bullet(int playerId, int bulletId) { //usefull constructor for SQL updates
-        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId);
+        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0);
     }
     
     public Bullet(double posX, double posY, int playerId, int bulletId){
-        this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId );
+        this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0);
     }
     
-    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId){
-        damage = 22.0;
+    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId, double damage){
+        this.damage = damage;
         this.posX = posX;
         this.posY = posY;
         ballWidth = 10;
@@ -115,6 +115,10 @@ public class Bullet {
     
     public void setSpeed(double speed){
         this.speed = speed;
+    }
+    
+    public void setDamage(double damage){
+        this.damage = damage;
     }
     
     public int getBulletId(){

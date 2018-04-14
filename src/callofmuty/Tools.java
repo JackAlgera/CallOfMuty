@@ -15,7 +15,8 @@ public class Tools {
     public static BufferedImage tileset = loadImage("Tileset.png"),
                 hudTileset = loadImage("HudTileset.png"),
                 bulletTileset = loadImage("BulletTileset.png"),
-                playerTileset = loadImage("PlayerTileset.png");
+                playerTileset = loadImage("PlayerTileset.png"),
+                gunTileset = loadImage("GunTileset.png");
     public static int tileSize = 32; //Size of a tile in a tileset image
 
     
