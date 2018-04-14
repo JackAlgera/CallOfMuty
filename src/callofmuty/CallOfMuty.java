@@ -5,10 +5,11 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
 import javax.swing.JFrame;
+import javazoom.jl.decoder.JavaLayerException;
 
 public class CallOfMuty {
     
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws InterruptedException, IOException, JavaLayerException {
         
         int textureSize, mapWidth, mapHeight, maxFPS;
         long dT, minUpdateTime;

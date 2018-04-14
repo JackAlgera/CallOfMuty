@@ -1,6 +1,12 @@
 package callofmuty;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.io.File;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javax.swing.ImageIcon;
 
 /**

@@ -32,7 +32,7 @@ public class Tools {
             System.out.println("Error: cannot read image : /resources/images/"+ name + " : "+ error);  
         }
         return image;
-    } 
+    }
     
    public static ImageIcon loadIcon(String name){
         BufferedImage image = loadImage(name);

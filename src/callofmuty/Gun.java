@@ -33,7 +33,7 @@ public class Gun {
             case PISTOL:
                 ammunition = 3;
                 image = pistolImage;
-                reloadTime = 1000; //in milliseconds
+                reloadTime = 500; //in milliseconds
                 damage = 22;
         }
     }

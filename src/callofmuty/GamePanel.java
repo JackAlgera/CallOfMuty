@@ -13,10 +13,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,9 +30,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javazoom.jl.decoder.JavaLayerException;
 
 public class GamePanel extends JPanel{
-
+    
     public static BufferedImage MenuBackground = Tools.loadImage("MenuBackground.png"),
             EditorBackground = Tools.loadImage("EditorBackground.png");
 
@@ -51,6 +56,8 @@ public class GamePanel extends JPanel{
     
     private static long gunGenerationTime = 1000; //in milliseconds
     
+    private SoundPlayer menuMusicPlayer;
+    
     private Map map;
     private TileSelector tileSelector;
     private Player player;
@@ -65,8 +72,14 @@ public class GamePanel extends JPanel{
     private ArrayList<Bullet> otherPlayersBullets;
     private GameTimer timer;
     
-    public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer) throws IOException{
+    public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer) throws IOException, JavaLayerException{
         super();
+        menuMusicPlayer = new SoundPlayer("menuMusic.mp3");
+        try {
+            menuMusicPlayer.play();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
         gameState = MAIN_MENU;
         gameMode = RANDOMLY_GIVEN_GUNS;
         lastGunGeneration = System.currentTimeMillis();
