@@ -28,7 +28,7 @@ public class SQLManager {
     }
     
     public void uploadPlayerAndBullets(Player player) { //updates player's position & bullets + hurt players' health
-        if (!player.isPlayerDead()) {
+        if (!player.isDead()) {
             PreparedStatement requete;
             String xStatement = "";
             String yStatement = "";
@@ -126,7 +126,7 @@ public class SQLManager {
                     } else {
                         if (resultat.getInt("players.id") == player.getPlayerId()) { // update local player's health
                             player.setHealth(resultat.getDouble("players.playerHp"));
-                            if (player.isPlayerDead()) {
+                            if (player.isDead()) {
                                 setPlayerDead(player);
                             }
                         } else { // if player was not "known" : isn't supposed to happen, deal with it here if it does

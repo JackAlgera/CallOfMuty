@@ -114,6 +114,8 @@ public class Player {
         this.health = health;
         if (health<=0){
             isDead = true;
+        } else {
+            isDead = false;
         }
         if (health < 0.15*maxHealth){
             hpBar = lowHealthBar;
@@ -310,7 +312,7 @@ public class Player {
         return this.posY;
     }
     
-    public boolean isPlayerDead(){
+    public boolean isDead(){
         return this.isDead;
     }
     

@@ -455,7 +455,7 @@ public class GamePanel extends JPanel{
             System.out.println("Uploads : " + (System.currentTimeMillis()-time));
         }
         if(otherPlayersList.isEmpty()){ // Game is ended
-            if (!player.isPlayerDead()){ // Local player won
+            if (!player.isDead()){ // Local player won
                 endGame();
             } else {
                 endGame();
@@ -728,7 +728,7 @@ public void paint(Graphics g) {
         int formerGameState = gameState;
         setState(MAIN_MENU);
         if (isConnected){
-            if(!player.isPlayerDead()){
+            if(!player.isDead()){
                 sql.removePlayer(player);
             }
             if(sql.getPlayerList().isEmpty() || (isHost && formerGameState==PRE_GAME) ){
