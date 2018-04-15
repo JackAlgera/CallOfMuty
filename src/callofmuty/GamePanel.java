@@ -759,6 +759,7 @@ public void paint(Graphics g) {
             if (playerList.isEmpty()) { // No game is currently on
                 sql.clearTable(); //Clear previous game on SQL server
                 sql.createGame(map);
+                player.setGunId(Gun.NO_GUN);
                 player.setPlayerId(1);
                 player.setMaxHealth();
                 player.setPosition(map);
@@ -796,6 +797,7 @@ public void paint(Graphics g) {
             if (currentGameState == PRE_GAME) {
                 otherPlayersList = sql.getPlayerList();
                 player.setMaxHealth();
+                player.setGunId(Gun.NO_GUN);
                 map = sql.getMap(textureSize);
                 player.setPosition(map);
                 player.setPlayerId(1); // 0 means "null", ids start at 1
