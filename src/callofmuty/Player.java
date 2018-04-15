@@ -25,7 +25,7 @@ public class Player {
     private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health;
-    private boolean isDead, isIdle;  
+    private boolean isDead, isIdle, muteSounds;  
     private int[] skin;
     private String name;
     public ArrayList<Image> animationImages = new ArrayList<Image>();
@@ -41,6 +41,7 @@ public class Player {
         hurtSoundPlayer = new SoundPlayer("hurtSound.mp3", false);
         dyingSoundPlayer = new SoundPlayer("dyingSound.mp3", false);
         isIdle = true;
+        muteSounds = false;
         facedDirection = 0;
         this.posX=x;
         this.posY=y;
@@ -82,6 +83,14 @@ public class Player {
         gun = new Gun();
     }
 
+    public void setMuteSounds(Boolean muteSounds){
+        this.muteSounds = muteSounds;
+    }
+    
+    public boolean getMuteSounds(){
+        return muteSounds;
+    }
+    
     public String getName(){
         return name;
     }
@@ -124,14 +133,16 @@ public class Player {
         this.health = health;
         if (health <= 0) {
             isDead = true;
-            try {
-                dyingSoundPlayer.play();
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            if (!muteSounds) {
+                try {
+                    dyingSoundPlayer.play();
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         } else {
             isDead = false;
-            if (formerHealth > health) {
+            if (formerHealth > health && !muteSounds) {
                 try {
                     hurtSoundPlayer.play();
                 } catch (URISyntaxException ex) {
@@ -401,6 +412,7 @@ public class Player {
     
     public Player(int playerId){ //usefull constructor for SQL updates
         this.playerId = playerId;
+        muteSounds = false;
     }
     
     public void incrementId(){
@@ -426,10 +438,26 @@ public class Player {
     public void shoot(double[] directionOfFire, double bulletSpeed, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
         if (gun.shoot(unlimitedBullets)){
             addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, bulletSpeed, sql, gun.getDamage());
+            if (!muteSounds) {
+                try {
+                    shootingSoundPlayer.play();
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
+
+    void playShootSound() {
+        if(!muteSounds){
             try {
                 shootingSoundPlayer.play();
+            } catch (JavaLayerException ex) {
+                Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
             } catch (URISyntaxException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

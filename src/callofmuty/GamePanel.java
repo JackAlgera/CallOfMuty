@@ -9,6 +9,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -55,7 +57,7 @@ public class GamePanel extends JPanel{
     
     private static long gunGenerationTime = 1000; //in milliseconds
     
-    private SoundPlayer menuMusicPlayer, gameMusicPlayer;
+    private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer;
     
     private Map map;
     private TileSelector tileSelector;
@@ -66,7 +68,7 @@ public class GamePanel extends JPanel{
     private boolean isHost, setStartingTile;
     private long lastGunGeneration;
     private SQLManager sql; 
-    private boolean isConnected;
+    private boolean isConnected, muteMusic, muteSounds;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons;
     private ArrayList<Bullet> otherPlayersBullets;
     private GameTimer timer;
@@ -75,6 +77,9 @@ public class GamePanel extends JPanel{
         super();
         menuMusicPlayer = new SoundPlayer("menuMusic.mp3", true);
         gameMusicPlayer = new SoundPlayer("gameMusic.mp3", true);
+        clicSoundPlayer = new SoundPlayer("clicSound.mp3", false);
+        muteMusic = false;
+        muteSounds = false;
         try {
             menuMusicPlayer.play();
         } catch (URISyntaxException ex) {
@@ -120,11 +125,20 @@ public class GamePanel extends JPanel{
                     directionOfFire[0] = directionOfFire[0] / norme;
                     directionOfFire[1] = directionOfFire[1] / norme;
 
-                    player.shoot(directionOfFire, bulletSpeed, sql, false);
+                {
+                    try {
+                        player.shoot(directionOfFire, bulletSpeed, sql, false);
+                    } catch (JavaLayerException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                     break;
                 case MAP_EDITOR:
                     int[] mapClicked = map.clickedTile(e.getX(), e.getY());
                     if (mapClicked[0]>-1){ // map was clicked
+                        playClicSound();
                         if(!setStartingTile){
                             map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
                         } else {
@@ -132,6 +146,7 @@ public class GamePanel extends JPanel{
                         }
                     } else { // check if tileSelector was clicked and select the tile if so
                         if(tileSelector.clickedTile(e.getX(), e.getY())[0]>-1){
+                            playClicSound();
                             setStartingTile = false;
                         }
                     }
@@ -258,30 +273,47 @@ public class GamePanel extends JPanel{
         
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                initialiseGame(false);
+                playClicSound();
+                try {
+                    initialiseGame(false);
+                } catch (IOException ex) {
+                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (JavaLayerException ex) {
+                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         
         gameCreateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                try{
                 initialiseGame(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (JavaLayerException ex) {
+                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 quitGame();
             }
         });
         
         gameModeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 // to do
             }
         });
         
         rightSkinArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 int skinIndex = player.getSkinIndex();
                 skinIndex = (skinIndex%5)+1;
                 getPlayer().setSkin(skinIndex);
@@ -291,6 +323,7 @@ public class GamePanel extends JPanel{
         
         leftSkinArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 int skinIndex = player.getSkinIndex();
                 skinIndex--;
                 if (skinIndex<1){
@@ -315,6 +348,7 @@ public class GamePanel extends JPanel{
         
         mapEditorButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 setState(MAP_EDITOR);
             }
         });
@@ -322,6 +356,67 @@ public class GamePanel extends JPanel{
         usernameField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 player.setName(usernameField.getText());
+            }
+        });
+        
+        usernameField.addFocusListener(new FocusListener(){
+            @Override
+            public void focusGained(FocusEvent fe) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                player.setName(usernameField.getText());
+            }
+        });
+        
+        // Sound buttons, added to ME & MM
+        
+        JButton muteSoundsButton = new JButton("Mute sound effects");
+        //muteSoundsButton.setIcon(muteSoundsIcon);
+        muteSoundsButton.setVisible(true);
+        muteSoundsButton.setBounds(860, 20, 150,50);
+        //muteSoundsButton.setContentAreaFilled(false);
+        //muteSoundsButton.setBorderPainted(false);
+        add(muteSoundsButton);
+        MMbuttons.add(muteSoundsButton);
+        MEbuttons.add(muteSoundsButton);
+        
+        JButton muteMusicButton = new JButton("Mute music");
+        //muteMusicButton.setIcon(joinGameIcon);
+        muteMusicButton.setVisible(true);
+        muteMusicButton.setBounds(750, 20, 100, 50);
+        //muteMusicButton.setContentAreaFilled(false);
+        //muteMusicButton.setBorderPainted(false);
+        add(muteMusicButton);
+        MMbuttons.add(muteMusicButton);
+        MEbuttons.add(muteMusicButton);
+        
+        muteSoundsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                muteSounds = !muteSounds;
+                player.setMuteSounds(muteSounds);
+                playClicSound();
+            }
+        });
+        
+        muteMusicButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                muteMusic = !muteMusic;
+                if(muteMusic){
+                    menuMusicPlayer.stop();
+                } else {
+                    try {
+                        menuMusicPlayer.play();
+                    } catch (JavaLayerException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (URISyntaxException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         });
         
@@ -369,6 +464,7 @@ public class GamePanel extends JPanel{
         
         saveMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 JFileChooser fileChooser = new JFileChooser("");
 	
                 if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
@@ -393,6 +489,7 @@ public class GamePanel extends JPanel{
         
         loadMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 JFileChooser fileChooser = new JFileChooser("");
 	
                 if (fileChooser.showOpenDialog(null)== 
@@ -407,12 +504,14 @@ public class GamePanel extends JPanel{
         
         doneButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 setState(MAIN_MENU);
             }
         });
         
         setStartingTileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 setStartingTile = true;
             }
         });
@@ -427,6 +526,7 @@ public class GamePanel extends JPanel{
         
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 sql.setGameState(IN_GAME);
                 setState(IN_GAME);
                 repaint();
@@ -434,7 +534,7 @@ public class GamePanel extends JPanel{
         });
     }
     
-    public void updateGame(long dT){
+    public void updateGame(long dT) throws JavaLayerException, IOException{
         boolean printTime = false; // Set to true if you want to print the time taken by each method in updateGame
         long time = System.currentTimeMillis();
         // Update player movement 
@@ -649,12 +749,14 @@ public void paint(Graphics g) {
         }
     }
     
-    public void initialiseGame(boolean isHost) {
+    public void initialiseGame(boolean isHost) throws IOException, JavaLayerException {
         this.isHost = isHost;
         sql = new SQLManager();
         int currentGameState = sql.getGameState();
-        if (isHost) { // Try to create a game
-            if (sql.getPlayerList().isEmpty()) { // No game is currently on
+        if (isHost) {
+            // Try to create a game
+            ArrayList<Player> playerList = sql.getPlayerList();
+            if (playerList.isEmpty()) { // No game is currently on
                 sql.clearTable(); //Clear previous game on SQL server
                 sql.createGame(map);
                 player.setPlayerId(1);
@@ -744,8 +846,14 @@ public void paint(Graphics g) {
             if(!player.isDead()){
                 sql.removePlayer(player);
             }
-            if(sql.getPlayerList().isEmpty() || (isHost && formerGameState==PRE_GAME) ){
-                sql.clearTable();
+            try {
+                if(sql.getPlayerList().isEmpty() || (isHost && formerGameState==PRE_GAME) ){
+                    sql.clearTable();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (JavaLayerException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             sql.disconnect();
         }
@@ -753,7 +861,13 @@ public void paint(Graphics g) {
     }
     
     public void preGameUpdate() {
-        sql.updatePlayerList(player, otherPlayersList);
+        try {
+            sql.updatePlayerList(player, otherPlayersList);
+        } catch (IOException ex) {
+            Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JavaLayerException ex) {
+            Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if(!isHost){
             int newGameState = sql.getGameState();
             if (newGameState==IN_GAME){
@@ -801,7 +915,7 @@ public void paint(Graphics g) {
                 for (JComponent component : PGbuttons) {
                     component.setVisible(false);
                 }
-                if (formerGameState==IN_GAME) {
+                if (formerGameState==IN_GAME && !muteMusic) {
                     try {
                         gameMusicPlayer.stop();
                         menuMusicPlayer.play();
@@ -843,14 +957,30 @@ public void paint(Graphics g) {
                 for (JComponent component : PGbuttons){
                     component.setVisible(false);
                 }
-                menuMusicPlayer.stop();
-                try {
-                    gameMusicPlayer.play();
-                } catch (JavaLayerException | IOException | URISyntaxException ex) {
-                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                if (!muteMusic) {
+                    menuMusicPlayer.stop();
+                    try {
+                        gameMusicPlayer.play();
+                    } catch (JavaLayerException | IOException | URISyntaxException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 timer.update();
         }
         repaint();
+    }
+    
+    public void playClicSound(){
+        if (!muteSounds) {
+            try {
+                clicSoundPlayer.play();
+            } catch (JavaLayerException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }

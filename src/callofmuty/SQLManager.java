@@ -96,6 +96,7 @@ public class SQLManager {
                             otherPlayersList.get(playerIndex).setPosition(position);
                             otherPlayersList.get(playerIndex).setHealth(resultat.getDouble("players.playerHp"));
                             otherPlayersList.get(playerIndex).setGunId(resultat.getInt("players.gunId"));
+                            otherPlayersList.get(playerIndex).setMuteSounds(player.getMuteSounds());
                             updatedPlayers.add(new Player(playerId));
                             // update bullet
                             bulletId = resultat.getInt("bullet.idBullet");
@@ -105,6 +106,7 @@ public class SQLManager {
                                 if (bulletIndex == -1) { // bullet was not already in the list
                                     otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
                                     otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
+                                    player.playShootSound();
                                 } else { // bullet was already in the list
                                     otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
                                     otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
