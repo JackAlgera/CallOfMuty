@@ -569,14 +569,53 @@ public class GamePanel extends JPanel{
         }
         if(otherPlayersList.isEmpty()){ // Game is ended
             if (!player.isDead()){ // Local player won
-                endGame();
+                //endGame();
             } else {
-                endGame();
+                //endGame();
             }
         }
     }
     
     private void updatePlayerMovement(){
+        if (pressedButtons.contains(KeyEvent.VK_S)){
+//            player.setFacedDirection(0);
+            player.setAcceleration(1, 1);
+            player.setDirectionOfTravel(1, 1);
+        }
+        if (pressedButtons.contains(KeyEvent.VK_Z)){
+//            player.setFacedDirection(3);
+            player.setAcceleration(1, -1);
+            player.setDirectionOfTravel(1, -1);
+        }
+        if (pressedButtons.contains(KeyEvent.VK_Q)){
+//            player.setFacedDirection(1);
+            player.setAcceleration(0, -1);
+            player.setDirectionOfTravel(0, -1);
+        }
+        if (pressedButtons.contains(KeyEvent.VK_D)){
+//            player.setFacedDirection(2);
+            player.setAcceleration(0, 1);
+            player.setDirectionOfTravel(0, 1);
+        }
+        
+//        Deceleration
+        if (releasedButtons.contains(KeyEvent.VK_S)){
+            player.reverseAcceleration(1);
+            releasedButtons.remove((Integer)KeyEvent.VK_S);
+        }
+        if (releasedButtons.contains(KeyEvent.VK_Z)){
+            player.reverseAcceleration(1);
+            releasedButtons.remove((Integer)KeyEvent.VK_Z);
+        }
+        if (releasedButtons.contains(KeyEvent.VK_Q)){
+            player.reverseAcceleration(0);
+            releasedButtons.remove((Integer)KeyEvent.VK_Q);
+        }
+        if (releasedButtons.contains(KeyEvent.VK_D)){
+            player.reverseAcceleration(0);
+            releasedButtons.remove((Integer)KeyEvent.VK_D);
+        }
+        
         if (pressedButtons.contains(KeyEvent.VK_DOWN)){
 //            player.setFacedDirection(0);
             player.setAcceleration(1, 1);
@@ -619,6 +658,23 @@ public class GamePanel extends JPanel{
     
     // Use of KeyBindings
     public void mapKeys(){
+        this.getInputMap().put(KeyStroke.getKeyStroke("S"), "sPressed");
+        this.getInputMap().put(KeyStroke.getKeyStroke("released S"), "sReleased");
+        this.getInputMap().put(KeyStroke.getKeyStroke("Z"), "zPressed");
+        this.getInputMap().put(KeyStroke.getKeyStroke("released Z"), "zReleased");
+        this.getInputMap().put(KeyStroke.getKeyStroke("Q"), "qPressed");
+        this.getInputMap().put(KeyStroke.getKeyStroke("released Q"), "qReleased");
+        this.getInputMap().put(KeyStroke.getKeyStroke("D"), "dPressed");
+        this.getInputMap().put(KeyStroke.getKeyStroke("released D"), "dReleased");
+        this.getActionMap().put("zPressed", new KeyPressed(KeyEvent.VK_Z));
+        this.getActionMap().put("zReleased", new KeyReleased(KeyEvent.VK_Z) );
+        this.getActionMap().put("sPressed", new KeyPressed(KeyEvent.VK_S));
+        this.getActionMap().put("sReleased", new KeyReleased(KeyEvent.VK_S) );
+        this.getActionMap().put("qPressed", new KeyPressed(KeyEvent.VK_Q));
+        this.getActionMap().put("qReleased", new KeyReleased(KeyEvent.VK_Q) );
+        this.getActionMap().put("dPressed", new KeyPressed(KeyEvent.VK_D));
+        this.getActionMap().put("dReleased", new KeyReleased(KeyEvent.VK_D) );
+        
         this.getInputMap().put(KeyStroke.getKeyStroke("UP"), "upPressed");
         this.getInputMap().put(KeyStroke.getKeyStroke("released UP"), "upReleased");
         this.getInputMap().put(KeyStroke.getKeyStroke("DOWN"), "downPressed");
