@@ -35,6 +35,7 @@ public class Bullet {
         isActive = false;
         image = Tools.selectTile(Tools.bulletTileset, 1, 1);
         
+        /*
         this.bulletAnimation = new Animation(250,1,4,4,0);// in ms
         
         for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
@@ -44,6 +45,7 @@ public class Bullet {
                 animationImages.add(Tools.selectTile(Tools.bulletTileset, i+1, j+1));
             }
         }
+        */
     }
     
     public boolean isActive(){

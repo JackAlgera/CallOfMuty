@@ -25,7 +25,7 @@ public class Player {
     private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health;
-    private boolean isDead, isIdle, muteSounds;  
+    private boolean isDead, muteSounds;  
     private int[] skin;
     private String name;
     public ArrayList<Image> animationImages = new ArrayList<Image>();
@@ -40,7 +40,6 @@ public class Player {
         shootingSoundPlayer = new SoundPlayer("shootingSound.mp3", false);
         hurtSoundPlayer = new SoundPlayer("hurtSound.mp3", false);
         dyingSoundPlayer = new SoundPlayer("dyingSound.mp3", false);
-        isIdle = true;
         muteSounds = false;
         facedDirection = 0;
         this.posX=x;
@@ -52,13 +51,10 @@ public class Player {
         this.skin[1]= 1;
         image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
         
-        this.playerAnimation = new Animation(135,8,12,4,0); // en ms
-        
-        BufferedImage manTileset = Tools.loadImage("man.png"); // Temporary image, animations need to be put in playerTileset
+        this.playerAnimation = new Animation(250,4,2,4,1); // en ms
         for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
             for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++){
-                
-                animationImages.add(Tools.selectTile(manTileset, i+1, j+1));
+                animationImages.add(Tools.selectTile(Tools.PlayerTilesetAnimated, i+1, j+1));
             }
         }
         
@@ -191,8 +187,8 @@ public class Player {
     
     public void draw(Graphics2D g) {
         if (!isDead) {
-            //g.drawImage(animationImages.get(playerAnimation.getCurrentImage(facedDirection, isIdle)),(int) posX,(int) posY, playerWidth, playerHeight, null);
-            g.drawImage(image, (int) posX + playerWidth / 2 - image.getWidth(null), (int) posY + playerHeight / 2 - image.getHeight(null), image.getWidth(null) * 2, image.getHeight(null) * 2, null);
+            g.drawImage(animationImages.get(playerAnimation.getCurrentImage()), (int) posX + playerWidth / 2 - image.getWidth(null), (int) posY + playerHeight / 2 - image.getHeight(null), image.getWidth(null) * 2, image.getHeight(null) * 2, null);
+            //g.drawImage(image, (int) posX + playerWidth / 2 - image.getWidth(null), (int) posY + playerHeight / 2 - image.getHeight(null), image.getWidth(null) * 2, image.getHeight(null) * 2, null);
             g.drawImage(hpBar, (int) posX + playerWidth / 2 - image.getWidth(null), (int) posY + playerHeight / 2 - image.getHeight(null) - 12, image.getWidth(null) * 2, image.getHeight(null) * 2, null);
             gun.draw(g, this);
             g.setColor(Color.RED);
@@ -210,28 +206,11 @@ public class Player {
         if(!isDead){
             
             // Update animation
-//            this.playerAnimation.update(dT);
+            this.playerAnimation.update(dT);
 
             //Calculate speed vector
             speed[0] += acceleration[0]*dT;
             speed[1] += acceleration[1]*dT;
-
-            double speedNorm = Math.sqrt(Math.pow(speed[0], 2) + Math.pow(speed[1], 2));
-            double angle;
-
-            if (speedNorm == 0) {
-                angle = 0;
-            } else {
-                angle = Math.acos(speed[0]/speedNorm); //Angle between speed vector and [1,0]+
-            }
-            if (speedNorm>maxSpeed ){
-
-                if (directionOfTravel[1] == -1) {
-                    angle = -angle;
-                }
-                speed[0] = maxSpeed*Math.cos(angle);
-                speed[1] = maxSpeed*Math.sin(angle);
-            }
 
             // Deceleration
             if (directionOfTravel[0] == 1 && acceleration[0] < 0 && speed[0]<0){
@@ -250,6 +229,25 @@ public class Player {
                 speed[1] = 0;
                 acceleration[1] = 0;
             }
+            
+            double speedNorm = Math.sqrt(Math.pow(speed[0], 2) + Math.pow(speed[1], 2));
+            double angle;
+
+            if (speedNorm == 0) {
+                angle = 0;
+            } else {
+                angle = Math.acos(speed[0]/speedNorm); //Angle between speed vector and [1,0]+
+            }
+            if (speedNorm>maxSpeed ){
+
+                if (directionOfTravel[1] == -1) {
+                    angle = -angle;
+                }
+                
+                speed[0] = maxSpeed*Math.cos(angle);
+                speed[1] = maxSpeed*Math.sin(angle);
+            }
+            
 
             // check if player is still in the map
             wantedX = posX + speed[0]*dT;
@@ -281,6 +279,17 @@ public class Player {
             }
             posX = wantedX;
             posY = wantedY;
+                        
+            if(Math.abs(speed[0]) <= 0.0001 && Math.abs(speed[1]) <= 0.0001)
+            {
+                playerAnimation.setIsIdle(true);
+            }
+            else
+            {
+                playerAnimation.setIsIdle(false);
+            }
+            
+            
 //            if (speed[0] == 0 && acceleration[0] == 0)
 //            {
 //                directionOfTravel[0] = 0;

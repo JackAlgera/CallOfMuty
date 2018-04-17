@@ -3,10 +3,12 @@ package callofmuty;
 public class Animation {
     double totalTime, switchTime;
     int[] numberOfImagesAnimation;
-    int currentImage, firstImage, animationImageLength; // currentImage starts at 0
+    int currentImage, firstImage, animationImageLength, row; // currentImage starts at 1
+    boolean isIdle;
     
-    public Animation(double switchTime, int numberOfImagesY, int numberOfImagesX, int animationImageLength, int firstImage)
+    public Animation(double switchTime, int numberOfImagesX, int numberOfImagesY, int animationImageLength, int firstImage)
     {
+        row = 2;
         this.totalTime = 0;
         this.switchTime = switchTime;
         numberOfImagesAnimation = new int[2];
@@ -15,6 +17,7 @@ public class Animation {
         this.currentImage = firstImage;
         this.firstImage = firstImage;
         this.animationImageLength = animationImageLength;
+        isIdle = false;
     }
     
     public void update(double dT)
@@ -52,20 +55,30 @@ public class Animation {
         return numberOfImagesAnimation[1];
     }
     
-    public int getCurrentImage(int row, boolean isIdle)
+    public int getCurrentImage()
     {
         if (isIdle)
         {
-            return (row*numberOfImagesAnimation[0] + firstImage + 1);
+            return ((row-1)*numberOfImagesAnimation[0] + currentImage - 1);
         }
         else
         {
-            return (row*numberOfImagesAnimation[0] + currentImage);
+            return 0;//(row*numberOfImagesAnimation[0] + firstImage + 1);
         }
     }
     
     public void setFirstImage(int firstImage)
     {
         this.firstImage = firstImage;
+    }
+    
+    public void setRow(int row)
+    {
+        this.row = row;
+    }
+    
+    public void setIsIdle(boolean isIdle)
+    {
+        this.isIdle = isIdle;
     }
 }
