@@ -4,6 +4,7 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/GamePanel.java</file>
             <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/SQLManager.java</file>
             <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/Animation.java</file>
@@ -13,6 +14,8 @@
             <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/Bullet.java</file>
             <file>file:/C:/Users/Jack/Documents/CallOfMuty/src/callofmuty/Player.java</file>
 =======
+=======
+>>>>>>> 7db24535be902ba33b735435ee0ca43f8ce498c4
             <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GameTimer.java</file>
             <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Tools.java</file>
             <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Map.java</file>
@@ -22,6 +25,9 @@
             <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GamePanel.java</file>
             <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Bullet.java</file>
             <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/CallOfMuty.java</file>
+<<<<<<< HEAD
+>>>>>>> 7db24535be902ba33b735435ee0ca43f8ce498c4
+=======
 >>>>>>> 7db24535be902ba33b735435ee0ca43f8ce498c4
         </group>
     </open-files>
