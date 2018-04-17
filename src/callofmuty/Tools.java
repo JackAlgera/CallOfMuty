@@ -16,6 +16,7 @@ public class Tools {
                 hudTileset = loadImage("HudTileset.png"),
                 bulletTileset = loadImage("BulletTileset.png"),
                 playerTileset = loadImage("PlayerTileset.png"),
+                PlayerTilesetAnimated = loadImage("PlayerTilesetAnimated.png"),
                 gunTileset = loadImage("GunTileset.png");
     public static int tileSize = 32; //Size of a tile in a tileset image
 
