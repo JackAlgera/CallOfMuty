@@ -31,9 +31,9 @@ public class Gun {
         this.id = id;
         switch(id){
             case PISTOL:
-                ammunition = 3;
+                ammunition = 30;
                 image = pistolImage;
-                reloadTime = 500; //in milliseconds
+                reloadTime = 50; //in milliseconds
                 damage = 22;
         }
     }
