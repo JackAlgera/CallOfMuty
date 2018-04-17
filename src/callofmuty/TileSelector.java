@@ -14,7 +14,7 @@ public class TileSelector extends Map {
             setTile(i,0,i);
         }
         selectedTile = 0;
-        super.setDrawingParameters(10,10, textureSize*getMapWidth(), textureSize*getMapHeight());
+        super.setDrawingParameters(91,13, textureSize*getMapWidth(), textureSize*getMapHeight());
     }
     
     public void draw(Graphics2D g2d, boolean setStartingTile){
@@ -22,8 +22,8 @@ public class TileSelector extends Map {
         int newXTextureSize = getDrawWidth()/getMapWidth(), newYTextureSize = getDrawHeight()/getMapHeight();
         if (!setStartingTile) { // do not draw the selection rectangle when setting the starting tile
             g2d.setStroke(new BasicStroke(5));
-            g2d.setColor(Color.lightGray);
-            g2d.drawRect(getxPos() + selectedTile * newXTextureSize, getyPos(), newXTextureSize, newYTextureSize);
+            g2d.setColor(Color.black);
+            g2d.drawRect(getxPos() + selectedTile * newXTextureSize, getyPos(), newXTextureSize, newYTextureSize-1);
         }
     }
     

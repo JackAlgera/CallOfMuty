@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -45,6 +46,10 @@ public class GamePanel extends JPanel{
             pressedleftArrowIcon = Tools.loadIcon("LeftArrowP.png"),
             rightArrowIcon = Tools.loadIcon("RightArrow.png"),
             pressedrightArrowIcon = Tools.loadIcon("RightArrowP.png"),
+            topArrowIcon = Tools.loadIcon("TopArrow.png"),
+            pressedtopArrowIcon = Tools.loadIcon("TopArrowP.png"),
+            bottomArrowIcon = Tools.loadIcon("BottomArrow.png"),
+            pressedbottomArrowIcon = Tools.loadIcon("BottomArrowP.png"),            
             exitIcon = Tools.loadIcon("Exit.png"),
             mapEditorIcon = Tools.loadIcon("EditMaps.png"),
             saveMapIcon = Tools.loadIcon("Save.png"),
@@ -233,6 +238,26 @@ public class GamePanel extends JPanel{
         leftSkinArrow.setBorderPainted(false);
         add(leftSkinArrow);
         MMbuttons.add(leftSkinArrow);
+        
+        JButton MEtopSkinArrow = new JButton();
+        MEtopSkinArrow.setIcon(topArrowIcon);
+        MEtopSkinArrow.setBounds(29, 16, topArrowIcon.getIconWidth(), topArrowIcon.getIconHeight());
+        MEtopSkinArrow.setPressedIcon(pressedtopArrowIcon);
+        MEtopSkinArrow.setVisible(true);
+        MEtopSkinArrow.setContentAreaFilled(false);
+        MEtopSkinArrow.setBorderPainted(false);
+        add(MEtopSkinArrow);
+        MEbuttons.add(MEtopSkinArrow);
+        
+        JButton MEBottomSkinArrow = new JButton();
+        MEBottomSkinArrow.setIcon(bottomArrowIcon);
+        MEBottomSkinArrow.setBounds(29, 78, bottomArrowIcon.getIconWidth(), bottomArrowIcon.getIconHeight());
+        MEBottomSkinArrow.setPressedIcon(pressedbottomArrowIcon);
+        MEBottomSkinArrow.setVisible(true);
+        MEBottomSkinArrow.setContentAreaFilled(false);
+        MEBottomSkinArrow.setBorderPainted(false);
+        add(MEBottomSkinArrow);
+        MEbuttons.add(MEBottomSkinArrow);        
         
         JButton rightMapArrow = new JButton();
         rightMapArrow.setIcon(rightArrowIcon);
@@ -494,8 +519,7 @@ public class GamePanel extends JPanel{
         loadMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                JFileChooser fileChooser = new JFileChooser("");
-	
+                JFileChooser fileChooser = new JFileChooser(new File("src/resources/maps"));
                 if (fileChooser.showOpenDialog(null)== 
                     JFileChooser.APPROVE_OPTION) {
                     String adresse = fileChooser.getSelectedFile().getPath();
