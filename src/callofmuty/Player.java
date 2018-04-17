@@ -51,7 +51,7 @@ public class Player {
         this.skin[1]= 1;
         image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
         
-        this.playerAnimation = new Animation(250,4,2,4,1); // en ms
+        this.playerAnimation = new Animation(75,7,3,7,1); // en ms
         for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
             for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++){
                 animationImages.add(Tools.selectTile(Tools.PlayerTilesetAnimated, i+1, j+1));

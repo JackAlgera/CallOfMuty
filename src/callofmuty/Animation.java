@@ -8,7 +8,7 @@ public class Animation {
     
     public Animation(double switchTime, int numberOfImagesX, int numberOfImagesY, int animationImageLength, int firstImage)
     {
-        row = 2;
+        row = 3;
         this.totalTime = 0;
         this.switchTime = switchTime;
         numberOfImagesAnimation = new int[2];
