@@ -456,9 +456,9 @@ public class Player {
         }
     }
     
-    public void shoot(double[] directionOfFire, double bulletSpeed, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
+    public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
         if (gun.shoot(unlimitedBullets)){
-            addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, bulletSpeed, sql, gun.getDamage());
+            addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
             if (!muteSounds) {
                 try {
                     shootingSoundPlayer.play();

@@ -98,12 +98,16 @@ public class Gun {
         return id;
     }
     
+    public double getBulletSpeed(){
+        return bulletSpeed;
+    }
+    
     public void draw(Graphics2D g2d, Player player){
         switch(id){
             case NO_GUN: //draw nothing
                 break;
             default:
-                g2d.drawImage(image, (int) player.getPosX()+15, (int) player.getPosY(), image.getWidth(null), image.getHeight(null), null);
+                g2d.drawImage(image, (int) player.getPosX()+15, (int) player.getPosY()+10, image.getWidth(null), image.getHeight(null), null);
         }
         
     }
