@@ -7,11 +7,11 @@ import java.awt.image.BufferedImage;
 public class Gun {
     
     public static final int NO_GUN = 0, PISTOL = 1, UZI = 2, SNIPER = 3, SHOTGUN = 4, AK = 5;
-    private static final BufferedImage pistolImage = Tools.selectTile(Tools.WeaponTileset, 1, 1);
-    private static final BufferedImage uziImage = Tools.selectTile(Tools.WeaponTileset, 2, 3); 
-    private static final BufferedImage sniperImage = Tools.selectTile(Tools.WeaponTileset, 3, 2);  
-    private static final BufferedImage shotgunImage = Tools.selectTile(Tools.WeaponTileset, 1, 7); 
-    private static final BufferedImage akImage = Tools.selectTile(Tools.WeaponTileset, 1, 3); 
+    private static final BufferedImage pistolImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 1, 1);
+    private static final BufferedImage uziImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 3, 1); 
+    private static final BufferedImage sniperImage = Tools.selectWeaponTile(Tools.WeaponTileset, 3, 1, 2);  
+    private static final BufferedImage shotgunImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 7, 2); 
+    private static final BufferedImage akImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 3, 2); 
     
     private int ammunition,stockAmmo, id, startingAmmo;
     private Image image;
