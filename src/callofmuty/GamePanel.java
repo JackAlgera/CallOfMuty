@@ -38,7 +38,8 @@ import javazoom.jl.decoder.JavaLayerException;
 public class GamePanel extends JPanel{
     
     public static BufferedImage MenuBackground = Tools.loadImage("MenuBackground.png"),
-            EditorBackground = Tools.loadImage("EditorBackground.png");
+            EditorBackground = Tools.loadImage("EditorBackground.png"),
+            PreGameBackground = Tools.loadImage("PreGameBackground.png");
 
     public static ImageIcon joinGameIcon = Tools.loadIcon("JoinGame.png"),
             createGameIcon = Tools.loadIcon("CreateGame.png"),
@@ -57,7 +58,9 @@ public class GamePanel extends JPanel{
             doneIcon = Tools.loadIcon("Done.png"),
             gameModeIcon = Tools.loadIcon("GameMode.png"),
             SoundsIcon = Tools.loadIcon("Sound.png"),
-            muteSoundsIcon = Tools.loadIcon("Mute.png");
+            muteSoundsIcon = Tools.loadIcon("Mute.png"),
+            MusicIcon = Tools.loadIcon("Music.png"),
+            muteMusicIcon = Tools.loadIcon("muteMusic.png");
             
     
     
@@ -399,21 +402,18 @@ public class GamePanel extends JPanel{
                 player.setName(usernameField.getText());
             }
         });
-        
-        // Sound buttons, added to ME & MM
-        
-        JButton muteSoundsButton = new JButton("Mute sounds");
-        muteSoundsButton.setIcon(muteSoundsIcon);
-        muteSoundsButton.setBounds(860, 20, muteSoundsIcon.getIconWidth(), muteSoundsIcon.getIconHeight());
+                
+        JToggleButton muteSoundsButton = new JToggleButton();
+        muteSoundsButton.setIcon(SoundsIcon);
+        muteSoundsButton.setBounds(840, 20, SoundsIcon.getIconWidth(), SoundsIcon.getIconHeight());
         muteSoundsButton.setVisible(true);
         muteSoundsButton.setBorderPainted(false);
         add(muteSoundsButton);
         MMbuttons.add(muteSoundsButton);
-        MEbuttons.add(muteSoundsButton);
         
         JToggleButton  muteMusicButton = new JToggleButton();
-        muteMusicButton.setIcon(SoundsIcon);
-        muteMusicButton.setBounds(900, 20, SoundsIcon.getIconWidth(), SoundsIcon.getIconHeight());
+        muteMusicButton.setIcon(MusicIcon);
+        muteMusicButton.setBounds(900, 20, MusicIcon.getIconWidth(), MusicIcon.getIconHeight());
         muteMusicButton.setVisible(true);
         muteMusicButton.setBorderPainted(false);
         add(muteMusicButton);
@@ -423,7 +423,12 @@ public class GamePanel extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 muteSounds = !muteSounds;
                 player.setMuteSounds(muteSounds);
-                playClicSound();
+                if(muteSounds){
+                    muteSoundsButton.setIcon(muteSoundsIcon);      
+                }else{
+                    muteSoundsButton.setIcon(SoundsIcon);
+                    playClicSound();
+                }
             }
         });
         
@@ -432,10 +437,10 @@ public class GamePanel extends JPanel{
                 playClicSound();
                 muteMusic = !muteMusic;
                 if(muteMusic){
-                    muteMusicButton.setIcon(muteSoundsIcon);
+                    muteMusicButton.setIcon(muteMusicIcon);
                     menuMusicPlayer.stop();
                 } else {
-                    muteMusicButton.setIcon(SoundsIcon);              
+                    muteMusicButton.setIcon(MusicIcon);              
                     try {
                         menuMusicPlayer.play();
                     } catch (JavaLayerException ex) {
@@ -453,9 +458,7 @@ public class GamePanel extends JPanel{
         JButton saveMapButton = new JButton();
         saveMapButton.setIcon(saveMapIcon);
         saveMapButton.setBounds(7, 212, saveMapIcon.getIconWidth(), saveMapIcon.getIconHeight());
-        //saveMapButton.setPressedIcon(pressedSaveMapIcon);
         saveMapButton.setVisible(false);
-        //saveMapButton.setContentAreaFilled(false);
         saveMapButton.setBorderPainted(true);
         add(saveMapButton);
         MEbuttons.add(saveMapButton);
@@ -463,9 +466,7 @@ public class GamePanel extends JPanel{
         JButton loadMapButton = new JButton();
         loadMapButton.setIcon(loadMapIcon);
         loadMapButton.setBounds(7, 163, loadMapIcon.getIconWidth(), loadMapIcon.getIconHeight());
-        //loadMapButton.setPressedIcon(pressedLoadMapIcon);
         loadMapButton.setVisible(false);
-        //loadMapButton.setContentAreaFilled(false);
         loadMapButton.setBorderPainted(true);
         add(loadMapButton);
         MEbuttons.add(loadMapButton);
@@ -473,9 +474,7 @@ public class GamePanel extends JPanel{
         JButton doneButton = new JButton();
         doneButton.setIcon(doneIcon);
         doneButton.setBounds(7, 279, doneIcon.getIconWidth(), doneIcon.getIconHeight());
-        //doneButton.setPressedIcon(presseddoneIcon);
         doneButton.setVisible(false);
-        //doneButton.setContentAreaFilled(false);
         doneButton.setBorderPainted(true);
         add(doneButton);
         MEbuttons.add(doneButton);
@@ -729,6 +728,8 @@ public void paint(Graphics g) {
     Graphics2D g2d = (Graphics2D) g;
     switch(gameState) {
         case PRE_GAME:
+            g2d.drawImage(PreGameBackground, 0, 0, 16*64, 9*64, this);
+            map.draw(g2d, false);
             for (int i=0; i<otherPlayersList.size(); i++){
                 g2d.drawString(otherPlayersList.get(i).getName(), 100, 100+i*50);
             }
