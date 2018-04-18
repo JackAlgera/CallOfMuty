@@ -22,6 +22,24 @@ public class Bullet {
         this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0);
     }
     
+    public Bullet(double posX, double posY) { //usefull constructor bullet animations
+        this.posX = posX;
+        this.posY = posY;
+        speed = 0;
+        isActive = true;
+        
+        this.bulletAnimation = new Animation(130,6,2,5,2,1);// in ms
+        bulletAnimation.setRow(2);
+        
+        for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
+        {
+            for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++)
+            {
+                animationImages.add(Tools.selectTile(Tools.bulletTilesetAnimated, i+1, j+1));
+            }
+        }
+    }
+    
     public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId, double damage){
         this.damage = damage;
         this.posX = posX;
@@ -33,19 +51,18 @@ public class Bullet {
         this.playerId = playerId;
         this.bulletId = bulletId;
         isActive = false;
-        image = Tools.selectTile(Tools.bulletTileset, 1, 1);
+        image = Tools.selectTile(Tools.bulletTileset, 1, 2);
         
-        /*
-        this.bulletAnimation = new Animation(250,1,4,4,0);// in ms
+        this.bulletAnimation = new Animation(130,6,2,5,2,2);// in ms
+        bulletAnimation.setRow(2);
         
         for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
         {
             for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++)
             {
-                animationImages.add(Tools.selectTile(Tools.bulletTileset, i+1, j+1));
+                animationImages.add(Tools.selectTile(Tools.bulletTilesetAnimated, i+1, j+1));
             }
         }
-        */
     }
     
     public boolean isActive(){
@@ -60,14 +77,14 @@ public class Bullet {
         if (isActive) {
             posX += direction[0] * dT * speed;
             posY += direction[1] * dT * speed;
-    //        bulletAnimation.update(dT);
+            bulletAnimation.update(dT);
         }
     }
     
-    public void draw(Graphics2D g2d, int texturesize, int row){
+    public void draw(Graphics2D g2d, int texturesize){
         if (isActive) {
-    //        g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage(row, false)),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
-            g2d.drawImage(image, (int) posX, (int) posY, texturesize / 2, texturesize / 2, null);
+            g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
+            //g2d.drawImage(image, (int) posX, (int) posY, texturesize / 2, texturesize / 2, null);
         }
     }
     
@@ -133,6 +150,24 @@ public class Bullet {
     
     public void incrementId(){ //used to find first free id for a new bullet
         bulletId++;
+    }
+    
+    public void setAnimation(boolean state)
+    {
+        if(state)
+            bulletAnimation.setAnimation(1);
+        else
+            bulletAnimation.setAnimation(2);
+    }
+    
+    public boolean endOfAnimation()
+    {
+        return bulletAnimation.endOfAnimation();
+    }
+    
+    public void updateBulletAnimation(double dT)
+    {
+        bulletAnimation.update(dT);
     }
     
     @Override

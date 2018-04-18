@@ -33,7 +33,7 @@ public class Player {
     public Animation playerAnimation;
     private ArrayList<Player> hurtPlayers;
     
-    private ArrayList<Bullet> bulletList;
+    private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
     private SoundPlayer shootingSoundPlayer, hurtSoundPlayer, dyingSoundPlayer;
         
@@ -52,12 +52,15 @@ public class Player {
         this.skin[1]= 1;
         image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
         
-        this.playerAnimation = new Animation(75,7,3,7,1); // en ms
+        destroyedBullets = new ArrayList();
+        
+        this.playerAnimation = new Animation(75,7,3,4,1,0); // en ms
         for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
             for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++){
                 animationImages.add(Tools.selectTile(Tools.PlayerTilesetAnimated, i+1, j+1));
             }
         }
+        playerAnimation.setRow(2);
         
         maxSpeed = 0.3; //in pixel per ms
         speed = new double[2];
@@ -199,7 +202,11 @@ public class Player {
     
     public void drawBullets(Graphics2D g,int texturesize) {
         for (Bullet bullet : bulletList) {
-            bullet.draw(g, texturesize, 0);
+            bullet.draw(g, texturesize);
+        }
+        for (Bullet bullet : destroyedBullets)
+        {
+            bullet.draw(g, texturesize);
         }
     }
     
@@ -208,6 +215,14 @@ public class Player {
             
             // Update animation
             this.playerAnimation.update(dT);
+            for(int i=0; i<destroyedBullets.size(); i++)
+            {
+                destroyedBullets.get(i).updateBulletAnimation(dT);
+                if(destroyedBullets.get(i).endOfAnimation())
+                {
+                    destroyedBullets.remove(i);
+                }
+            }
 
             //Calculate speed vector
             speed[0] += acceleration[0]*dT;
@@ -407,6 +422,7 @@ public class Player {
                 bullet.update(dT);
                 if (bullet.checkCollisionWithMap(map)) {
                     bullet.setActive(false);
+                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY()));
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
                         if (Tools.isPlayerHit(otherPlayer, bullet)) {

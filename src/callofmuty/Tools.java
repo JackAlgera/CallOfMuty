@@ -16,6 +16,7 @@ public class Tools {
     public static BufferedImage tileset = loadImage("Tileset.png"),
                 hudTileset = loadImage("HudTileset.png"),
                 bulletTileset = loadImage("BulletTileset.png"),
+                bulletTilesetAnimated = loadImage("BulletsTilesetAnimated.png"),
                 playerTileset = loadImage("PlayerTileset.png"),
                 PlayerTilesetAnimated = loadImage("PlayerTilesetAnimated.png"),
                 WeaponTileset = loadImage("WeaponTileset.png");

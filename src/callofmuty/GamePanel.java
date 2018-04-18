@@ -751,7 +751,7 @@ public void paint(Graphics g) {
                 otherPlayer.draw(g2d);
             }
             for (int i=0; i<otherPlayersBullets.size(); i++){
-                otherPlayersBullets.get(i).draw(g2d, textureSize, 0);// To do : Only 1 SQL line to modifie every bullet's position
+                otherPlayersBullets.get(i).draw(g2d, textureSize);// To do : Only 1 SQL line to modifie every bullet's position
             }
             break;
             
