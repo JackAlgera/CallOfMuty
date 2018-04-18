@@ -18,14 +18,33 @@ public class Tools {
                 bulletTileset = loadImage("BulletTileset.png"),
                 playerTileset = loadImage("PlayerTileset.png"),
                 PlayerTilesetAnimated = loadImage("PlayerTilesetAnimated.png"),
-                gunTileset = loadImage("GunTileset.png");
+                WeaponTileset = loadImage("WeaponTileset.png");
+    
     public static int tileSize = 32; //Size of a tile in a tileset image
 
     
     public static BufferedImage selectTile(BufferedImage tileset, int column, int row){
         return tileset.getSubimage(tileSize*(row-1),tileSize*(column-1), tileSize, tileSize);
     }
-   
+    
+    public static BufferedImage selectWeaponTile(BufferedImage tileset, int column, int row, int taille){
+        BufferedImage gunImage;
+        switch(taille) {
+            case 1:
+                    gunImage = tileset.getSubimage(tileSize*(row-1),tileSize*(column-1), tileSize, tileSize);
+                    break;
+                            
+            case 2:
+                    gunImage = tileset.getSubimage(tileSize*(row-1),tileSize*(column-1), tileSize*2, tileSize);
+                    break;
+            
+            default :
+                    gunImage = tileset.getSubimage(tileSize*(row-1),tileSize*(column-1), tileSize, tileSize);
+                    
+        }
+        return gunImage;
+    }
+    
    public static BufferedImage loadImage(String name){
         BufferedImage image = null;
         try {

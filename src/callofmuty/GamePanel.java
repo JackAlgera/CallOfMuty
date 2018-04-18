@@ -59,7 +59,7 @@ public class GamePanel extends JPanel{
             SoundsIcon = Tools.loadIcon("Sound.png"),
             muteSoundsIcon = Tools.loadIcon("Mute.png");
             
-    private double bulletSpeed = 0.5;
+    
     
     public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
             MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3,
@@ -137,8 +137,10 @@ public class GamePanel extends JPanel{
 
                 {
                     try {
-                        player.shoot(directionOfFire, bulletSpeed, sql, false);
-                    } catch (JavaLayerException | IOException ex) {
+                        player.shoot(directionOfFire, sql, false);
+                    } catch (JavaLayerException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
                         Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }

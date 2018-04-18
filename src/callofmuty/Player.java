@@ -442,13 +442,25 @@ public class Player {
 
     void generateGun(int numberOfPlayers) {
         if (gun.getId() == 0 && Math.random()<1.0/(4*numberOfPlayers)){ // One player gets a gun every 4 seconds
-            gun.setId(Gun.PISTOL);
+            double gunRandom = Math.random();
+            if (gunRandom <0.2){
+                gun.setId(Gun.PISTOL);
+            } else if (gunRandom<0.4){
+                gun.setId(Gun.UZI);
+            } else if (gunRandom<0.6){
+                gun.setId(Gun.SNIPER);
+            } else if (gunRandom<0.8){
+                gun.setId(Gun.SHOTGUN);
+            } else if (gunRandom<1.0){
+                gun.setId(Gun.AK);
+            }
+            
         }
     }
     
-    public void shoot(double[] directionOfFire, double bulletSpeed, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
+    public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
         if (gun.shoot(unlimitedBullets)){
-            addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, bulletSpeed, sql, gun.getDamage());
+            addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
             if (!muteSounds) {
                 try {
                     shootingSoundPlayer.play();
