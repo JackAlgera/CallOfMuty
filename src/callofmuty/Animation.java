@@ -3,12 +3,15 @@ package callofmuty;
 public class Animation {
     double totalTime, switchTime;
     int[] numberOfImagesAnimation;
-    int currentImage, firstImage, animationImageLength, row; // currentImage starts at 1
+    int currentImage, firstImage, animationImageLength, row, type; // currentImage starts at 1
     boolean isIdle;
     
-    public Animation(double switchTime, int numberOfImagesX, int numberOfImagesY, int animationImageLength, int firstImage)
+    public static final int PLAYER = 0, GUN = 1, STILL_IMAGE = 2;
+    
+    public Animation(double switchTime, int numberOfImagesX, int numberOfImagesY, int animationImageLength, int firstImage, int type)
     {
-        row = 3;
+        this.type = type;
+        row = 1;
         this.totalTime = 0;
         this.switchTime = switchTime;
         numberOfImagesAnimation = new int[2];
@@ -57,14 +60,29 @@ public class Animation {
     
     public int getCurrentImage()
     {
-        if (isIdle)
+        int image = 0;
+        switch(type)
         {
-            return ((row-1)*numberOfImagesAnimation[0] + currentImage - 1);
+            case PLAYER:
+                if (isIdle)
+                {
+                    image = ((row-1)*numberOfImagesAnimation[0] + currentImage - 1);
+                }
+                else
+                {
+                    image = 0;//(row*numberOfImagesAnimation[0] + firstImage + 1);
+                }
+                break;
+                
+            case GUN:
+                image = ((row-1)*numberOfImagesAnimation[0] + currentImage - 1);
+                break;
+                
+            case STILL_IMAGE :
+                image = (row-1) * numberOfImagesAnimation[0]; // Takes the first image of the a given row
+                break;
         }
-        else
-        {
-            return 0;//(row*numberOfImagesAnimation[0] + firstImage + 1);
-        }
+        return image;
     }
     
     public void setFirstImage(int firstImage)
@@ -80,5 +98,15 @@ public class Animation {
     public void setIsIdle(boolean isIdle)
     {
         this.isIdle = isIdle;
+    }
+    
+    public boolean endOfAnimation()
+    {
+        return currentImage == animationImageLength + firstImage - 1;
+    }
+    
+    public void setAnimation(int state)
+    {
+        type = state;
     }
 }
