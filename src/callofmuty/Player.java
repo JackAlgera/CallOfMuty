@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javazoom.jl.decoder.JavaLayerException;
@@ -332,8 +333,9 @@ public class Player {
     }
     
     public void setPosition(Map map){
-        posX = map.getStartTile()[0]*map.getTextureSize();
-        posY = map.getStartTile()[1]*map.getTextureSize();
+        int index = ThreadLocalRandom.current().nextInt(0, map.getStartTile().size());
+        posX = map.getStartTile().get(index)[0]*map.getTextureSize();
+        posY = map.getStartTile().get(index)[1]*map.getTextureSize();
     }
     
     public void setPlayerId(int playerId)

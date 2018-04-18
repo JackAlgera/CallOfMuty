@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
@@ -42,22 +43,26 @@ public class Tools {
    
     public static Map textFileToMap(String address, int textureSize){
         int [][] intMap = null;
-        int[] startingTile = null;
+        ArrayList<int[]> startingTile = new ArrayList<>();
         try {
             BufferedReader file = new BufferedReader (new FileReader(address));
             String[] line = file.readLine().split(" ");
             file.close();
             int mapWidth, mapHeight;
-            if (line.length > 3) {
+            if (line.length > 1) {
                 mapWidth = Integer.parseInt(line[0]);
                 mapHeight = Integer.parseInt(line[1]);
-                startingTile = new int[]{Integer.parseInt(line[2]),Integer.parseInt(line[3])};
                 intMap = new int[mapWidth][mapHeight];
-                if (line.length == 4 + mapWidth * mapHeight) {
+                if (line.length > 3 + mapWidth * mapHeight) {
                     for (int i = 0; i < mapWidth; i++) {
                         for (int j = 0; j < mapHeight; j++) {
-                            intMap[i][j] = Integer.parseInt(line[i*mapHeight + j+4]);
+                            intMap[i][j] = Integer.parseInt(line[i*mapHeight + j+2]);
                         }
+                    }
+                    int i = 2 + mapWidth * mapHeight;
+                    while(i+1<line.length){
+                        startingTile.add(new int[]{Integer.parseInt(line[i]),Integer.parseInt(line[i+1])});
+                        i +=2;
                     }
                 } else {
                     System.out.println("Cannot load the map : file length is wrong");
@@ -79,10 +84,13 @@ public class Tools {
         int[][] intMap = map.getMap();
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(address));
-            writer.write("" + map.getMapWidth()+ " " + map.getMapHeight() + " " + map.getStartTile()[0]+ " " + map.getStartTile()[1]);
+            writer.write("" + map.getMapWidth()+ " " + map.getMapHeight());
             for (int i = 0; i < map.getMapWidth(); i++) {
                 for (int j = 0; j < map.getMapHeight(); j++) {
                     writer.write(" "+intMap[i][j]);
+                }
+                for(int[] startTile : map.getStartTile()){
+                    writer.write(" "+startTile[0]+" "+startTile[1]);
                 }
             }
             writer.close();

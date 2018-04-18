@@ -17,6 +17,11 @@ public class TileSelector extends Map {
         super.setDrawingParameters(91,13, textureSize*getMapWidth(), textureSize*getMapHeight());
     }
     
+    @Override
+    public void setTile(int i, int j, int tileType){
+        super.getMap()[i][j] = tileType;
+    }
+    
     public void draw(Graphics2D g2d, boolean setStartingTile){
         super.draw(g2d, false);
         int newXTextureSize = getDrawWidth()/getMapWidth(), newYTextureSize = getDrawHeight()/getMapHeight();

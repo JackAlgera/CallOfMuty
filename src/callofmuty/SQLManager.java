@@ -230,8 +230,8 @@ public class SQLManager {
         PreparedStatement requete;
         String values = "";
         int[][] intMap = map.getMap();
-        int[] startTile = map.getStartTile();
-        if (Arrays.equals(startTile, new int[]{0, 0})) {
+        ArrayList<int[]> startTile = map.getStartTile();
+        if (startTile.contains(new int[]{0, 0})) {
             values += "(0,0," + intMap[0][0] + ",1)";
         } else {
             values += "(0,0," + intMap[0][0] + ",0)";
@@ -239,7 +239,7 @@ public class SQLManager {
         for (int i = 0 ; i<map.getMapWidth() ; i++){
             for (int j = 0; j<map.getMapHeight(); j++){
                 if (i != 0 || j != 0) {
-                    if (Arrays.equals(startTile, new int[]{i, j})) {
+                    if (startTile.contains(new int[]{i, j})) {
                         values += ", (" + i + "," + j + "," + intMap[i][j] + ",1)";
                     } else {
                         values += ", (" + i + "," + j + "," + intMap[i][j] + ",0)";
@@ -276,7 +276,7 @@ public class SQLManager {
                     }
                 }
                 map = new Map(intMap, textureSize);
-                map.setStartTile(startingTile);
+                map.addStartTile(startingTile);
             }
             requete.close();
         } catch (SQLException ex) {

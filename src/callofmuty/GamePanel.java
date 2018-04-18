@@ -138,9 +138,7 @@ public class GamePanel extends JPanel{
                 {
                     try {
                         player.shoot(directionOfFire, bulletSpeed, sql, false);
-                    } catch (JavaLayerException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
+                    } catch (JavaLayerException | IOException ex) {
                         Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -152,7 +150,7 @@ public class GamePanel extends JPanel{
                         if(!setStartingTile){
                             map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
                         } else {
-                            map.setStartTile(new int[]{mapClicked[1], mapClicked[2]});
+                            map.addStartTile(new int[]{mapClicked[1], mapClicked[2]});
                         }
                     } else { // check if tileSelector was clicked and select the tile if so
                         if(tileSelector.clickedTile(e.getX(), e.getY())[0]>-1){
@@ -402,15 +400,15 @@ public class GamePanel extends JPanel{
         
         // Sound buttons, added to ME & MM
         
-//        JButton muteSoundsButton = new JButton("Mute sounds");
-//        muteSoundsButton.setIcon(muteSoundsIcon);
-//        muteSoundsButton.setBounds(860, 20, muteSoundsIcon.getIconWidth(), muteSoundsIcon.getIconHeight());
-//        muteSoundsButton.setVisible(true);
-//        muteSoundsButton.setBorderPainted(false);
-//        add(muteSoundsButton);
-//        MMbuttons.add(muteSoundsButton);
-//        MEbuttons.add(muteSoundsButton);
-//        
+        JButton muteSoundsButton = new JButton("Mute sounds");
+        muteSoundsButton.setIcon(muteSoundsIcon);
+        muteSoundsButton.setBounds(860, 20, muteSoundsIcon.getIconWidth(), muteSoundsIcon.getIconHeight());
+        muteSoundsButton.setVisible(true);
+        muteSoundsButton.setBorderPainted(false);
+        add(muteSoundsButton);
+        MMbuttons.add(muteSoundsButton);
+        MEbuttons.add(muteSoundsButton);
+        
         JToggleButton  muteMusicButton = new JToggleButton();
         muteMusicButton.setIcon(SoundsIcon);
         muteMusicButton.setBounds(900, 20, SoundsIcon.getIconWidth(), SoundsIcon.getIconHeight());
@@ -419,14 +417,14 @@ public class GamePanel extends JPanel{
         add(muteMusicButton);
         MMbuttons.add(muteMusicButton);
         
-//        muteSoundsButton.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                muteSounds = !muteSounds;
-//                player.setMuteSounds(muteSounds);
-//                playClicSound();
-//            }
-//        });
-//        
+        muteSoundsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                muteSounds = !muteSounds;
+                player.setMuteSounds(muteSounds);
+                playClicSound();
+            }
+        });
+        
         muteMusicButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
