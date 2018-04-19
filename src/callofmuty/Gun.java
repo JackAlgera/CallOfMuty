@@ -17,7 +17,7 @@ public class Gun {
     
     private int ammunition,stockAmmo, id, startingAmmo;
     private Image image;
-    private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire;
+    private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot;
     private SoundPlayer gunSound;
     
     public Gun(){
@@ -39,7 +39,7 @@ public class Gun {
         
         switch(this.id){
             case PISTOL:
-                ammunition = 12;
+                ammunition = 10;
                 image = pistolImage;
                 rateOfFire = 500; //in milliseconds
                 damage = 15;
@@ -49,12 +49,13 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
+                distanceMaxShoot = 400;
                 break;
                 
             case UZI:
-                ammunition = 10;
+                ammunition = 40;
                 image = uziImage;
-                rateOfFire = 200;
+                rateOfFire = 150;
                 damage = 5;
                 reloadTime = 1000;
                 bulletSpeed = 0.8;
@@ -62,10 +63,11 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
+                distanceMaxShoot = 400;
                 break;
                 
             case SNIPER:
-                ammunition = 5;
+                ammunition = 4;
                 image = sniperImage;
                 rateOfFire = 1000;
                 damage = 35;
@@ -75,10 +77,11 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
+                distanceMaxShoot = 400;
                 break;
                 
             case SHOTGUN:
-                ammunition = 8;
+                ammunition = 7;
                 image = shotgunImage;
                 rateOfFire = 650;
                 damage = 22;
@@ -88,10 +91,11 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
+                distanceMaxShoot = 400;
                 break;
                 
             case AK:
-                ammunition = 10;
+                ammunition = 25;
                 image = akImage;
                 rateOfFire = 280;
                 damage = 10;
@@ -101,7 +105,11 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
+                distanceMaxShoot = 400;
                 break;
+                
+            case NO_GUN:
+                ammunition = 0;
                 
                 
         }
@@ -117,6 +125,10 @@ public class Gun {
     
     public SoundPlayer getGunSound(){
         return gunSound;
+    }
+    
+    public double getDistanceMaxShoot() {
+        return distanceMaxShoot;
     }
     
     public void draw(Graphics2D g2d, Player player){
@@ -140,7 +152,7 @@ public class Gun {
             lastShotTimeStamp = System.currentTimeMillis();
             if(ammunition==0){
                 if(stockAmmo !=0 ){
-                    stockAmmo=stockAmmo-startingAmmo;
+                    stockAmmo-=startingAmmo;
                     ammunition=startingAmmo;
                     rateOfFire+=reloadTime;
                 } else {

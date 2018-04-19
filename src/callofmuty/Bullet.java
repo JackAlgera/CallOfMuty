@@ -6,7 +6,7 @@ import java.awt.Image;
 import java.util.ArrayList;
 
 public class Bullet {
-    public double posX, posY, speed, damage;
+    public double posX, posY, speed, damage, distanceTravelled;
     public int ballWidth, ballHeight, playerId, bulletId;
     public double[] direction;
     public ArrayList<Image> animationImages = new ArrayList<Image>();
@@ -52,6 +52,7 @@ public class Bullet {
         this.bulletId = bulletId;
         isActive = false;
         image = Tools.selectTile(Tools.bulletTileset, 1, 2);
+        distanceTravelled = 0;
         
         this.bulletAnimation = new Animation(130,6,2,5,2,2);// in ms
         bulletAnimation.setRow(2);
@@ -78,6 +79,7 @@ public class Bullet {
             posX += direction[0] * dT * speed;
             posY += direction[1] * dT * speed;
             bulletAnimation.update(dT);
+            distanceTravelled+= Math.sqrt(Math.pow(direction[0] * dT * speed, 2)+Math.pow(direction[1] * dT * speed, 2));
         }
     }
     
@@ -126,6 +128,14 @@ public class Bullet {
 
     public int getPlayerId() {
         return playerId;
+    }
+    
+    public double getDistanceTravelled(){
+        return distanceTravelled;
+    }
+    
+    public void setDistanceTravelled(double distance){
+        this.distanceTravelled = distance;
     }
 
     public void setPlayerId(int playerId) {

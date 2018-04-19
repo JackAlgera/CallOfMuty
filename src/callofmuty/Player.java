@@ -35,10 +35,10 @@ public class Player {
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
-    private SoundPlayer shootingSoundPlayer, hurtSoundPlayer, dyingSoundPlayer;
+    private SoundPlayer  hurtSoundPlayer, dyingSoundPlayer;
         
     public Player(double x,double y) throws IOException, JavaLayerException{
-        shootingSoundPlayer = new SoundPlayer("shootingSound.mp3", false);
+        
         hurtSoundPlayer = new SoundPlayer("hurtSound.mp3", false);
         dyingSoundPlayer = new SoundPlayer("dyingSound.mp3", false);
         muteSounds = false;
@@ -423,6 +423,11 @@ public class Player {
                 if (bullet.checkCollisionWithMap(map)) {
                     bullet.setActive(false);
                     destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY()));
+                    bullet.setDistanceTravelled(0);
+                } else if(bullet.getDistanceTravelled()>gun.getDistanceMaxShoot()){
+                    bullet.setActive(false);
+                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY()));
+                    bullet.setDistanceTravelled(0);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
                         if (Tools.isPlayerHit(otherPlayer, bullet)) {
@@ -430,8 +435,10 @@ public class Player {
                             hurtPlayer = new Player(otherPlayer.getPlayerId());
                             hurtPlayer.setHealth(bullet.getDamage());
                             hurtPlayers.add(hurtPlayer);
+                            bullet.setDistanceTravelled(0);
                         }
                     }
+                    
                 }
             }
         }
