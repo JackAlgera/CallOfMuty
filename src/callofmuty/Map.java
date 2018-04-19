@@ -45,7 +45,7 @@ public class Map{
         }
     }
     
-    private int startTileIndex(int[] tile){
+    public int startTileIndex(int[] tile){
         int index = -1;
         int i = 0;
         boolean tileFound = false;

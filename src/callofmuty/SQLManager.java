@@ -231,7 +231,7 @@ public class SQLManager {
         String values = "";
         int[][] intMap = map.getMap();
         ArrayList<int[]> startTile = map.getStartTile();
-        if (startTile.contains(new int[]{0, 0})) {
+        if (map.startTileIndex(new int[]{0, 0})>-1) {
             values += "(0,0," + intMap[0][0] + ",1)";
         } else {
             values += "(0,0," + intMap[0][0] + ",0)";
@@ -239,7 +239,7 @@ public class SQLManager {
         for (int i = 0 ; i<map.getMapWidth() ; i++){
             for (int j = 0; j<map.getMapHeight(); j++){
                 if (i != 0 || j != 0) {
-                    if (startTile.contains(new int[]{i, j})) {
+                    if (map.startTileIndex(new int[]{0, 0})>-1) {
                         values += ", (" + i + "," + j + "," + intMap[i][j] + ",1)";
                     } else {
                         values += ", (" + i + "," + j + "," + intMap[i][j] + ",0)";
