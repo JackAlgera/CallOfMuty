@@ -3,7 +3,11 @@ package callofmuty;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javazoom.jl.decoder.JavaLayerException;
 
 public class Gun {
@@ -24,10 +28,6 @@ public class Gun {
         ammunition = 0;
         id = NO_GUN;
         lastShotTimeStamp = System.currentTimeMillis();
-    }
-    
-    public boolean isEmpty(){
-        return ammunition==0;
     }
     
     public double getDamage(){
@@ -123,10 +123,6 @@ public class Gun {
         return bulletSpeed;
     }
     
-    public SoundPlayer getGunSound(){
-        return gunSound;
-    }
-    
     public double getDistanceMaxShoot() {
         return distanceMaxShoot;
     }
@@ -141,10 +137,9 @@ public class Gun {
         
     }
     
-    public boolean shoot(boolean unlimitedBullets)throws IOException, JavaLayerException{ // if gun can shoot, shoots and returns true, else returns false
+    public boolean shoot(boolean unlimitedBullets, boolean muteShootingSound)throws IOException, JavaLayerException{ // if gun can shoot, shoots and returns true, else returns false
         boolean test = (unlimitedBullets || ammunition>0) && System.currentTimeMillis()-rateOfFire>=lastShotTimeStamp;
         if (test){
-            
             if(!unlimitedBullets){
                 ammunition--;
                 rateOfFire=initialRateOfFire;
@@ -160,8 +155,23 @@ public class Gun {
                 }
                 
             }
+            if (!muteShootingSound){
+                playShootingSound();
+            }
         }
         return test;
+    }
+    
+    public void playShootingSound() {
+        if (id != NO_GUN) {
+            try {
+                gunSound.play();
+            } catch (FileNotFoundException | URISyntaxException ex) {
+                Logger.getLogger(Gun.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (JavaLayerException | IOException ex) {
+                Logger.getLogger(Gun.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
 }

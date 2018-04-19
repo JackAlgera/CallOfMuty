@@ -69,20 +69,18 @@ public class Tools {
             String[] line = file.readLine().split(" ");
             file.close();
             int mapWidth, mapHeight;
-            if (line.length > 1) {
+            if (line.length >= 2) {
                 mapWidth = Integer.parseInt(line[0]);
                 mapHeight = Integer.parseInt(line[1]);
                 intMap = new int[mapWidth][mapHeight];
-                if (line.length > 3 + mapWidth * mapHeight) {
+                if (line.length >= 4 + mapWidth * mapHeight) {
                     for (int i = 0; i < mapWidth; i++) {
                         for (int j = 0; j < mapHeight; j++) {
                             intMap[i][j] = Integer.parseInt(line[i*mapHeight + j+2]);
                         }
                     }
-                    int i = 2 + mapWidth * mapHeight;
-                    while(i+1<line.length){
+                    for (int i = 2 + mapWidth * mapHeight; i+1 < line.length; i+=2){
                         startingTile.add(new int[]{Integer.parseInt(line[i]),Integer.parseInt(line[i+1])});
-                        i +=2;
                     }
                 } else {
                     System.out.println("Cannot load the map : file length is wrong");
@@ -104,14 +102,14 @@ public class Tools {
         int[][] intMap = map.getMap();
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(address));
-            writer.write("" + map.getMapWidth()+ " " + map.getMapHeight());
+            writer.write("" + map.getMapWidth() + " " + map.getMapHeight());
             for (int i = 0; i < map.getMapWidth(); i++) {
                 for (int j = 0; j < map.getMapHeight(); j++) {
-                    writer.write(" "+intMap[i][j]);
+                    writer.write(" " + intMap[i][j]);
                 }
-                for(int[] startTile : map.getStartTile()){
-                    writer.write(" "+startTile[0]+" "+startTile[1]);
-                }
+            }
+            for (int[] startTile : map.getStartTile()) {
+                writer.write(" " + startTile[0] + " " + startTile[1]);
             }
             writer.close();
         } catch (IOException e) {

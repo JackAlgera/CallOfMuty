@@ -482,29 +482,14 @@ public class Player {
     }
     
     public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
-        if (gun.shoot(unlimitedBullets)){
+        if (gun.shoot(unlimitedBullets, muteSounds)){
             addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
-            if (!muteSounds) {
-                try {
-                    gun.getGunSound().play();
-                } catch (URISyntaxException ex) {
-                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
         }
     }
 
     void playShootSound() {
         if(!muteSounds){
-            try {
-                gun.getGunSound().play();
-            } catch (JavaLayerException ex) {
-                Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            gun.playShootingSound();
         }
     }
 }

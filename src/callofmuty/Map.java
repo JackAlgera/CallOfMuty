@@ -4,7 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.JOptionPane;
 
 public class Map{
@@ -91,7 +90,8 @@ public class Map{
                 setDrawingParameters(100,100,mapWidth*textureSize - 100, mapHeight*textureSize-100);
                 break;
             case GamePanel.IN_GAME:
-                setDrawingParameters(0,0,mapHeight*textureSize,mapWidth*textureSize);
+                setDrawingParameters(0, 0, mapWidth*textureSize, mapHeight*textureSize);
+                break;
             case GamePanel.PRE_GAME:
                 setDrawingParameters(585, 330, 425, 230);
         }

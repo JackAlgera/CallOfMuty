@@ -138,16 +138,11 @@ public class GamePanel extends JPanel{
                     double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
                     directionOfFire[0] = directionOfFire[0] / norme;
                     directionOfFire[1] = directionOfFire[1] / norme;
-
-                {
                     try {
                         player.shoot(directionOfFire, sql, false);
-                    } catch (JavaLayerException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
+                    } catch (JavaLayerException | IOException ex) {
                         Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }
                     break;
                 case MAP_EDITOR:
                     int[] mapClicked = map.clickedTile(e.getX(), e.getY());
@@ -444,11 +439,7 @@ public class GamePanel extends JPanel{
                     muteMusicButton.setIcon(MusicIcon);              
                     try {
                         menuMusicPlayer.play();
-                    } catch (JavaLayerException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (URISyntaxException ex) {
+                    } catch (JavaLayerException | IOException | URISyntaxException ex) {
                         Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -557,7 +548,6 @@ public class GamePanel extends JPanel{
                 playClicSound();
                 sql.setGameState(IN_GAME);
                 setState(IN_GAME);
-                repaint();
             }
         });
     }
@@ -951,9 +941,7 @@ public void paint(Graphics g) {
     public void preGameUpdate() {
         try {
             sql.updatePlayerList(player, otherPlayersList);
-        } catch (IOException ex) {
-            Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (JavaLayerException ex) {
+        } catch (IOException | JavaLayerException ex) {
             Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         if(!isHost){
