@@ -15,7 +15,7 @@ public class Gun {
     
     private int ammunition,stockAmmo, id, startingAmmo;
     private Image image;
-    private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed;
+    private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire;
     
     public Gun(){
         ammunition = 0;
@@ -40,21 +40,23 @@ public class Gun {
                 image = pistolImage;
                 rateOfFire = 500; //in milliseconds
                 damage = 15;
-                reloadTime = 120;
+                reloadTime = 1000;
                 bulletSpeed = 1.0;
-                stockAmmo = 0;
+                stockAmmo = ammunition;
                 startingAmmo=ammunition;
+                initialRateOfFire=rateOfFire;
                 break;
                 
             case UZI:
-                ammunition = 50;
+                ammunition = 10;
                 image = uziImage;
                 rateOfFire = 200;
                 damage = 5;
-                reloadTime = 150;
+                reloadTime = 1000;
                 bulletSpeed = 0.8;
-                stockAmmo = 0;
+                stockAmmo = ammunition;
                 startingAmmo=ammunition;
+                initialRateOfFire=rateOfFire;
                 break;
                 
             case SNIPER:
@@ -62,10 +64,11 @@ public class Gun {
                 image = sniperImage;
                 rateOfFire = 1000;
                 damage = 35;
-                reloadTime = 300;
+                reloadTime = 1000;
                 bulletSpeed = 1.8;
-                stockAmmo = 0;
+                stockAmmo = ammunition;
                 startingAmmo=ammunition;
+                initialRateOfFire=rateOfFire;
                 break;
                 
             case SHOTGUN:
@@ -73,21 +76,23 @@ public class Gun {
                 image = shotgunImage;
                 rateOfFire = 650;
                 damage = 22;
-                reloadTime = 200;
+                reloadTime = 1000;
                 bulletSpeed = 1.2;
-                stockAmmo = 0;
+                stockAmmo = ammunition;
                 startingAmmo=ammunition;
+                initialRateOfFire=rateOfFire;
                 break;
                 
             case AK:
-                ammunition = 30;
+                ammunition = 10;
                 image = akImage;
                 rateOfFire = 280;
                 damage = 10;
-                reloadTime = 180;
+                reloadTime = 1000;
                 bulletSpeed = 1.0;
-                stockAmmo = 0;
+                stockAmmo = ammunition;
                 startingAmmo=ammunition;
+                initialRateOfFire=rateOfFire;
                 break;
                 
                 
@@ -118,12 +123,14 @@ public class Gun {
             
             if(!unlimitedBullets){
                 ammunition--;
+                rateOfFire=initialRateOfFire;
             }
             lastShotTimeStamp = System.currentTimeMillis();
             if(ammunition==0){
                 if(stockAmmo !=0 ){
                     stockAmmo=stockAmmo-startingAmmo;
                     ammunition=startingAmmo;
+                    rateOfFire+=reloadTime;
                 } else {
                     setId(NO_GUN);
                 }
