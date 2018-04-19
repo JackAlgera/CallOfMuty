@@ -3,6 +3,8 @@ package callofmuty;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javazoom.jl.decoder.JavaLayerException;
 
 public class Gun {
     
@@ -16,6 +18,7 @@ public class Gun {
     private int ammunition,stockAmmo, id, startingAmmo;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire;
+    private SoundPlayer gunSound;
     
     public Gun(){
         ammunition = 0;
@@ -31,7 +34,7 @@ public class Gun {
         return damage;
     }
     
-    public void setId(int id){
+    public void setId(int id)throws IOException, JavaLayerException{
         this.id = id;
         
         switch(this.id){
@@ -45,6 +48,7 @@ public class Gun {
                 stockAmmo = ammunition;
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
+                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 break;
                 
             case UZI:
@@ -57,6 +61,7 @@ public class Gun {
                 stockAmmo = ammunition;
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
+                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 break;
                 
             case SNIPER:
@@ -69,6 +74,7 @@ public class Gun {
                 stockAmmo = ammunition;
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
+                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 break;
                 
             case SHOTGUN:
@@ -81,6 +87,7 @@ public class Gun {
                 stockAmmo = ammunition;
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
+                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 break;
                 
             case AK:
@@ -93,6 +100,7 @@ public class Gun {
                 stockAmmo = ammunition;
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
+                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 break;
                 
                 
@@ -107,6 +115,10 @@ public class Gun {
         return bulletSpeed;
     }
     
+    public SoundPlayer getGunSound(){
+        return gunSound;
+    }
+    
     public void draw(Graphics2D g2d, Player player){
         switch(id){
             case NO_GUN: //draw nothing
@@ -117,7 +129,7 @@ public class Gun {
         
     }
     
-    public boolean shoot(boolean unlimitedBullets){ // if gun can shoot, shoots and returns true, else returns false
+    public boolean shoot(boolean unlimitedBullets)throws IOException, JavaLayerException{ // if gun can shoot, shoots and returns true, else returns false
         boolean test = (unlimitedBullets || ammunition>0) && System.currentTimeMillis()-rateOfFire>=lastShotTimeStamp;
         if (test){
             
