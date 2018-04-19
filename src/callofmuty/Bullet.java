@@ -28,7 +28,7 @@ public class Bullet {
         speed = 0;
         isActive = true;
         
-        this.bulletAnimation = new Animation(130,6,2,5,2,1);// in ms
+        this.bulletAnimation = new Animation(75,6,2,5,2,1);// in ms
         bulletAnimation.setRow(2);
         
         for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)

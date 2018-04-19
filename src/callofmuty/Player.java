@@ -54,7 +54,7 @@ public class Player {
         
         destroyedBullets = new ArrayList();
         
-        this.playerAnimation = new Animation(75,7,3,4,1,0); // en ms
+        this.playerAnimation = new Animation(160,7,3,4,1,0); // en ms
         for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
             for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++){
                 animationImages.add(Tools.selectTile(Tools.PlayerTilesetAnimated, i+1, j+1));
