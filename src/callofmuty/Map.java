@@ -50,7 +50,7 @@ public class Map{
         int i = 0;
         boolean tileFound = false;
         while(!tileFound && i<startTile.size()){
-            tileFound = tile[0]==startTile.get(i)[0] && tile[1]==startTile.get(i)[1];
+            tileFound = (tile[0]==startTile.get(i)[0]) && (tile[1]==startTile.get(i)[1]);
             i++;
         }
         if(tileFound){
