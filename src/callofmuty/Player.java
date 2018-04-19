@@ -95,7 +95,7 @@ public class Player {
         return name;
     }
     
-    public void setGunId(int gunId){
+    public void setGunId(int gunId)throws IOException, JavaLayerException{
         gun.setId(gunId);
     }
     
@@ -456,7 +456,7 @@ public class Player {
         return test;
     }
 
-    void generateGun(int numberOfPlayers) {
+    void generateGun(int numberOfPlayers) throws IOException, JavaLayerException{
         if (gun.getId() == 0 && Math.random()<1.0/(4*numberOfPlayers)){ // One player gets a gun every 4 seconds
             double gunRandom = Math.random();
             if (gunRandom <0.2){
@@ -479,7 +479,7 @@ public class Player {
             addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
             if (!muteSounds) {
                 try {
-                    shootingSoundPlayer.play();
+                    gun.getGunSound().play();
                 } catch (URISyntaxException ex) {
                     Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -490,7 +490,7 @@ public class Player {
     void playShootSound() {
         if(!muteSounds){
             try {
-                shootingSoundPlayer.play();
+                gun.getGunSound().play();
             } catch (JavaLayerException ex) {
                 Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
