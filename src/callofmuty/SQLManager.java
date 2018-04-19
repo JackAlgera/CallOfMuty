@@ -258,7 +258,7 @@ public class SQLManager {
     
     public Map getMap(int textureSize){
         Map map = null;
-        int[] startingTile = new int[]{1,1};
+        ArrayList<int[]> startingTile = new ArrayList<>();
         PreparedStatement requete;
         try {
             requete = connexion.prepareStatement("SELECT * FROM grid ORDER BY i DESC, j DESC");
@@ -267,16 +267,16 @@ public class SQLManager {
                 int[][] intMap = new int[resultat.getInt("i")+1][resultat.getInt("j")+1];
                 intMap[resultat.getInt("i")][resultat.getInt("j")] = resultat.getInt("tileType");                
                 if (resultat.getInt("startingTile")==1){
-                    startingTile = new int[]{resultat.getInt("i"),resultat.getInt("j")};
+                    startingTile.add(new int[]{resultat.getInt("i"),resultat.getInt("j")});
                 }
                 while (resultat.next()) {
                     intMap[resultat.getInt("i")][resultat.getInt("j")] = resultat.getInt("tileType");
                     if (resultat.getInt("startingTile") == 1) {
-                        startingTile = new int[]{resultat.getInt("i"), resultat.getInt("j")};
+                        startingTile.add(new int[]{resultat.getInt("i"),resultat.getInt("j")});
                     }
                 }
                 map = new Map(intMap, textureSize);
-                map.addStartTile(startingTile);
+                map.setStartTile(startingTile);
             }
             requete.close();
         } catch (SQLException ex) {
