@@ -91,10 +91,9 @@ public class Map{
                 setDrawingParameters(100,100,mapWidth*textureSize - 100, mapHeight*textureSize-100);
                 break;
             case GamePanel.IN_GAME:
-                xPos = 0;
-                yPos = 0;
-                drawHeight = mapHeight*textureSize;
-                drawWidth = mapWidth*textureSize;
+                setDrawingParameters(0,0,mapHeight*textureSize,mapWidth*textureSize);
+            case GamePanel.PRE_GAME:
+                setDrawingParameters(585, 330, 425, 230);
         }
     }
 

@@ -60,7 +60,8 @@ public class GamePanel extends JPanel{
             SoundsIcon = Tools.loadIcon("Sound.png"),
             muteSoundsIcon = Tools.loadIcon("Mute.png"),
             MusicIcon = Tools.loadIcon("Music.png"),
-            muteMusicIcon = Tools.loadIcon("muteMusic.png");
+            muteMusicIcon = Tools.loadIcon("muteMusic.png"),
+            startGameIcon = Tools.loadIcon("StartGame.png");
             
     
     
@@ -544,10 +545,10 @@ public class GamePanel extends JPanel{
         });
         
         //Pre game interface
-        JButton startButton = new JButton("Start");
+        JButton startButton = new JButton();
         startButton.setVisible(false);
-        startButton.setBounds(286, 300, joinGameIcon.getIconWidth(), joinGameIcon.getIconHeight());
-        //connectButton.setPressedIcon(pressedJoinGameIcon);
+        startButton.setIcon(startGameIcon);
+        startButton.setBounds(360, 234, startGameIcon.getIconWidth(), startGameIcon.getIconHeight());
         add(startButton);
         PGbuttons.add(startButton);
         
@@ -1031,7 +1032,8 @@ public void paint(Graphics g) {
                     component.setVisible(false);
                 }
                 for (JComponent component : PGbuttons){
-                    component.setVisible(isHost);
+                    component.setVisible(true);
+                    component.setEnabled(isHost);
                 }
                 break;
             case IN_GAME:
