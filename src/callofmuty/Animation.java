@@ -109,4 +109,10 @@ public class Animation {
     {
         type = state;
     }
+    
+    public int getCurrentImageValue()
+    {
+        return currentImage;
+    }
+    
 }

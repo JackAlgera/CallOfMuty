@@ -54,13 +54,13 @@ public class Player {
         
         destroyedBullets = new ArrayList();
         
-        this.playerAnimation = new Animation(160,7,3,4,1,0); // en ms
+        this.playerAnimation = new Animation(160,7,4,6,1,0); // en ms
         for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
             for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++){
                 animationImages.add(Tools.selectTile(Tools.PlayerTilesetAnimated, i+1, j+1));
             }
         }
-        playerAnimation.setRow(2);
+        playerAnimation.setRow(3);
         
         maxSpeed = 0.3; //in pixel per ms
         speed = new double[2];
@@ -460,7 +460,7 @@ public class Player {
         return test;
     }
 
-    void generateGun(int numberOfPlayers, long gunGenerationTime) throws IOException, JavaLayerException{
+    public void generateGun(int numberOfPlayers, long gunGenerationTime) throws IOException, JavaLayerException{
         if (gun.getId() == 0 && Math.random()<(double)gunGenerationTime/(1000*numberOfPlayers*4)){ // In average, one player gets a gun every 4 seconds
             double gunRandom = Math.random();
             int numberOfCartridges = Math.round((float)Math.random()); // player can get 0 or 1 cartridge
@@ -489,9 +489,14 @@ public class Player {
         }
     }
 
-    void playShootSound() {
+    public void playShootSound() {
         if(!muteSounds){
             gun.playShootingSound();
         }
+    }
+    
+    public int getCurrentImage()
+    {
+        return playerAnimation.getCurrentImageValue();
     }
 }

@@ -142,7 +142,7 @@ public class Gun {
             case NO_GUN: //draw nothing
                 break;
             default:
-                g2d.drawImage(image, (int) player.getPosX()+15, (int) player.getPosY()+10, image.getWidth(null), image.getHeight(null), null);
+                g2d.drawImage(image, (int) getGunPositionY(player), (int) player.getPosY() + 15, image.getWidth(null), image.getHeight(null), null);
         }
         
     }
@@ -182,6 +182,30 @@ public class Gun {
                 Logger.getLogger(Gun.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    public int getGunPositionY(Player player)
+    {
+        int gunPos = (int)player.getPosX() - 6;
+        switch(player.getCurrentImage())
+        {
+            case 1:
+                gunPos += 2;
+                break;
+            case 2:
+                gunPos += 4;
+                break;
+            case 3:
+                gunPos += 6;
+                break;
+            case 4:
+                gunPos += 6;
+                break;
+            case 5:
+                gunPos += 2;
+                break;
+        }
+        return gunPos;
     }
     
 }

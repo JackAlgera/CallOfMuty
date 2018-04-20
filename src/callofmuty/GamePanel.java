@@ -260,7 +260,6 @@ public class GamePanel extends JPanel{
         add(gameCreateButton);
         MMbuttons.add(gameCreateButton);
         
-        
         gameCreateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
