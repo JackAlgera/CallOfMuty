@@ -111,7 +111,6 @@ public class SQLManager {
                                     otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
                                     otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
                                 }
-                            } else {
                             }
                         } else { // this player's position was already updated, update only the bullet
                             bulletId = resultat.getInt("bullet.idBullet");
