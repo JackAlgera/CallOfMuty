@@ -69,7 +69,7 @@ public class GamePanel extends JPanel{
             MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3,
             RANDOMLY_GIVEN_GUNS = 0;
     
-    private static long gunGenerationTime = 1000; //in milliseconds
+    private static long gunGenerationTime = 100; //in milliseconds
     
     private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer;
     
@@ -79,16 +79,13 @@ public class GamePanel extends JPanel{
     private ArrayList <Player> otherPlayersList;
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState, gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
-    private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds;
+    private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds, mousePressed;
     private long lastGunGeneration;
     private SQLManager sql;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons;
     private ArrayList<Bullet> otherPlayersBullets;
     private GameTimer timer;
-    
-    // Volatile variables are used in Threads
-    private volatile boolean mousePressed;
-    private volatile int[] mousePosition;
+    private int[] mousePosition;
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer) throws IOException, JavaLayerException{
         super();
@@ -188,7 +185,17 @@ public class GamePanel extends JPanel{
                             }
                             break;
                         case MAP_EDITOR:
-
+                            int[] mapClicked = map.clickedTile(mousePosition[0], mousePosition[1]);
+                            if (mapClicked[0] > -1) { // map was clicked
+                                if (!setStartingTile) {
+                                    map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
+                                }
+                            } else { // check if tileSelector was clicked and select the tile if so
+                                if (tileSelector.clickedTile(mousePosition[0], mousePosition[1])[0] > -1) {
+                                    setStartingTile = false;
+                                }
+                            }
+                            repaint();
                             break;
                         default:
                     }
@@ -659,7 +666,7 @@ public class GamePanel extends JPanel{
         // gun generation
         if(System.currentTimeMillis()-gunGenerationTime > lastGunGeneration){
             lastGunGeneration = System.currentTimeMillis();
-            player.generateGun(otherPlayersList.size()+1); // has a probability to give local player a gun that decreases with number of players
+            player.generateGun(otherPlayersList.size()+1, gunGenerationTime); // has a probability to give local player a gun that decreases with number of players
         }
         
         // sql uploads

@@ -204,8 +204,7 @@ public class Player {
         for (Bullet bullet : bulletList) {
             bullet.draw(g, texturesize);
         }
-        for (Bullet bullet : destroyedBullets)
-        {
+        for (Bullet bullet : destroyedBullets){
             bullet.draw(g, texturesize);
         }
     }
@@ -215,11 +214,9 @@ public class Player {
             
             // Update animation
             this.playerAnimation.update(dT);
-            for(int i=0; i<destroyedBullets.size(); i++)
-            {
+            for(int i=0; i<destroyedBullets.size(); i++){
                 destroyedBullets.get(i).updateBulletAnimation(dT);
-                if(destroyedBullets.get(i).endOfAnimation())
-                {
+                if(destroyedBullets.get(i).endOfAnimation()){
                     destroyedBullets.remove(i);
                 }
             }
@@ -463,8 +460,8 @@ public class Player {
         return test;
     }
 
-    void generateGun(int numberOfPlayers) throws IOException, JavaLayerException{
-        if (gun.getId() == 0 && Math.random()<1.0/(4*numberOfPlayers)){ // One player gets a gun every 4 seconds
+    void generateGun(int numberOfPlayers, long gunGenerationTime) throws IOException, JavaLayerException{
+        if (gun.getId() == 0 && Math.random()<(double)gunGenerationTime/(1000*numberOfPlayers*4)){ // In average, one player gets a gun every 4 seconds
             double gunRandom = Math.random();
             int numberOfCartridges = Math.round((float)Math.random()); // player can get 0 or 1 cartridge
             if (gunRandom <0.14){
