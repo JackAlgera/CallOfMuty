@@ -96,7 +96,7 @@ public class Player {
     }
     
     public void setGunId(int gunId)throws IOException, JavaLayerException{
-        gun.setId(gunId);
+        gun.setId(gunId, 0);
     }
     
     public int getGunId(){
@@ -466,20 +466,21 @@ public class Player {
     void generateGun(int numberOfPlayers) throws IOException, JavaLayerException{
         if (gun.getId() == 0 && Math.random()<1.0/(4*numberOfPlayers)){ // One player gets a gun every 4 seconds
             double gunRandom = Math.random();
+            int numberOfCartridges = Math.round((float)Math.random()); // player can get 0 or 1 cartridge
             if (gunRandom <0.14){
-                gun.setId(Gun.PISTOL);
-            /*} else if (gunRandom<0.28){
-                gun.setId(Gun.UZI);
+                gun.setId(Gun.PISTOL, numberOfCartridges);
+            } else if (gunRandom<0.28){
+                gun.setId(Gun.UZI, numberOfCartridges);
             } else if (gunRandom<0.42){
-                gun.setId(Gun.SNIPER);
+                gun.setId(Gun.SNIPER, numberOfCartridges);
             } else if (gunRandom<0.56){
-                gun.setId(Gun.SHOTGUN);
+                gun.setId(Gun.SHOTGUN, numberOfCartridges);
             } else if (gunRandom<0.70){
-                gun.setId(Gun.AK);*/
+                gun.setId(Gun.AK, numberOfCartridges);
             } else if (gunRandom<0.54){
-                gun.setId(Gun.MAGNUM);
-            } else if (gunRandom<1.0){
-                gun.setId(Gun.MITRAILLEUSE);
+                gun.setId(Gun.MAGNUM, numberOfCartridges);
+            } else {
+                gun.setId(Gun.MITRAILLEUSE, numberOfCartridges);
             }
             
         }

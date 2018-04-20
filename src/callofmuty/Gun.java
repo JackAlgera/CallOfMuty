@@ -36,7 +36,7 @@ public class Gun {
         return damage;
     }
     
-    public void setId(int id)throws IOException, JavaLayerException{
+    public void setId(int id, int numberOfCartridges)throws IOException, JavaLayerException{
         this.id = id;
         
         switch(this.id){
@@ -47,9 +47,6 @@ public class Gun {
                 damage = 15;
                 reloadTime = 1000;
                 bulletSpeed = 1.0;
-                stockAmmo = ammunition;
-                startingAmmo=ammunition;
-                initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 550;
                 break;
@@ -61,9 +58,6 @@ public class Gun {
                 damage = 5;
                 reloadTime = 1000;
                 bulletSpeed = 0.8;
-                stockAmmo = ammunition;
-                startingAmmo=ammunition;
-                initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 450;
                 break;
@@ -75,9 +69,6 @@ public class Gun {
                 damage = 35;
                 reloadTime = 1000;
                 bulletSpeed = 1.8;
-                stockAmmo = ammunition;
-                startingAmmo=ammunition;
-                initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 800;
                 break;
@@ -89,9 +80,6 @@ public class Gun {
                 damage = 22;
                 reloadTime = 1000;
                 bulletSpeed = 1.2;
-                stockAmmo = ammunition;
-                startingAmmo=ammunition;
-                initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 400;
                 break;
@@ -103,9 +91,6 @@ public class Gun {
                 damage = 10;
                 reloadTime = 1000;
                 bulletSpeed = 1.0;
-                stockAmmo = ammunition;
-                startingAmmo=ammunition;
-                initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 500;
                 break;
@@ -117,9 +102,6 @@ public class Gun {
                 damage = 25;
                 reloadTime = 1000;
                 bulletSpeed = 1.8;
-                stockAmmo = ammunition;
-                startingAmmo=ammunition;
-                initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 700;
                 break;
@@ -131,18 +113,16 @@ public class Gun {
                 damage = 7;
                 reloadTime = 1250;
                 bulletSpeed = 1.0;
-                stockAmmo = ammunition;
-                startingAmmo=ammunition;
-                initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 550;
                 break;
                 
             case NO_GUN:
-                ammunition = 0;
-                
-                
+                ammunition = 0;       
         }
+        stockAmmo = ammunition * numberOfCartridges;
+        startingAmmo = ammunition;
+        initialRateOfFire = rateOfFire;
     }
     
     public int getId(){
@@ -181,7 +161,7 @@ public class Gun {
                     ammunition=startingAmmo;
                     rateOfFire+=reloadTime;
                 } else {
-                    setId(NO_GUN);
+                    setId(NO_GUN, 0);
                 }
                 
             }

@@ -14,7 +14,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -80,13 +79,16 @@ public class GamePanel extends JPanel{
     private ArrayList <Player> otherPlayersList;
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState, gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
-    private boolean isHost, setStartingTile, mousePressed;
+    private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds;
     private long lastGunGeneration;
-    private SQLManager sql; 
-    private boolean isConnected, muteMusic, muteSounds;
+    private SQLManager sql;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons;
     private ArrayList<Bullet> otherPlayersBullets;
     private GameTimer timer;
+    
+    // Volatile variables are used in Threads
+    private volatile boolean mousePressed;
+    private volatile int[] mousePosition;
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer) throws IOException, JavaLayerException{
         super();
@@ -121,21 +123,16 @@ public class GamePanel extends JPanel{
         this.timer = timer;
         mapKeys();
         mousePressed = false;
+        mousePosition = new int[]{0,0};
+        
+        setFocusable(true);
+        buildInterface(); 
         
         addMouseMotionListener(new MouseAdapter(){
             @Override
             public void mouseDragged(MouseEvent e){
-                switch (gameState) {
-                case IN_GAME:
-                    if(mousePressed){
-                        playershoot(e);
-                    }                   
-                    break;
-                case MAP_EDITOR:
-                    
-                    break;
-                default:
-                }
+                mousePosition[0] = e.getX();
+                mousePosition[1] = e.getY();
             }
         });
         
@@ -150,6 +147,8 @@ public class GamePanel extends JPanel{
             public void mousePressed(MouseEvent e) {
                 switch (gameState) {
                 case IN_GAME:
+                    mousePosition[0] = e.getX();
+                    mousePosition[1] = e.getY();
                     mousePressed = true;
                     break;
                 case MAP_EDITOR:
@@ -175,10 +174,32 @@ public class GamePanel extends JPanel{
             public void mouseReleased(MouseEvent e) {
                 mousePressed = false;
             }
-        });
+        });  
         
-	setFocusable(true);
-        buildInterface();        
+        // Defining the thread which will handle mouse dragging
+        new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    switch (gameState) {
+                        case IN_GAME:
+                            if (mousePressed) {
+                                playershoot();
+                            }
+                            break;
+                        case MAP_EDITOR:
+
+                            break;
+                        default:
+                    }
+                    try {
+                        Thread.sleep(0, 500000); // Thread sleeps for 500µs, to not overcharge program
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }.start();     
     }
     
     private void buildInterface(){
@@ -927,37 +948,23 @@ public class GamePanel extends JPanel{
     
     //-------------------------------------------------------------------------------------------------------------------------
     
-    public void playershoot(MouseEvent e){
+    public void playershoot(){
         double[] directionOfFire = new double[2];
-                    directionOfFire[0] = e.getX() - player.getPosX() - textureSize / 2;
-                    directionOfFire[1] = e.getY() - player.getPosY() - textureSize / 2;
+        directionOfFire[0] = mousePosition[0] - player.getPosX() - textureSize / 2;
+        directionOfFire[1] = mousePosition[1] - player.getPosY() - textureSize / 2;
 
-                    double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
-                    directionOfFire[0] = directionOfFire[0] / norme;
-                    directionOfFire[1] = directionOfFire[1] / norme;
+        double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
+        directionOfFire[0] = directionOfFire[0] / norme;
+        directionOfFire[1] = directionOfFire[1] / norme;
 
-                {
-                    try {
-                        player.shoot(directionOfFire, sql, false);
-                    } catch (JavaLayerException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+        {
+            try {
+                player.shoot(directionOfFire, sql, false);
+            } catch (JavaLayerException | IOException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
-    
-    public void initshootThread(MouseEvent e){
-        if (mousePressed) {
-            new Thread() {
-                public void run() {
-                    do {
-                        playershoot(e);
-                    } while (mousePressed);
-                }
-            }.start();
-        }   
-    }   
     
     @Override
     public void paint(Graphics g) {
