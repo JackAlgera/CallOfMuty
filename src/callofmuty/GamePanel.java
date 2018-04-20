@@ -187,7 +187,16 @@ public class GamePanel extends JPanel{
         MEbuttons = new ArrayList<JComponent>(); //ME : Map Editor
         PGbuttons = new ArrayList<JComponent>(); // Pre game
         
-        // Main menu interface
+        /*
+        ----------------------------------------------------------------------------------------------------------------
+        
+        Buttons used during the game
+        
+        ----------------------------------------------------------------------------------------------------------------
+        */
+
+        //---------------------------------------------- Connect button ------------------------------------------------       
+        
         JButton connectButton = new JButton();
         connectButton.setIcon(joinGameIcon);
         connectButton.setVisible(true);
@@ -197,118 +206,6 @@ public class GamePanel extends JPanel{
         connectButton.setBorderPainted(true);
         add(connectButton);
         MMbuttons.add(connectButton);
-        
-        JButton gameCreateButton = new JButton();
-        gameCreateButton.setIcon(createGameIcon);
-        gameCreateButton.setBounds(287, 227, createGameIcon.getIconWidth(), createGameIcon.getIconHeight());
-        //gameCreateButton.setPressedIcon(pressedcreateGameIcon);
-        gameCreateButton.setVisible(true);
-        gameCreateButton.setContentAreaFilled(false);
-        gameCreateButton.setBorderPainted(true);
-        add(gameCreateButton);
-        MMbuttons.add(gameCreateButton);
-        
-        JButton exitButton = new JButton();
-        exitButton.setIcon(exitIcon);
-        exitButton.setBounds(287, 373, exitIcon.getIconWidth(), exitIcon.getIconHeight());
-        //exitButton.setPressedIcon(pressedExitIcon);
-        exitButton.setVisible(true);
-        exitButton.setContentAreaFilled(false);
-        exitButton.setBorderPainted(true);
-        add(exitButton);
-        MMbuttons.add(exitButton);
-        
-        JButton gameModeButton = new JButton();
-        gameModeButton.setIcon(gameModeIcon);
-        gameModeButton.setBounds(287, 154, gameModeIcon.getIconWidth(), gameModeIcon.getIconHeight());
-        //gameModeButton.setPressedIcon(pressedGameModeIcon);
-        gameModeButton.setVisible(true);
-        gameModeButton.setContentAreaFilled(false);
-        gameModeButton.setBorderPainted(true);
-        add(gameModeButton);
-        MMbuttons.add(gameModeButton);
-        
-        JButton rightSkinArrow = new JButton();
-        rightSkinArrow.setIcon(rightArrowIcon);
-        rightSkinArrow.setBounds(182, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
-        rightSkinArrow.setPressedIcon(pressedrightArrowIcon);
-        rightSkinArrow.setVisible(true);
-        rightSkinArrow.setContentAreaFilled(false);
-        rightSkinArrow.setBorderPainted(false);
-        add(rightSkinArrow);
-        MMbuttons.add(rightSkinArrow);
-        
-        JButton leftSkinArrow = new JButton();
-        leftSkinArrow.setIcon(leftArrowIcon);
-        leftSkinArrow.setBounds(54, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
-        leftSkinArrow.setPressedIcon(pressedleftArrowIcon);
-        leftSkinArrow.setVisible(true);
-        leftSkinArrow.setContentAreaFilled(false);
-        leftSkinArrow.setBorderPainted(false);
-        add(leftSkinArrow);
-        MMbuttons.add(leftSkinArrow);
-        
-        JButton MEtopSkinArrow = new JButton();
-        MEtopSkinArrow.setIcon(topArrowIcon);
-        MEtopSkinArrow.setBounds(29, 16, topArrowIcon.getIconWidth(), topArrowIcon.getIconHeight());
-        MEtopSkinArrow.setPressedIcon(pressedtopArrowIcon);
-        MEtopSkinArrow.setVisible(true);
-        MEtopSkinArrow.setContentAreaFilled(false);
-        MEtopSkinArrow.setBorderPainted(false);
-        add(MEtopSkinArrow);
-        MEbuttons.add(MEtopSkinArrow);
-        
-        JButton MEBottomSkinArrow = new JButton();
-        MEBottomSkinArrow.setIcon(bottomArrowIcon);
-        MEBottomSkinArrow.setBounds(29, 78, bottomArrowIcon.getIconWidth(), bottomArrowIcon.getIconHeight());
-        MEBottomSkinArrow.setPressedIcon(pressedbottomArrowIcon);
-        MEBottomSkinArrow.setVisible(true);
-        MEBottomSkinArrow.setContentAreaFilled(false);
-        MEBottomSkinArrow.setBorderPainted(false);
-        add(MEBottomSkinArrow);
-        MEbuttons.add(MEBottomSkinArrow);        
-        
-        JButton rightMapArrow = new JButton();
-        rightMapArrow.setIcon(rightArrowIcon);
-        rightMapArrow.setBounds(824, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
-        rightMapArrow.setPressedIcon(pressedrightArrowIcon);
-        rightMapArrow.setVisible(true);
-        rightMapArrow.setContentAreaFilled(false);
-        rightMapArrow.setBorderPainted(false);
-        add(rightMapArrow);
-        MMbuttons.add(rightMapArrow);
-        
-        JButton leftMapArrow = new JButton();
-        leftMapArrow.setIcon(leftArrowIcon);
-        leftMapArrow.setBounds(637, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
-        leftMapArrow.setPressedIcon(pressedleftArrowIcon);
-        leftMapArrow.setVisible(true);
-        leftMapArrow.setContentAreaFilled(false);
-        leftMapArrow.setBorderPainted(false);
-        add(leftMapArrow);
-        MMbuttons.add(leftMapArrow);
-        
-        JButton mapEditorButton = new JButton();
-        mapEditorButton.setIcon(mapEditorIcon);
-        mapEditorButton.setBounds(537, 140, mapEditorIcon.getIconWidth(), mapEditorIcon.getIconHeight());
-        //mapEditorButton.setPressedIcon(pressedmapEditorIcon);
-        mapEditorButton.setVisible(true);
-        mapEditorButton.setContentAreaFilled(false);
-        mapEditorButton.setBorderPainted(true);
-        add(mapEditorButton);
-        MMbuttons.add(mapEditorButton);
-        
-        JTextField usernameField = new JTextField("Username");
-        usernameField.setBounds(56, 140, 172, mapEditorIcon.getIconHeight()+1);
-        usernameField.setEditable(true);
-        usernameField.setHorizontalAlignment(JTextField.CENTER);
-        usernameField.setFont(new Font("TimesRoman", Font.BOLD+Font.ITALIC, 18));
-        usernameField.setBackground(new Color(230,226,211));//(new Color(221,214,192));
-        usernameField.setForeground(Color.DARK_GRAY);
-        usernameField.setBorder(null);
-        usernameField.setVisible(true);
-        add(usernameField);
-        MMbuttons.add(usernameField);
         
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -323,6 +220,19 @@ public class GamePanel extends JPanel{
             }
         });
         
+        //---------------------------------------------- Create game Button ------------------------------------------             
+        
+        JButton gameCreateButton = new JButton();
+        gameCreateButton.setIcon(createGameIcon);
+        gameCreateButton.setBounds(287, 227, createGameIcon.getIconWidth(), createGameIcon.getIconHeight());
+        //gameCreateButton.setPressedIcon(pressedcreateGameIcon);
+        gameCreateButton.setVisible(true);
+        gameCreateButton.setContentAreaFilled(false);
+        gameCreateButton.setBorderPainted(true);
+        add(gameCreateButton);
+        MMbuttons.add(gameCreateButton);
+        
+        
         gameCreateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
@@ -336,6 +246,18 @@ public class GamePanel extends JPanel{
             }
         });
         
+        //---------------------------------------------- Exit button --------------------------------------------    
+        
+        JButton exitButton = new JButton();
+        exitButton.setIcon(exitIcon);
+        exitButton.setBounds(287, 373, exitIcon.getIconWidth(), exitIcon.getIconHeight());
+        //exitButton.setPressedIcon(pressedExitIcon);
+        exitButton.setVisible(true);
+        exitButton.setContentAreaFilled(false);
+        exitButton.setBorderPainted(true);
+        add(exitButton);
+        MMbuttons.add(exitButton);
+        
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
@@ -343,12 +265,36 @@ public class GamePanel extends JPanel{
             }
         });
         
+        //---------------------------------------------- Game mode button --------------------------------------------   
+        
+        JButton gameModeButton = new JButton();
+        gameModeButton.setIcon(gameModeIcon);
+        gameModeButton.setBounds(287, 154, gameModeIcon.getIconWidth(), gameModeIcon.getIconHeight());
+        //gameModeButton.setPressedIcon(pressedGameModeIcon);
+        gameModeButton.setVisible(true);
+        gameModeButton.setContentAreaFilled(false);
+        gameModeButton.setBorderPainted(true);
+        add(gameModeButton);
+        MMbuttons.add(gameModeButton);
+        
         gameModeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
                 // to do
             }
         });
+        
+        //--------------------------------------- Right arrow for skin selection ------------------------------------   
+        
+        JButton rightSkinArrow = new JButton();
+        rightSkinArrow.setIcon(rightArrowIcon);
+        rightSkinArrow.setBounds(182, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
+        rightSkinArrow.setPressedIcon(pressedrightArrowIcon);
+        rightSkinArrow.setVisible(true);
+        rightSkinArrow.setContentAreaFilled(false);
+        rightSkinArrow.setBorderPainted(false);
+        add(rightSkinArrow);
+        MMbuttons.add(rightSkinArrow);
         
         rightSkinArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -359,6 +305,18 @@ public class GamePanel extends JPanel{
                 repaint();
             }
         });
+        
+        //--------------------------------------- Left arrow for skin selection ------------------------------------    
+        
+        JButton leftSkinArrow = new JButton();
+        leftSkinArrow.setIcon(leftArrowIcon);
+        leftSkinArrow.setBounds(54, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
+        leftSkinArrow.setPressedIcon(pressedleftArrowIcon);
+        leftSkinArrow.setVisible(true);
+        leftSkinArrow.setContentAreaFilled(false);
+        leftSkinArrow.setBorderPainted(false);
+        add(leftSkinArrow);
+        MMbuttons.add(leftSkinArrow);
         
         leftSkinArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -373,17 +331,77 @@ public class GamePanel extends JPanel{
             }
         });
         
+        //--------------------------------------- Up arrow for the map editor ------------------------------------  
+        
+        JButton MEtopSkinArrow = new JButton();
+        MEtopSkinArrow.setIcon(topArrowIcon);
+        MEtopSkinArrow.setBounds(29, 16, topArrowIcon.getIconWidth(), topArrowIcon.getIconHeight());
+        MEtopSkinArrow.setPressedIcon(pressedtopArrowIcon);
+        MEtopSkinArrow.setVisible(true);
+        MEtopSkinArrow.setContentAreaFilled(false);
+        MEtopSkinArrow.setBorderPainted(false);
+        add(MEtopSkinArrow);
+        MEbuttons.add(MEtopSkinArrow);
+        
+        //--------------------------------------- Down arrow for the map editor ------------------------------------ 
+        
+        JButton MEBottomSkinArrow = new JButton();
+        MEBottomSkinArrow.setIcon(bottomArrowIcon);
+        MEBottomSkinArrow.setBounds(29, 78, bottomArrowIcon.getIconWidth(), bottomArrowIcon.getIconHeight());
+        MEBottomSkinArrow.setPressedIcon(pressedbottomArrowIcon);
+        MEBottomSkinArrow.setVisible(true);
+        MEBottomSkinArrow.setContentAreaFilled(false);
+        MEBottomSkinArrow.setBorderPainted(false);
+        add(MEBottomSkinArrow);
+        MEbuttons.add(MEBottomSkinArrow);        
+        
+        //--------------------------------------- Right arrow map selection ------------------------------------  
+        
+        JButton rightMapArrow = new JButton();
+        rightMapArrow.setIcon(rightArrowIcon);
+        rightMapArrow.setBounds(824, 440, rightArrowIcon.getIconWidth(), rightArrowIcon.getIconHeight());
+        rightMapArrow.setPressedIcon(pressedrightArrowIcon);
+        rightMapArrow.setVisible(true);
+        rightMapArrow.setContentAreaFilled(false);
+        rightMapArrow.setBorderPainted(false);
+        add(rightMapArrow);
+        MMbuttons.add(rightMapArrow);
+        
         rightMapArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // to do
             }
         });
         
+        //--------------------------------------- Left arrow map selection ------------------------------------   
+        
+        JButton leftMapArrow = new JButton();
+        leftMapArrow.setIcon(leftArrowIcon);
+        leftMapArrow.setBounds(637, 440, leftArrowIcon.getIconWidth(), leftArrowIcon.getIconHeight());
+        leftMapArrow.setPressedIcon(pressedleftArrowIcon);
+        leftMapArrow.setVisible(true);
+        leftMapArrow.setContentAreaFilled(false);
+        leftMapArrow.setBorderPainted(false);
+        add(leftMapArrow);
+        MMbuttons.add(leftMapArrow);
+        
         leftMapArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // toudou
             }
         });
+        
+        //--------------------------------------------- Map editor button ------------------------------------------  
+        
+        JButton mapEditorButton = new JButton();
+        mapEditorButton.setIcon(mapEditorIcon);
+        mapEditorButton.setBounds(537, 140, mapEditorIcon.getIconWidth(), mapEditorIcon.getIconHeight());
+        //mapEditorButton.setPressedIcon(pressedmapEditorIcon);
+        mapEditorButton.setVisible(true);
+        mapEditorButton.setContentAreaFilled(false);
+        mapEditorButton.setBorderPainted(true);
+        add(mapEditorButton);
+        MMbuttons.add(mapEditorButton);
         
         mapEditorButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -392,71 +410,8 @@ public class GamePanel extends JPanel{
             }
         });
         
-        usernameField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                player.setName(usernameField.getText());
-            }
-        });
+        //-------------------------------------- Save map button for the map editor ------------------------------------------  
         
-        usernameField.addFocusListener(new FocusListener(){
-            @Override
-            public void focusGained(FocusEvent fe) {
-            }
-
-            @Override
-            public void focusLost(FocusEvent fe) {
-                player.setName(usernameField.getText());
-            }
-        });
-                
-        JToggleButton muteSoundsButton = new JToggleButton();
-        muteSoundsButton.setIcon(SoundsIcon);
-        muteSoundsButton.setBounds(840, 20, SoundsIcon.getIconWidth(), SoundsIcon.getIconHeight());
-        muteSoundsButton.setVisible(true);
-        muteSoundsButton.setBorderPainted(false);
-        add(muteSoundsButton);
-        MMbuttons.add(muteSoundsButton);
-        
-        JToggleButton  muteMusicButton = new JToggleButton();
-        muteMusicButton.setIcon(MusicIcon);
-        muteMusicButton.setBounds(900, 20, MusicIcon.getIconWidth(), MusicIcon.getIconHeight());
-        muteMusicButton.setVisible(true);
-        muteMusicButton.setBorderPainted(false);
-        add(muteMusicButton);
-        MMbuttons.add(muteMusicButton);
-        
-        muteSoundsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                muteSounds = !muteSounds;
-                player.setMuteSounds(muteSounds);
-                if(muteSounds){
-                    muteSoundsButton.setIcon(muteSoundsIcon);      
-                }else{
-                    muteSoundsButton.setIcon(SoundsIcon);
-                    playClicSound();
-                }
-            }
-        });
-        
-        muteMusicButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                playClicSound();
-                muteMusic = !muteMusic;
-                if(muteMusic){
-                    muteMusicButton.setIcon(muteMusicIcon);
-                    menuMusicPlayer.stop();
-                } else {
-                    muteMusicButton.setIcon(MusicIcon);              
-                    try {
-                        menuMusicPlayer.play();
-                    } catch (JavaLayerException | IOException | URISyntaxException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });
-        
-        // Map Editor interface
         JButton saveMapButton = new JButton();
         saveMapButton.setIcon(saveMapIcon);
         saveMapButton.setBounds(7, 212, saveMapIcon.getIconWidth(), saveMapIcon.getIconHeight());
@@ -464,33 +419,6 @@ public class GamePanel extends JPanel{
         saveMapButton.setBorderPainted(true);
         add(saveMapButton);
         MEbuttons.add(saveMapButton);
-        
-        JButton loadMapButton = new JButton();
-        loadMapButton.setIcon(loadMapIcon);
-        loadMapButton.setBounds(7, 163, loadMapIcon.getIconWidth(), loadMapIcon.getIconHeight());
-        loadMapButton.setVisible(false);
-        loadMapButton.setBorderPainted(true);
-        add(loadMapButton);
-        MEbuttons.add(loadMapButton);
-        
-        JButton doneButton = new JButton();
-        doneButton.setIcon(doneIcon);
-        doneButton.setBounds(7, 279, doneIcon.getIconWidth(), doneIcon.getIconHeight());
-        doneButton.setVisible(false);
-        doneButton.setBorderPainted(true);
-        add(doneButton);
-        MEbuttons.add(doneButton);
-        
-        JButton setStartingTileButton = new JButton("Set starting tile");
-        setStartingTileButton.setName("setStartingTileButton");
-        //setStartingTileButton.setIcon(startingTileIcon);
-        setStartingTileButton.setBounds(700, 30, doneIcon.getIconWidth(), doneIcon.getIconHeight());
-        //setStartingTileButton.setPressedIcon(presseddoneIcon);
-        setStartingTileButton.setVisible(false);
-        //setStartingTileButton.setContentAreaFilled(false);
-        //setStartingTileButton.setBorderPainted(false);
-        add(setStartingTileButton);
-        MEbuttons.add(setStartingTileButton);
         
         saveMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -517,6 +445,16 @@ public class GamePanel extends JPanel{
             }
         });
         
+        //-------------------------------------- Load map button for the map editor ------------------------------------------  
+        
+        JButton loadMapButton = new JButton();
+        loadMapButton.setIcon(loadMapIcon);
+        loadMapButton.setBounds(7, 163, loadMapIcon.getIconWidth(), loadMapIcon.getIconHeight());
+        loadMapButton.setVisible(false);
+        loadMapButton.setBorderPainted(true);
+        add(loadMapButton);
+        MEbuttons.add(loadMapButton);
+        
         loadMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
@@ -531,12 +469,35 @@ public class GamePanel extends JPanel{
             }
         });
         
+        //-------------------------------------- Done button for the map editor ------------------------------------------  
+        
+        JButton doneButton = new JButton();
+        doneButton.setIcon(doneIcon);
+        doneButton.setBounds(7, 279, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        doneButton.setVisible(false);
+        doneButton.setBorderPainted(true);
+        add(doneButton);
+        MEbuttons.add(doneButton);
+        
         doneButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
                 setState(MAIN_MENU);
             }
         });
+        
+        //--------------------------- Button to choose the starting positions for the map editor ----------------------------- 
+        
+        JButton setStartingTileButton = new JButton("Set starting tile");
+        setStartingTileButton.setName("setStartingTileButton");
+        //setStartingTileButton.setIcon(startingTileIcon);
+        setStartingTileButton.setBounds(700, 30, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        //setStartingTileButton.setPressedIcon(presseddoneIcon);
+        setStartingTileButton.setVisible(false);
+        //setStartingTileButton.setContentAreaFilled(false);
+        //setStartingTileButton.setBorderPainted(false);
+        add(setStartingTileButton);
+        MEbuttons.add(setStartingTileButton);
         
         setStartingTileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -545,7 +506,8 @@ public class GamePanel extends JPanel{
             }
         });
         
-        //Pre game interface
+        //------------------------------------- Start game button during lobby ----------------------------- 
+        
         JButton startButton = new JButton();
         startButton.setVisible(false);
         startButton.setIcon(startGameIcon);
@@ -559,41 +521,97 @@ public class GamePanel extends JPanel{
                 sql.setGameState(IN_GAME);
                 setState(IN_GAME);
             }
+        });        
+        
+        //-------------------------------------------- Mute sound button ------------------------------------------  
+                
+        JToggleButton muteSoundsButton = new JToggleButton();
+        muteSoundsButton.setIcon(SoundsIcon);
+        muteSoundsButton.setBounds(840, 20, SoundsIcon.getIconWidth(), SoundsIcon.getIconHeight());
+        muteSoundsButton.setVisible(true);
+        muteSoundsButton.setBorderPainted(false);
+        add(muteSoundsButton);
+        MMbuttons.add(muteSoundsButton);
+        
+        muteSoundsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                muteSounds = !muteSounds;
+                player.setMuteSounds(muteSounds);
+                if(muteSounds){
+                    muteSoundsButton.setIcon(muteSoundsIcon);      
+                }else{
+                    muteSoundsButton.setIcon(SoundsIcon);
+                    playClicSound();
+                }
+            }
         });
-    }
-    
-    public void playershoot(MouseEvent e){
-        double[] directionOfFire = new double[2];
-                    directionOfFire[0] = e.getX() - player.getPosX() - textureSize / 2;
-                    directionOfFire[1] = e.getY() - player.getPosY() - textureSize / 2;
-
-                    double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
-                    directionOfFire[0] = directionOfFire[0] / norme;
-                    directionOfFire[1] = directionOfFire[1] / norme;
-
-                {
+        
+        //--------------------------------------------- Mute music button ------------------------------------------  
+        
+        JToggleButton muteMusicButton = new JToggleButton();
+        muteMusicButton.setIcon(MusicIcon);
+        muteMusicButton.setBounds(900, 20, MusicIcon.getIconWidth(), MusicIcon.getIconHeight());
+        muteMusicButton.setVisible(true);
+        muteMusicButton.setBorderPainted(false);
+        add(muteMusicButton);
+        MMbuttons.add(muteMusicButton);
+                
+        muteMusicButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                muteMusic = !muteMusic;
+                if(muteMusic){
+                    muteMusicButton.setIcon(muteMusicIcon);
+                    menuMusicPlayer.stop();
+                } else {
+                    muteMusicButton.setIcon(MusicIcon);              
                     try {
-                        player.shoot(directionOfFire, sql, false);
-                    } catch (JavaLayerException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
+                        menuMusicPlayer.play();
+                    } catch (JavaLayerException | IOException | URISyntaxException ex) {
                         Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-    }
-    
-    public void initshootThread(MouseEvent e){
-        if (mousePressed) {
-        new Thread() {
-            public void run() {
-                do {
-                    playershoot(e);
-                } while (mousePressed);
             }
-        }.start();
-    }
+        });
+        
+        //-------------------------------- Username input area --------------------------------- 
+        
+        JTextField usernameField = new JTextField("Username");
+        usernameField.setBounds(56, 140, 172, mapEditorIcon.getIconHeight()+1);
+        usernameField.setEditable(true);
+        usernameField.setHorizontalAlignment(JTextField.CENTER);
+        usernameField.setFont(new Font("TimesRoman", Font.BOLD+Font.ITALIC, 18));
+        usernameField.setBackground(new Color(230,226,211));//(new Color(221,214,192));
+        usernameField.setForeground(Color.DARK_GRAY);
+        usernameField.setBorder(null);
+        usernameField.setVisible(true);
+        add(usernameField);
+        MMbuttons.add(usernameField);
                 
+        usernameField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                player.setName(usernameField.getText());
+            }
+        });
+        
+        usernameField.addFocusListener(new FocusListener(){
+            @Override
+            public void focusGained(FocusEvent fe) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                player.setName(usernameField.getText());
+            }
+        });              
     }
+    /*
+    ----------------------------------------------------------------------------------------------------------------
+
+    Main game updating function to handle the SQL server and player input
+
+    ----------------------------------------------------------------------------------------------------------------
+    */
     
     public void updateGame(long dT) throws JavaLayerException, IOException{
         boolean printTime = false; // Set to true if you want to print the time taken by each method in updateGame
@@ -637,23 +655,32 @@ public class GamePanel extends JPanel{
         }
     }
     
+    /*
+    ----------------------------------------------------------------------------------------------------------------
+
+    Player keyboard input updates
+
+    ----------------------------------------------------------------------------------------------------------------
+    */
+    
     private void updatePlayerMovement(){
-        if (pressedButtons.contains(KeyEvent.VK_S)){
+        // Acceleration
+        if (pressedButtons.contains(KeyEvent.VK_S) || pressedButtons.contains(KeyEvent.VK_DOWN)){
 //            player.setFacedDirection(0);
             player.setAcceleration(1, 1);
             player.setDirectionOfTravel(1, 1);
         }
-        if (pressedButtons.contains(KeyEvent.VK_Z)){
+        if (pressedButtons.contains(KeyEvent.VK_Z) || pressedButtons.contains(KeyEvent.VK_UP)){
 //            player.setFacedDirection(3);
             player.setAcceleration(1, -1);
             player.setDirectionOfTravel(1, -1);
         }
-        if (pressedButtons.contains(KeyEvent.VK_Q)){
+        if (pressedButtons.contains(KeyEvent.VK_Q) || pressedButtons.contains(KeyEvent.VK_LEFT)){
 //            player.setFacedDirection(1);
             player.setAcceleration(0, -1);
             player.setDirectionOfTravel(0, -1);
         }
-        if (pressedButtons.contains(KeyEvent.VK_D)){
+        if (pressedButtons.contains(KeyEvent.VK_D) || pressedButtons.contains(KeyEvent.VK_RIGHT)){
 //            player.setFacedDirection(2);
             player.setAcceleration(0, 1);
             player.setDirectionOfTravel(0, 1);
@@ -676,29 +703,6 @@ public class GamePanel extends JPanel{
             player.reverseAcceleration(0);
             releasedButtons.remove((Integer)KeyEvent.VK_D);
         }
-        
-        if (pressedButtons.contains(KeyEvent.VK_DOWN)){
-//            player.setFacedDirection(0);
-            player.setAcceleration(1, 1);
-            player.setDirectionOfTravel(1, 1);
-        }
-        if (pressedButtons.contains(KeyEvent.VK_UP)){
-//            player.setFacedDirection(3);
-            player.setAcceleration(1, -1);
-            player.setDirectionOfTravel(1, -1);
-        }
-        if (pressedButtons.contains(KeyEvent.VK_LEFT)){
-//            player.setFacedDirection(1);
-            player.setAcceleration(0, -1);
-            player.setDirectionOfTravel(0, -1);
-        }
-        if (pressedButtons.contains(KeyEvent.VK_RIGHT)){
-//            player.setFacedDirection(2);
-            player.setAcceleration(0, 1);
-            player.setDirectionOfTravel(0, 1);
-        }
-        
-//        Deceleration
         if (releasedButtons.contains(KeyEvent.VK_DOWN)){
             player.reverseAcceleration(1);
             releasedButtons.remove((Integer)KeyEvent.VK_DOWN);
@@ -717,99 +721,36 @@ public class GamePanel extends JPanel{
         }
     }
     
-    // Use of KeyBindings
     public void mapKeys(){
-        this.getInputMap().put(KeyStroke.getKeyStroke("S"), "sPressed");
-        this.getInputMap().put(KeyStroke.getKeyStroke("released S"), "sReleased");
-        this.getInputMap().put(KeyStroke.getKeyStroke("Z"), "zPressed");
-        this.getInputMap().put(KeyStroke.getKeyStroke("released Z"), "zReleased");
-        this.getInputMap().put(KeyStroke.getKeyStroke("Q"), "qPressed");
-        this.getInputMap().put(KeyStroke.getKeyStroke("released Q"), "qReleased");
-        this.getInputMap().put(KeyStroke.getKeyStroke("D"), "dPressed");
-        this.getInputMap().put(KeyStroke.getKeyStroke("released D"), "dReleased");
-        this.getActionMap().put("zPressed", new KeyPressed(KeyEvent.VK_Z));
-        this.getActionMap().put("zReleased", new KeyReleased(KeyEvent.VK_Z) );
-        this.getActionMap().put("sPressed", new KeyPressed(KeyEvent.VK_S));
-        this.getActionMap().put("sReleased", new KeyReleased(KeyEvent.VK_S) );
-        this.getActionMap().put("qPressed", new KeyPressed(KeyEvent.VK_Q));
-        this.getActionMap().put("qReleased", new KeyReleased(KeyEvent.VK_Q) );
-        this.getActionMap().put("dPressed", new KeyPressed(KeyEvent.VK_D));
-        this.getActionMap().put("dReleased", new KeyReleased(KeyEvent.VK_D) );
+        ArrayList<String> keyStrokeList = new ArrayList();
+        keyStrokeList.add("S"); keyStrokeList.add("Z"); keyStrokeList.add("Q"); keyStrokeList.add("D");
+        keyStrokeList.add("DOWN"); keyStrokeList.add("UP"); keyStrokeList.add("LEFT"); keyStrokeList.add("RIGHT"); keyStrokeList.add("ESCAPE");
+        for (String key : keyStrokeList)
+        {
+            this.getInputMap().put(KeyStroke.getKeyStroke(key), key + "Pressed");
+            this.getInputMap().put(KeyStroke.getKeyStroke("released " + key), key + "Released");
+        }
         
-        this.getInputMap().put(KeyStroke.getKeyStroke("UP"), "upPressed");
-        this.getInputMap().put(KeyStroke.getKeyStroke("released UP"), "upReleased");
-        this.getInputMap().put(KeyStroke.getKeyStroke("DOWN"), "downPressed");
-        this.getInputMap().put(KeyStroke.getKeyStroke("released DOWN"), "downReleased");
-        this.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "leftPressed");
-        this.getInputMap().put(KeyStroke.getKeyStroke("released LEFT"), "leftReleased");
-        this.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "rightPressed");
-        this.getInputMap().put(KeyStroke.getKeyStroke("released RIGHT"), "rightReleased");
-        this.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escapePressed");
-        this.getActionMap().put("upPressed", new KeyPressed(KeyEvent.VK_UP));
-        this.getActionMap().put("upReleased", new KeyReleased(KeyEvent.VK_UP) );
-        this.getActionMap().put("downPressed", new KeyPressed(KeyEvent.VK_DOWN));
-        this.getActionMap().put("downReleased", new KeyReleased(KeyEvent.VK_DOWN) );
-        this.getActionMap().put("leftPressed", new KeyPressed(KeyEvent.VK_LEFT));
-        this.getActionMap().put("leftReleased", new KeyReleased(KeyEvent.VK_LEFT) );
-        this.getActionMap().put("rightPressed", new KeyPressed(KeyEvent.VK_RIGHT));
-        this.getActionMap().put("rightReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
-        this.getActionMap().put("escapePressed", new EscapePressed());
+        this.getActionMap().put("ZPressed", new KeyPressed(KeyEvent.VK_Z));
+        this.getActionMap().put("ZReleased", new KeyReleased(KeyEvent.VK_Z) );
+        this.getActionMap().put("SPressed", new KeyPressed(KeyEvent.VK_S));
+        this.getActionMap().put("SReleased", new KeyReleased(KeyEvent.VK_S) );
+        this.getActionMap().put("QPressed", new KeyPressed(KeyEvent.VK_Q));
+        this.getActionMap().put("QReleased", new KeyReleased(KeyEvent.VK_Q) );
+        this.getActionMap().put("DPressed", new KeyPressed(KeyEvent.VK_D));
+        this.getActionMap().put("DReleased", new KeyReleased(KeyEvent.VK_D) );
+        this.getActionMap().put("UPPressed", new KeyPressed(KeyEvent.VK_UP));
+        this.getActionMap().put("UPReleased", new KeyReleased(KeyEvent.VK_UP) );
+        this.getActionMap().put("DOWNPressed", new KeyPressed(KeyEvent.VK_DOWN));
+        this.getActionMap().put("DOWNReleased", new KeyReleased(KeyEvent.VK_DOWN) );
+        this.getActionMap().put("LEFTPressed", new KeyPressed(KeyEvent.VK_LEFT));
+        this.getActionMap().put("LEFTReleased", new KeyReleased(KeyEvent.VK_LEFT) );
+        this.getActionMap().put("RIGHTPressed", new KeyPressed(KeyEvent.VK_RIGHT));
+        this.getActionMap().put("RIGHTReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
+        this.getActionMap().put("ESCAPEPressed", new EscapePressed());
     }
     
-@Override
-public void paint(Graphics g) {
-    super.paint(g);
-    Graphics2D g2d = (Graphics2D) g;
-    switch(gameState) {
-        case PRE_GAME:
-            g2d.drawImage(PreGameBackground, 0, 0, 16*64, 9*64, this);
-            map.draw(g2d, false);
-            for (int i=0; i<otherPlayersList.size(); i++){
-                g2d.drawString(otherPlayersList.get(i).getName(), 100, 100+i*50);
-            }
-            break;
-            
-        case MAIN_MENU:
-            g2d.drawImage(MenuBackground, 0, 0, 16*64, 9*64, this);
-            g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
-            map.draw(g2d, false);
-            break;
-            
-        case IN_GAME:
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-            map.draw(g2d, false);
-            player.draw(g2d);
-            player.drawBullets(g2d, map.getTextureSize());
-
-            for (Player otherPlayer : otherPlayersList) {
-                otherPlayer.draw(g2d);
-            }
-            for (int i=0; i<otherPlayersBullets.size(); i++){
-                otherPlayersBullets.get(i).draw(g2d, textureSize);// To do : Only 1 SQL line to modifie every bullet's position
-            }
-            break;
-            
-        case MAP_EDITOR:
-            g2d.drawImage(EditorBackground, 0, 0, 16*64, 9*64, this);     
-            map.draw(g2d, true);
-            tileSelector.draw(g2d, setStartingTile);
-            if (setStartingTile) { // draw a rectangle around setStartingTileButton
-                int index = MEbuttons.size()-1;
-                while(!MEbuttons.get(index).getName().equals("setStartingTileButton")){ //find the button
-                    index--;
-                }
-                if(index>-1){ // else, something went wrong, do nothing
-                    g2d.setStroke(new BasicStroke(5));
-                    g2d.setColor(Color.lightGray);
-                    g2d.drawRect(MEbuttons.get(index).getX(), MEbuttons.get(index).getY(), MEbuttons.get(index).getWidth(), MEbuttons.get(index).getHeight());
-                }
-            }
-            break;
-    }
-}
-    
-      //Use of KeyBindings
+       //Use of KeyBindings
     private class KeyPressed extends AbstractAction{
         
         private int key;
@@ -868,6 +809,13 @@ public void paint(Graphics g) {
         }
     }
     
+    /*
+    ----------------------------------------------------------------------------------------------------------------
+
+    Functions to properly start and end a game
+
+    ----------------------------------------------------------------------------------------------------------------
+    */
     public void initialiseGame(boolean isHost) throws IOException, JavaLayerException {
         this.isHost = isHost;
         sql = new SQLManager();
@@ -956,10 +904,6 @@ public void paint(Graphics g) {
         }
     }
     
-    public boolean isConnected(){
-        return isConnected;
-    }
-    
     public void endGame() {
         int formerGameState = gameState;
         setState(MAIN_MENU);
@@ -979,6 +923,97 @@ public void paint(Graphics g) {
             sql.disconnect();
         }
         isConnected = false;
+    }
+    
+    //-------------------------------------------------------------------------------------------------------------------------
+    
+    public void playershoot(MouseEvent e){
+        double[] directionOfFire = new double[2];
+                    directionOfFire[0] = e.getX() - player.getPosX() - textureSize / 2;
+                    directionOfFire[1] = e.getY() - player.getPosY() - textureSize / 2;
+
+                    double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
+                    directionOfFire[0] = directionOfFire[0] / norme;
+                    directionOfFire[1] = directionOfFire[1] / norme;
+
+                {
+                    try {
+                        player.shoot(directionOfFire, sql, false);
+                    } catch (JavaLayerException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+    }
+    
+    public void initshootThread(MouseEvent e){
+        if (mousePressed) {
+            new Thread() {
+                public void run() {
+                    do {
+                        playershoot(e);
+                    } while (mousePressed);
+                }
+            }.start();
+        }   
+    }   
+    
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        Graphics2D g2d = (Graphics2D) g;
+        switch(gameState) {
+            case PRE_GAME:
+                g2d.drawImage(PreGameBackground, 0, 0, 16*64, 9*64, this);
+                map.draw(g2d, false);
+                for (int i=0; i<otherPlayersList.size(); i++){
+                    g2d.drawString(otherPlayersList.get(i).getName(), 100, 100+i*50);
+                }
+                break;
+
+            case MAIN_MENU:
+                g2d.drawImage(MenuBackground, 0, 0, 16*64, 9*64, this);
+                g2d.drawImage(player.getImage(), (180-player.getPlayerWidth())/2, (panelHeight-player.getPlayerHeight())/2, 160, 160, this);
+                map.draw(g2d, false);
+                break;
+
+            case IN_GAME:
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+                map.draw(g2d, false);
+                player.draw(g2d);
+                player.drawBullets(g2d, map.getTextureSize());
+
+                for (Player otherPlayer : otherPlayersList) {
+                    otherPlayer.draw(g2d);
+                }
+                for (int i=0; i<otherPlayersBullets.size(); i++){
+                    otherPlayersBullets.get(i).draw(g2d, textureSize);// To do : Only 1 SQL line to modifie every bullet's position
+                }
+                break;
+
+            case MAP_EDITOR:
+                g2d.drawImage(EditorBackground, 0, 0, 16*64, 9*64, this);     
+                map.draw(g2d, true);
+                tileSelector.draw(g2d, setStartingTile);
+                if (setStartingTile) { // draw a rectangle around setStartingTileButton
+                    int index = MEbuttons.size()-1;
+                    while(!MEbuttons.get(index).getName().equals("setStartingTileButton")){ //find the button
+                        index--;
+                    }
+                    if(index>-1){ // else, something went wrong, do nothing
+                        g2d.setStroke(new BasicStroke(5));
+                        g2d.setColor(Color.lightGray);
+                        g2d.drawRect(MEbuttons.get(index).getX(), MEbuttons.get(index).getY(), MEbuttons.get(index).getWidth(), MEbuttons.get(index).getHeight());
+                    }
+                }
+                break;
+        }
+    }
+    
+    public boolean isConnected(){
+        return isConnected;
     }
     
     public void preGameUpdate() {
