@@ -466,16 +466,20 @@ public class Player {
     void generateGun(int numberOfPlayers) throws IOException, JavaLayerException{
         if (gun.getId() == 0 && Math.random()<1.0/(4*numberOfPlayers)){ // One player gets a gun every 4 seconds
             double gunRandom = Math.random();
-            if (gunRandom <0.2){
+            if (gunRandom <0.14){
                 gun.setId(Gun.PISTOL);
-            } else if (gunRandom<0.4){
+            /*} else if (gunRandom<0.28){
                 gun.setId(Gun.UZI);
-            } else if (gunRandom<0.6){
+            } else if (gunRandom<0.42){
                 gun.setId(Gun.SNIPER);
-            } else if (gunRandom<0.8){
+            } else if (gunRandom<0.56){
                 gun.setId(Gun.SHOTGUN);
+            } else if (gunRandom<0.70){
+                gun.setId(Gun.AK);*/
+            } else if (gunRandom<0.54){
+                gun.setId(Gun.MAGNUM);
             } else if (gunRandom<1.0){
-                gun.setId(Gun.AK);
+                gun.setId(Gun.MITRAILLEUSE);
             }
             
         }

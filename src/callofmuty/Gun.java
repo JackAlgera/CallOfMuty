@@ -12,12 +12,14 @@ import javazoom.jl.decoder.JavaLayerException;
 
 public class Gun {
     
-    public static final int NO_GUN = 0, PISTOL = 1, UZI = 2, SNIPER = 3, SHOTGUN = 4, AK = 5;
+    public static final int NO_GUN = 0, PISTOL = 1, UZI = 2, SNIPER = 3, SHOTGUN = 4, AK = 5, MAGNUM = 6, MITRAILLEUSE = 7;
     private static final BufferedImage pistolImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 1, 1);
     private static final BufferedImage uziImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 3, 1); 
     private static final BufferedImage sniperImage = Tools.selectWeaponTile(Tools.WeaponTileset, 3, 1, 2);  
     private static final BufferedImage shotgunImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 7, 2); 
     private static final BufferedImage akImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 3, 2); 
+    private static final BufferedImage magnumImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 1, 1);
+    private static final BufferedImage mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2);
     
     private int ammunition,stockAmmo, id, startingAmmo;
     private Image image;
@@ -49,7 +51,7 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
-                distanceMaxShoot = 400;
+                distanceMaxShoot = 550;
                 break;
                 
             case UZI:
@@ -63,7 +65,7 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
-                distanceMaxShoot = 400;
+                distanceMaxShoot = 450;
                 break;
                 
             case SNIPER:
@@ -77,7 +79,7 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
-                distanceMaxShoot = 400;
+                distanceMaxShoot = 800;
                 break;
                 
             case SHOTGUN:
@@ -105,7 +107,35 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
-                distanceMaxShoot = 400;
+                distanceMaxShoot = 500;
+                break;
+                
+            case MAGNUM:
+                ammunition = 8;
+                image = magnumImage;
+                rateOfFire = 700;
+                damage = 25;
+                reloadTime = 1000;
+                bulletSpeed = 1.8;
+                stockAmmo = ammunition;
+                startingAmmo=ammunition;
+                initialRateOfFire=rateOfFire;
+                gunSound = new SoundPlayer("shootingSound.mp3", false);
+                distanceMaxShoot = 700;
+                break;
+                
+            case MITRAILLEUSE:
+                ammunition = 50;
+                image = mitrailleuseImage;
+                rateOfFire = 200;
+                damage = 7;
+                reloadTime = 1250;
+                bulletSpeed = 1.0;
+                stockAmmo = ammunition;
+                startingAmmo=ammunition;
+                initialRateOfFire=rateOfFire;
+                gunSound = new SoundPlayer("shootingSound.mp3", false);
+                distanceMaxShoot = 550;
                 break;
                 
             case NO_GUN:
