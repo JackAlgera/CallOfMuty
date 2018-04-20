@@ -466,45 +466,34 @@ public class Player {
     void generateGun(int numberOfPlayers) throws IOException, JavaLayerException{
         if (gun.getId() == 0 && Math.random()<1.0/(4*numberOfPlayers)){ // One player gets a gun every 4 seconds
             double gunRandom = Math.random();
-            if (gunRandom <0.2){
+            if (gunRandom <0.14){
                 gun.setId(Gun.PISTOL);
-            } else if (gunRandom<0.4){
+            /*} else if (gunRandom<0.28){
                 gun.setId(Gun.UZI);
-            } else if (gunRandom<0.6){
+            } else if (gunRandom<0.42){
                 gun.setId(Gun.SNIPER);
-            } else if (gunRandom<0.8){
+            } else if (gunRandom<0.56){
                 gun.setId(Gun.SHOTGUN);
+            } else if (gunRandom<0.70){
+                gun.setId(Gun.AK);*/
+            } else if (gunRandom<0.54){
+                gun.setId(Gun.MAGNUM);
             } else if (gunRandom<1.0){
-                gun.setId(Gun.AK);
+                gun.setId(Gun.MITRAILLEUSE);
             }
             
         }
     }
     
     public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
-        if (gun.shoot(unlimitedBullets)){
+        if (gun.shoot(unlimitedBullets, muteSounds)){
             addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
-            if (!muteSounds) {
-                try {
-                    gun.getGunSound().play();
-                } catch (URISyntaxException ex) {
-                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
         }
     }
 
     void playShootSound() {
         if(!muteSounds){
-            try {
-                gun.getGunSound().play();
-            } catch (JavaLayerException ex) {
-                Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            gun.playShootingSound();
         }
     }
 }

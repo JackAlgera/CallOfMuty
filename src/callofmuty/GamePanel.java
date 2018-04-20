@@ -14,6 +14,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +80,7 @@ public class GamePanel extends JPanel{
     private ArrayList <Player> otherPlayersList;
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState, gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
-    private boolean isHost, setStartingTile;
+    private boolean isHost, setStartingTile, mousePressed;
     private long lastGunGeneration;
     private SQLManager sql; 
     private boolean isConnected, muteMusic, muteSounds;
@@ -119,6 +120,24 @@ public class GamePanel extends JPanel{
         otherPlayersList = new ArrayList<Player>();
         this.timer = timer;
         mapKeys();
+        mousePressed = false;
+        
+        addMouseMotionListener(new MouseAdapter(){
+            @Override
+            public void mouseDragged(MouseEvent e){
+                switch (gameState) {
+                case IN_GAME:
+                    if(mousePressed){
+                        playershoot(e);
+                    }                   
+                    break;
+                case MAP_EDITOR:
+                    
+                    break;
+                default:
+                }
+            }
+        });
         
         addMouseListener(new MouseAdapter() {
             @Override
@@ -131,23 +150,7 @@ public class GamePanel extends JPanel{
             public void mousePressed(MouseEvent e) {
                 switch (gameState) {
                 case IN_GAME:
-                    double[] directionOfFire = new double[2];
-                    directionOfFire[0] = e.getX() - player.getPosX() - textureSize / 2;
-                    directionOfFire[1] = e.getY() - player.getPosY() - textureSize / 2;
-
-                    double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
-                    directionOfFire[0] = directionOfFire[0] / norme;
-                    directionOfFire[1] = directionOfFire[1] / norme;
-
-                {
-                    try {
-                        player.shoot(directionOfFire, sql, false);
-                    } catch (JavaLayerException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+                    mousePressed = true;
                     break;
                 case MAP_EDITOR:
                     int[] mapClicked = map.clickedTile(e.getX(), e.getY());
@@ -170,8 +173,10 @@ public class GamePanel extends JPanel{
                 }
             }@Override
             public void mouseReleased(MouseEvent e) {
+                mousePressed = false;
             }
         });
+        
 	setFocusable(true);
         buildInterface();        
     }
@@ -444,11 +449,7 @@ public class GamePanel extends JPanel{
                     muteMusicButton.setIcon(MusicIcon);              
                     try {
                         menuMusicPlayer.play();
-                    } catch (JavaLayerException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (URISyntaxException ex) {
+                    } catch (JavaLayerException | IOException | URISyntaxException ex) {
                         Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -557,9 +558,41 @@ public class GamePanel extends JPanel{
                 playClicSound();
                 sql.setGameState(IN_GAME);
                 setState(IN_GAME);
-                repaint();
             }
         });
+    }
+    
+    public void playershoot(MouseEvent e){
+        double[] directionOfFire = new double[2];
+                    directionOfFire[0] = e.getX() - player.getPosX() - textureSize / 2;
+                    directionOfFire[1] = e.getY() - player.getPosY() - textureSize / 2;
+
+                    double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
+                    directionOfFire[0] = directionOfFire[0] / norme;
+                    directionOfFire[1] = directionOfFire[1] / norme;
+
+                {
+                    try {
+                        player.shoot(directionOfFire, sql, false);
+                    } catch (JavaLayerException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+    }
+    
+    public void initshootThread(MouseEvent e){
+        if (mousePressed) {
+        new Thread() {
+            public void run() {
+                do {
+                    playershoot(e);
+                } while (mousePressed);
+            }
+        }.start();
+    }
+                
     }
     
     public void updateGame(long dT) throws JavaLayerException, IOException{
@@ -951,9 +984,7 @@ public void paint(Graphics g) {
     public void preGameUpdate() {
         try {
             sql.updatePlayerList(player, otherPlayersList);
-        } catch (IOException ex) {
-            Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (JavaLayerException ex) {
+        } catch (IOException | JavaLayerException ex) {
             Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         if(!isHost){

@@ -3,17 +3,23 @@ package callofmuty;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javazoom.jl.decoder.JavaLayerException;
 
 public class Gun {
     
-    public static final int NO_GUN = 0, PISTOL = 1, UZI = 2, SNIPER = 3, SHOTGUN = 4, AK = 5;
+    public static final int NO_GUN = 0, PISTOL = 1, UZI = 2, SNIPER = 3, SHOTGUN = 4, AK = 5, MAGNUM = 6, MITRAILLEUSE = 7;
     private static final BufferedImage pistolImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 1, 1);
     private static final BufferedImage uziImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 3, 1); 
     private static final BufferedImage sniperImage = Tools.selectWeaponTile(Tools.WeaponTileset, 3, 1, 2);  
     private static final BufferedImage shotgunImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 7, 2); 
     private static final BufferedImage akImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 3, 2); 
+    private static final BufferedImage magnumImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 1, 1);
+    private static final BufferedImage mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2);
     
     private int ammunition,stockAmmo, id, startingAmmo;
     private Image image;
@@ -26,10 +32,6 @@ public class Gun {
         lastShotTimeStamp = System.currentTimeMillis();
     }
     
-    public boolean isEmpty(){
-        return ammunition==0;
-    }
-    
     public double getDamage(){
         return damage;
     }
@@ -39,7 +41,7 @@ public class Gun {
         
         switch(this.id){
             case PISTOL:
-                ammunition = 10;
+                ammunition = 6;
                 image = pistolImage;
                 rateOfFire = 500; //in milliseconds
                 damage = 15;
@@ -49,11 +51,11 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
-                distanceMaxShoot = 400;
+                distanceMaxShoot = 550;
                 break;
                 
             case UZI:
-                ammunition = 40;
+                ammunition = 20;
                 image = uziImage;
                 rateOfFire = 150;
                 damage = 5;
@@ -63,7 +65,7 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
-                distanceMaxShoot = 400;
+                distanceMaxShoot = 450;
                 break;
                 
             case SNIPER:
@@ -77,11 +79,11 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
-                distanceMaxShoot = 400;
+                distanceMaxShoot = 800;
                 break;
                 
             case SHOTGUN:
-                ammunition = 7;
+                ammunition = 5;
                 image = shotgunImage;
                 rateOfFire = 650;
                 damage = 22;
@@ -95,7 +97,7 @@ public class Gun {
                 break;
                 
             case AK:
-                ammunition = 25;
+                ammunition = 14;
                 image = akImage;
                 rateOfFire = 280;
                 damage = 10;
@@ -105,7 +107,35 @@ public class Gun {
                 startingAmmo=ammunition;
                 initialRateOfFire=rateOfFire;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
-                distanceMaxShoot = 400;
+                distanceMaxShoot = 500;
+                break;
+                
+            case MAGNUM:
+                ammunition = 6;
+                image = magnumImage;
+                rateOfFire = 700;
+                damage = 25;
+                reloadTime = 1000;
+                bulletSpeed = 1.8;
+                stockAmmo = ammunition;
+                startingAmmo=ammunition;
+                initialRateOfFire=rateOfFire;
+                gunSound = new SoundPlayer("shootingSound.mp3", false);
+                distanceMaxShoot = 700;
+                break;
+                
+            case MITRAILLEUSE:
+                ammunition = 20;
+                image = mitrailleuseImage;
+                rateOfFire = 200;
+                damage = 7;
+                reloadTime = 1250;
+                bulletSpeed = 1.0;
+                stockAmmo = ammunition;
+                startingAmmo=ammunition;
+                initialRateOfFire=rateOfFire;
+                gunSound = new SoundPlayer("shootingSound.mp3", false);
+                distanceMaxShoot = 550;
                 break;
                 
             case NO_GUN:
@@ -123,10 +153,6 @@ public class Gun {
         return bulletSpeed;
     }
     
-    public SoundPlayer getGunSound(){
-        return gunSound;
-    }
-    
     public double getDistanceMaxShoot() {
         return distanceMaxShoot;
     }
@@ -141,10 +167,9 @@ public class Gun {
         
     }
     
-    public boolean shoot(boolean unlimitedBullets)throws IOException, JavaLayerException{ // if gun can shoot, shoots and returns true, else returns false
+    public boolean shoot(boolean unlimitedBullets, boolean muteShootingSound)throws IOException, JavaLayerException{ // if gun can shoot, shoots and returns true, else returns false
         boolean test = (unlimitedBullets || ammunition>0) && System.currentTimeMillis()-rateOfFire>=lastShotTimeStamp;
         if (test){
-            
             if(!unlimitedBullets){
                 ammunition--;
                 rateOfFire=initialRateOfFire;
@@ -160,8 +185,23 @@ public class Gun {
                 }
                 
             }
+            if (!muteShootingSound){
+                playShootingSound();
+            }
         }
         return test;
+    }
+    
+    public void playShootingSound() {
+        if (id != NO_GUN) {
+            try {
+                gunSound.play();
+            } catch (FileNotFoundException | URISyntaxException ex) {
+                Logger.getLogger(Gun.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (JavaLayerException | IOException ex) {
+                Logger.getLogger(Gun.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
 }

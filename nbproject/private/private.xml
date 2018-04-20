@@ -3,11 +3,24 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/Z:/Mes%20documents/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/GameTimer.java</file>
             <file>file:/Z:/Mes%20documents/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Map.java</file>
             <file>file:/Z:/Mes%20documents/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/GamePanel.java</file>
             <file>file:/Z:/Mes%20documents/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Bullet.java</file>
             <file>file:/Z:/Mes%20documents/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Animation.java</file>
+=======
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GameTimer.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Map.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/TileType.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/TileSelector.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Animation.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GamePanel.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Player.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Gun.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Bullet.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/CallOfMuty.java</file>
+>>>>>>> 79adff5d089970f5f295329dc602712652bcd43c
         </group>
     </open-files>
 </project-private>
