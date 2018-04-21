@@ -39,7 +39,9 @@ public class GamePanel extends JPanel{
     
     public static BufferedImage MenuBackground = Tools.loadImage("MenuBackground.png"),
             EditorBackground = Tools.loadImage("EditorBackground.png"),
-            PreGameBackground = Tools.loadImage("PreGameBackground.png");
+            PreGameBackground = Tools.loadImage("PreGameBackground.png"),
+            victoryScreen = Tools.loadImage("Victory.png"),
+            defeatScreen = Tools.loadImage("Defeat.png");
 
     public static ImageIcon joinGameIcon = Tools.loadIcon("JoinGame.png"),
             createGameIcon = Tools.loadIcon("CreateGame.png"),
@@ -66,7 +68,7 @@ public class GamePanel extends JPanel{
     
     
     public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
-            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3,
+            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4,
             RANDOMLY_GIVEN_GUNS = 0;
     
     private static long gunGenerationTime = 100; //in milliseconds
@@ -82,7 +84,7 @@ public class GamePanel extends JPanel{
     private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds, mousePressed;
     private long lastGunGeneration;
     private SQLManager sql;
-    private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons;
+    private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons;
     private ArrayList<Bullet> otherPlayersBullets;
     private GameTimer timer;
     private int[] mousePosition;
@@ -218,7 +220,7 @@ public class GamePanel extends JPanel{
         MMbuttons = new ArrayList<JComponent>(); //MM : Main menu
         MEbuttons = new ArrayList<JComponent>(); //ME : Map Editor
         PGbuttons = new ArrayList<JComponent>(); // Pre game
-        
+        Ebuttons = new ArrayList<JComponent>(); // Ending (Victory or Defeat)
         /*
         ----------------------------------------------------------------------------------------------------------------
         
@@ -634,7 +636,45 @@ public class GamePanel extends JPanel{
             public void focusLost(FocusEvent fe) {
                 player.setName(usernameField.getText());
             }
-        });              
+        });
+
+//--------------------------------------------- Ending buttons : Return to menu ------------------------------------------  
+        JButton mainMenuButton = new JButton("Main menu");
+        mainMenuButton.setName("mainMenuButton");
+        //mainMenuButton.setIcon(mapEditorIcon);
+        mainMenuButton.setBounds((panelWidth-mapEditorIcon.getIconWidth())/2, 500, mapEditorIcon.getIconWidth(), mapEditorIcon.getIconHeight());
+        //mainMenuButton.setPressedIcon(pressedmapEditorIcon);
+        mainMenuButton.setVisible(false);
+        //mainMenuButton.setContentAreaFilled(false);
+        mainMenuButton.setBorderPainted(true);
+        add(mainMenuButton);
+        Ebuttons.add(mainMenuButton);
+
+        mainMenuButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                setState(MAIN_MENU);
+            }
+        });
+        
+//--------------------------------------------- Ending buttons : Spectate game ------------------------------------------  
+        JButton spectateGameButton = new JButton("Spectate the game");
+        spectateGameButton.setName("spectateGameButton");
+        //spectateGameButton.setIcon(mapEditorIcon);
+        spectateGameButton.setBounds((panelWidth-mapEditorIcon.getIconWidth())/2, 400, mapEditorIcon.getIconWidth(), mapEditorIcon.getIconHeight());
+        //spectateGameButton.setPressedIcon(pressedmapEditorIcon);
+        spectateGameButton.setVisible(false);
+        //spectateGameButton.setContentAreaFilled(false);
+        spectateGameButton.setBorderPainted(true);
+        add(spectateGameButton);
+        Ebuttons.add(spectateGameButton);
+
+        spectateGameButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                setState(IN_GAME);
+            }
+        });
     }
     /*
     ----------------------------------------------------------------------------------------------------------------
@@ -647,6 +687,7 @@ public class GamePanel extends JPanel{
     public void updateGame(long dT) throws JavaLayerException, IOException{
         boolean printTime = false; // Set to true if you want to print the time taken by each method in updateGame
         long time = System.currentTimeMillis();
+        boolean playerWasDead = player.isDead(); // used to check if player died
         // Update player movement 
         updatePlayerMovement();
         player.update(dT, map);
@@ -660,28 +701,32 @@ public class GamePanel extends JPanel{
             System.out.println("Downloads : " + (System.currentTimeMillis()-time));
             time = System.currentTimeMillis();
         }
-        // Update bullets
-        player.updateBulletList(dT, map, otherPlayersList);
-        if(printTime){
-            System.out.println("Bullet updates : " + (System.currentTimeMillis()-time));
-            time = System.currentTimeMillis();
-        }
-        // gun generation
-        if(System.currentTimeMillis()-gunGenerationTime > lastGunGeneration){
-            lastGunGeneration = System.currentTimeMillis();
-            player.generateGun(otherPlayersList.size()+1, gunGenerationTime); // has a probability to give local player a gun that decreases with number of players
-        }
-        
-        // sql uploads
-        sql.uploadPlayerAndBullets(player);
-        if(printTime){
-            System.out.println("Uploads : " + (System.currentTimeMillis()-time));
+        if (!player.isDead()) {
+            // Update bullets
+            player.updateBulletList(dT, map, otherPlayersList);
+            if (printTime) {
+                System.out.println("Bullet updates : " + (System.currentTimeMillis() - time));
+                time = System.currentTimeMillis();
+            }
+            // gun generation
+            if (System.currentTimeMillis() - gunGenerationTime > lastGunGeneration) {
+                lastGunGeneration = System.currentTimeMillis();
+                player.generateGun(otherPlayersList.size() + 1, gunGenerationTime); // has a probability to give local player a gun that decreases with number of players
+            }
+
+            // sql uploads
+            sql.uploadPlayerAndBullets(player);
+            if (printTime) {
+                System.out.println("Uploads : " + (System.currentTimeMillis() - time));
+            }
+        } else if(!playerWasDead){ // player just died : show defeat screen
+            setState(ENDING);
         }
         if(otherPlayersList.isEmpty()){ // Game is ended
-            if (!player.isDead()){ // Local player won
-                //endGame();
-            } else {
-                //endGame();
+            if (!player.isDead()){ // Local player won : show victory screen
+                setState(ENDING);
+            } else { // quit game
+                endGame();
             }
         }
     }
@@ -854,7 +899,7 @@ public class GamePanel extends JPanel{
         if (isHost) {
             // Try to create a game
             ArrayList<Player> playerList = sql.getPlayerList();
-            if (playerList.isEmpty()) { // No game is currently on
+            if (playerList.size()<2) { // No game is currently on
                 sql.clearTable(); //Clear previous game on SQL server
                 sql.createGame(map);
                 player.setGunId(Gun.NO_GUN);
@@ -946,9 +991,7 @@ public class GamePanel extends JPanel{
                 if(sql.getPlayerList().isEmpty() || (isHost && formerGameState==PRE_GAME) ){
                     sql.clearTable();
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (JavaLayerException ex) {
+            } catch (IOException | JavaLayerException ex) {
                 Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             sql.disconnect();
@@ -1006,7 +1049,7 @@ public class GamePanel extends JPanel{
                     otherPlayer.draw(g2d);
                 }
                 for (int i=0; i<otherPlayersBullets.size(); i++){
-                    otherPlayersBullets.get(i).draw(g2d, textureSize);// To do : Only 1 SQL line to modifie every bullet's position
+                    otherPlayersBullets.get(i).draw(g2d, textureSize);
                 }
                 break;
 
@@ -1024,6 +1067,26 @@ public class GamePanel extends JPanel{
                         g2d.setColor(Color.lightGray);
                         g2d.drawRect(MEbuttons.get(index).getX(), MEbuttons.get(index).getY(), MEbuttons.get(index).getWidth(), MEbuttons.get(index).getHeight());
                     }
+                }
+                break;
+
+            case ENDING:
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+                map.draw(g2d, false);
+                player.draw(g2d);
+                player.drawBullets(g2d, map.getTextureSize());
+
+                for (Player otherPlayer : otherPlayersList) {
+                    otherPlayer.draw(g2d);
+                }
+                for (int i=0; i<otherPlayersBullets.size(); i++){
+                    otherPlayersBullets.get(i).draw(g2d, textureSize);
+                }
+                if (player.isDead()){
+                    g2d.drawImage(defeatScreen, 0, 0, defeatScreen.getWidth(), defeatScreen.getHeight(), null);
+                } else {
+                    g2d.drawImage(victoryScreen, 0, 0, victoryScreen.getWidth(), victoryScreen.getHeight(), null);
                 }
                 break;
         }
@@ -1086,6 +1149,9 @@ public class GamePanel extends JPanel{
                 for (JComponent component : PGbuttons) {
                     component.setVisible(false);
                 }
+                for (JComponent component : Ebuttons) {
+                    component.setVisible(false);
+                }
                 if (formerGameState==IN_GAME && !muteMusic) {
                     try {
                         gameMusicPlayer.stop();
@@ -1105,6 +1171,9 @@ public class GamePanel extends JPanel{
                 for (JComponent component : PGbuttons){
                     component.setVisible(false);
                 }
+                for (JComponent component : Ebuttons) {
+                    component.setVisible(false);
+                }
                 setStartingTile = false;
                 break;
             case PRE_GAME:
@@ -1118,6 +1187,9 @@ public class GamePanel extends JPanel{
                     component.setVisible(true);
                     component.setEnabled(isHost);
                 }
+                for (JComponent component : Ebuttons) {
+                    component.setVisible(false);
+                }
                 break;
             case IN_GAME:
                 for (JComponent component : MMbuttons){
@@ -1129,7 +1201,10 @@ public class GamePanel extends JPanel{
                 for (JComponent component : PGbuttons){
                     component.setVisible(false);
                 }
-                if (!muteMusic) {
+                for (JComponent component : Ebuttons) {
+                    component.setVisible(false);
+                }
+                if (!muteMusic && formerGameState != ENDING) {
                     menuMusicPlayer.stop();
                     try {
                         gameMusicPlayer.play();
@@ -1138,6 +1213,24 @@ public class GamePanel extends JPanel{
                     }
                 }
                 timer.update();
+                break;
+            case ENDING:
+                for (JComponent component : MMbuttons){
+                    component.setVisible(false);
+                }
+                for (JComponent component : MEbuttons){
+                    component.setVisible(false);
+                }
+                for (JComponent component : PGbuttons){
+                    component.setVisible(false);
+                }
+                for (JComponent component : Ebuttons) {
+                    if(component.getName().equals("spectateGameButton")){
+                        component.setVisible(player.isDead());
+                    } else {
+                        component.setVisible(true);
+                    }
+                }
         }
         repaint();
     }
@@ -1146,11 +1239,7 @@ public class GamePanel extends JPanel{
         if (!muteSounds) {
             try {
                 clicSoundPlayer.play();
-            } catch (JavaLayerException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (URISyntaxException ex) {
+            } catch (JavaLayerException | IOException | URISyntaxException ex) {
                 Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

@@ -132,7 +132,7 @@ public class SQLManager {
                             if (player.isDead()) {
                                 setPlayerDead(player);
                             }
-                        } else { // if player was not "known" : isn't supposed to happen, deal with it here if it does
+                        } else { // if player was not "known" : isn't supposed to happen, deal with it here if needed
 
                         }
                     }
