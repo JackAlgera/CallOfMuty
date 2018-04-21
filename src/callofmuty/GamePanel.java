@@ -125,6 +125,7 @@ public class GamePanel extends JPanel{
         setFocusable(true);
         buildInterface(); 
         
+        // handling mouse inputs
         addMouseMotionListener(new MouseAdapter(){
             @Override
             public void mouseDragged(MouseEvent e){
@@ -142,32 +143,33 @@ public class GamePanel extends JPanel{
             public void mouseExited(MouseEvent e) {
             }@Override
             public void mousePressed(MouseEvent e) {
+                mousePressed = true;
+                mousePosition[0] = e.getX();
+                mousePosition[1] = e.getY();
                 switch (gameState) {
-                case IN_GAME:
-                    mousePosition[0] = e.getX();
-                    mousePosition[1] = e.getY();
-                    mousePressed = true;
-                    break;
-                case MAP_EDITOR:
-                    int[] mapClicked = map.clickedTile(e.getX(), e.getY());
-                    if (mapClicked[0]>-1){ // map was clicked
-                        playClicSound();
-                        if(!setStartingTile){
-                            map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
-                        } else {
-                            map.addStartTile(new int[]{mapClicked[1], mapClicked[2]});
-                        }
-                    } else { // check if tileSelector was clicked and select the tile if so
-                        if(tileSelector.clickedTile(e.getX(), e.getY())[0]>-1){
+                    case IN_GAME:
+                        break;
+                    case MAP_EDITOR:
+                        int[] mapClicked = map.clickedTile(e.getX(), e.getY());
+                        if (mapClicked[0] > -1) { // map was clicked
                             playClicSound();
-                            setStartingTile = false;
+                            if (!setStartingTile) {
+                                map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
+                            } else {
+                                map.addStartTile(new int[]{mapClicked[1], mapClicked[2]});
+                            }
+                        } else { // check if tileSelector was clicked and select the tile if so
+                            if (tileSelector.clickedTile(e.getX(), e.getY())[0] > -1) {
+                                playClicSound();
+                                setStartingTile = false;
+                            }
                         }
-                    }
-                    repaint();
-                    break;
-                default:
+                        repaint();
+                        break;
+                    default:
                 }
-            }@Override
+            }
+            @Override
             public void mouseReleased(MouseEvent e) {
                 mousePressed = false;
             }
@@ -185,17 +187,19 @@ public class GamePanel extends JPanel{
                             }
                             break;
                         case MAP_EDITOR:
-                            int[] mapClicked = map.clickedTile(mousePosition[0], mousePosition[1]);
-                            if (mapClicked[0] > -1) { // map was clicked
-                                if (!setStartingTile) {
-                                    map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
+                            if (mousePressed) {
+                                int[] mapClicked = map.clickedTile(mousePosition[0], mousePosition[1]);
+                                if (mapClicked[0] > -1) { // map was clicked
+                                    if (!setStartingTile) {
+                                        map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
+                                    }
+                                } else { // check if tileSelector was clicked and select the tile if so
+                                    if (tileSelector.clickedTile(mousePosition[0], mousePosition[1])[0] > -1) {
+                                        setStartingTile = false;
+                                    }
                                 }
-                            } else { // check if tileSelector was clicked and select the tile if so
-                                if (tileSelector.clickedTile(mousePosition[0], mousePosition[1])[0] > -1) {
-                                    setStartingTile = false;
-                                }
+                                repaint();
                             }
-                            repaint();
                             break;
                         default:
                     }

@@ -38,8 +38,6 @@ public class Map{
                 } else {
                     startTile.add(newStartTile);
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "The starting tile must not be an obstacle");
             }
         }
     }
@@ -264,8 +262,6 @@ public class Map{
         if (startTileIndex(new int[]{i,j})>-1){
             if (getTile(tileType).isCrossable()){
                 map[i][j] = tileType;
-            } else {
-                JOptionPane.showMessageDialog(null, "The starting tile must not be an obstacle");
             }
         } else {
             map[i][j] = tileType;
