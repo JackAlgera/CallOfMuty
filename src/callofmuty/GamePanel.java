@@ -653,7 +653,7 @@ public class GamePanel extends JPanel{
         mainMenuButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                setState(MAIN_MENU);
+                endGame();
             }
         });
         
@@ -1084,9 +1084,9 @@ public class GamePanel extends JPanel{
                     otherPlayersBullets.get(i).draw(g2d, textureSize);
                 }
                 if (player.isDead()){
-                    g2d.drawImage(defeatScreen, 0, 0, defeatScreen.getWidth(), defeatScreen.getHeight(), null);
+                    g2d.drawImage(defeatScreen, (panelWidth-defeatScreen.getWidth())/2, 0, defeatScreen.getWidth(), defeatScreen.getHeight(), null);
                 } else {
-                    g2d.drawImage(victoryScreen, 0, 0, victoryScreen.getWidth(), victoryScreen.getHeight(), null);
+                    g2d.drawImage(victoryScreen, (panelWidth-victoryScreen.getWidth())/2, 0, victoryScreen.getWidth(), victoryScreen.getHeight(), null);
                 }
                 break;
         }
@@ -1152,7 +1152,7 @@ public class GamePanel extends JPanel{
                 for (JComponent component : Ebuttons) {
                     component.setVisible(false);
                 }
-                if (formerGameState==IN_GAME && !muteMusic) {
+                if ((formerGameState==IN_GAME || formerGameState==ENDING) && !muteMusic) {
                     try {
                         gameMusicPlayer.stop();
                         menuMusicPlayer.play();

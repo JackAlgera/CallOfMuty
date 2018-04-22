@@ -11,9 +11,9 @@ public class Map{
     private int[][] map;
     private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
     private ArrayList<int[]> startTile;
-    private static TileType dirt = new TileType(true,1,1);
-    private static TileType woodt= new TileType(false,1,12), woodb= new TileType(false,3,12), woodl= new TileType(false,2,11), woodr= new TileType(false,2,13), woodtl= new TileType(false,1,11), woodbl= new TileType(false,3,11), woodtr= new TileType(false,1,13), woodbr= new TileType(false,3,13);
-    private static TileType box = new TileType(false,2,6);
+    private static TileType dirt = new TileType(true,1,1),
+            woodt= new TileType(false,1,12), woodb= new TileType(false,3,12), woodl= new TileType(false,2,11,1,1), woodr= new TileType(false,2,13,1,1), woodtl= new TileType(false,1,11), woodbl= new TileType(false,3,11), woodtr= new TileType(false,1,13), woodbr= new TileType(false,3,13),
+            box = new TileType(false,2,6,1,1), water = new TileType(true,2,3);
     
     public Map(int[][] map, int textureSize){
         this.map=map;
@@ -129,7 +129,7 @@ public class Map{
         map[0][mapHeight-1] = 6;
         map[mapWidth-1][0] = 7;
         map[mapWidth-1][mapHeight-1] = 8;
-        map[4][1] = 9 ;map[4][2] = 9;map[1][4] = 9;map[2][4] = 9;map[4][6] = 9;map[4][7] = 9;
+        map[4][1] = 10 ;map[4][2] = 10;map[1][4] = 10;map[2][4] = 9;map[4][6] = 9;map[4][7] = 9;
         startTile = new ArrayList<>();
         startTile.add(new int[]{1,1});
     }
@@ -168,6 +168,9 @@ public class Map{
             case 9:
                 tile = box;
                 break;
+            case 10:
+                tile = water;
+                break;
             default :
                 tile = dirt;
         }
@@ -197,40 +200,7 @@ public class Map{
         int newXTextureSize = drawWidth/mapWidth, newYTextureSize = drawHeight/mapHeight;
         for (int i = 0 ; i<mapWidth ; i++){
             for (int j = 0; j<mapHeight; j++){
-                switch(map[i][j]){
-                    case 1:
-                        g2d.drawImage(woodt.getImage(),xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        break;
-                    case 2:
-                        g2d.drawImage(woodb.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        break;
-                    case 3:
-                        g2d.drawImage(dirt.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        g2d.drawImage(woodl.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        break;
-                    case 4:
-                        g2d.drawImage(dirt.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        g2d.drawImage(woodr.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        break;
-                    case 5:
-                        g2d.drawImage(woodtl.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        break;
-                    case 6:
-                        g2d.drawImage(woodbl.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        break;
-                    case 7:                        
-                        g2d.drawImage(woodtr.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        break;
-                    case 8:
-                        g2d.drawImage(woodbr.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        break;                                        
-                    case 9:
-                        g2d.drawImage(dirt.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        g2d.drawImage(box.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                        break;
-                    default:
-                        g2d.drawImage(dirt.getImage(), xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize, null);
-                }
+                getTile(map[i][j]).draw(g2d, xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize);
             }
         }
         if(drawStartingTile){
