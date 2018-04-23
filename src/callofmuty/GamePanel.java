@@ -370,7 +370,7 @@ public class GamePanel extends JPanel{
         MEtopSkinArrow.setIcon(topArrowIcon);
         MEtopSkinArrow.setBounds(29, 16, topArrowIcon.getIconWidth(), topArrowIcon.getIconHeight());
         MEtopSkinArrow.setPressedIcon(pressedtopArrowIcon);
-        MEtopSkinArrow.setVisible(true);
+        MEtopSkinArrow.setVisible(false);
         MEtopSkinArrow.setContentAreaFilled(false);
         MEtopSkinArrow.setBorderPainted(false);
         add(MEtopSkinArrow);
@@ -382,7 +382,7 @@ public class GamePanel extends JPanel{
         MEBottomSkinArrow.setIcon(bottomArrowIcon);
         MEBottomSkinArrow.setBounds(29, 78, bottomArrowIcon.getIconWidth(), bottomArrowIcon.getIconHeight());
         MEBottomSkinArrow.setPressedIcon(pressedbottomArrowIcon);
-        MEBottomSkinArrow.setVisible(true);
+        MEBottomSkinArrow.setVisible(false);
         MEBottomSkinArrow.setContentAreaFilled(false);
         MEBottomSkinArrow.setBorderPainted(false);
         add(MEBottomSkinArrow);
@@ -524,7 +524,7 @@ public class GamePanel extends JPanel{
         JButton setStartingTileButton = new JButton("Set starting tile");
         setStartingTileButton.setName("setStartingTileButton");
         //setStartingTileButton.setIcon(startingTileIcon);
-        setStartingTileButton.setBounds(700, 30, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        setStartingTileButton.setBounds(750, 30, 50, doneIcon.getIconHeight());
         //setStartingTileButton.setPressedIcon(presseddoneIcon);
         setStartingTileButton.setVisible(false);
         //setStartingTileButton.setContentAreaFilled(false);
@@ -1020,8 +1020,8 @@ public class GamePanel extends JPanel{
     }
     
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         switch(gameState) {
             case PRE_GAME:

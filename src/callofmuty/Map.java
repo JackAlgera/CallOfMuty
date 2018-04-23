@@ -28,7 +28,7 @@ public class Map{
     
     public void addStartTile(int[] newStartTile){
         if (newStartTile.length==2){
-            if(getTile(newStartTile[0],newStartTile[1]).isCrossable()){
+            if(getTile(newStartTile[0],newStartTile[1]).blocksPlayers()){
                 if (startTileIndex(newStartTile)>-1){
                     if (startTile.size()>1){
                         startTile.remove(startTileIndex(newStartTile));
@@ -230,7 +230,7 @@ public class Map{
     
     public void setTile(int i, int j, int tileType){
         if (startTileIndex(new int[]{i,j})>-1){
-            if (getTile(tileType).isCrossable()){
+            if (getTile(tileType).blocksPlayers()){
                 map[i][j] = tileType;
             }
         } else {

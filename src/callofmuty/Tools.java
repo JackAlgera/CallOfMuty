@@ -118,10 +118,10 @@ public class Tools {
     }
     
     public static boolean isMapCrossable(double x, double y, int objectWidth, int objectHeight, Map map) {
-        boolean mapIsCrossable = map.getTile(x,y).isCrossable() 
-                                    && map.getTile(x + objectWidth, y).isCrossable() 
-                                    && map.getTile(x, y + objectHeight).isCrossable() 
-                                    && map.getTile(x + objectWidth, y + objectHeight).isCrossable();
+        boolean mapIsCrossable = map.getTile(x,y).blocksPlayers() 
+                                    && map.getTile(x + objectWidth, y).blocksPlayers() 
+                                    && map.getTile(x, y + objectHeight).blocksPlayers() 
+                                    && map.getTile(x + objectWidth, y + objectHeight).blocksPlayers();
         return mapIsCrossable;
     }
     

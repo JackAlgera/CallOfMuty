@@ -5,25 +5,25 @@ import java.awt.image.BufferedImage;
 
 public class TileType {
    
-    private final boolean crossable, hasSubImage;
+    private boolean blocksPlayers, hasSubImage, blocksBullets;
     private BufferedImage image, subImage;
 
-    TileType( boolean isCrossable, int column, int row){
-        this.crossable = isCrossable;
+    TileType( boolean blocksPlayers, int column, int row){
+        this.blocksPlayers = blocksPlayers;
         image = Tools.selectTile(Tools.tileset, column, row);
         hasSubImage = false;
         subImage = null;
     }
     
-    TileType(boolean isCrossable, int column, int row, int subImageColumn, int subImageRow){
-        this.crossable = isCrossable;
+    TileType(boolean blocksPlayers, int column, int row, int subImageColumn, int subImageRow){
+        this.blocksPlayers = blocksPlayers;
         image = Tools.selectTile(Tools.tileset, column, row);
         hasSubImage = true;
         subImage = Tools.selectTile(Tools.tileset, subImageColumn, subImageRow);
     }
 
-    public boolean isCrossable() {
-        return crossable;
+    public boolean blocksPlayers() {
+        return blocksPlayers;
     }
 
     public BufferedImage getImage() {
