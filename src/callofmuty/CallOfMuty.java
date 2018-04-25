@@ -52,6 +52,7 @@ public class CallOfMuty {
                 case GamePanel.IN_GAME:
                     dT = timer.update();
                     game.updateGame(dT);
+                    
                     if (dT < minUpdateTime) {
                         Thread.sleep(minUpdateTime - dT);
                     }

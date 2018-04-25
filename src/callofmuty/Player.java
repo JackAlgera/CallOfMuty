@@ -497,6 +497,7 @@ public class Player {
         return test;
     }
 
+
     public void generateGun(int numberOfPlayers, long gunGenerationTime, GameMode gameMode) throws IOException, JavaLayerException {
         switch (gameMode.getGunGestion()) {
             case GameMode.RANDOM:
@@ -541,12 +542,55 @@ public class Player {
                     }
                 }
                 break;
+
         }
     }
     
     public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
         if (gun.shoot(unlimitedBullets, muteSounds)){
-            addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+            if (gun.getId()==400){ //spread shotgun in progress
+                int spreadDir;
+                double [] secondBullet = directionOfFire;
+                double [] thirdBullet = directionOfFire;
+                double dispersionShotgun = 0.523;
+                double signe = Math.abs(directionOfFire[0])/directionOfFire[0];
+                if (Math.random()<0.5){
+                    spreadDir = 1;
+                } else {
+                    spreadDir = -1;
+                }
+                double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
+                double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
+                directionOfFire[0]=Math.cos(angleTirRandom+Gamma)*signe;
+                directionOfFire[1]=Math.sin(angleTirRandom+Gamma)*signe;
+                
+                double alpha = Math.atan(directionOfFire[1]/directionOfFire[0]);
+                
+                secondBullet[0]=Math.cos(alpha+dispersionShotgun)*signe;
+                secondBullet[1]=Math.cos(alpha+dispersionShotgun)*signe;
+                thirdBullet[0]=Math.cos(alpha-dispersionShotgun)*signe;
+                thirdBullet[1]=Math.cos(alpha-dispersionShotgun)*signe;
+                addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, secondBullet, gun.getBulletSpeed(), sql, gun.getDamage());
+                addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, thirdBullet, gun.getBulletSpeed(), sql, gun.getDamage());
+
+            } else { //Fonction spreadBullet
+                int spreadDir;
+                double signe = Math.abs(directionOfFire[0])/directionOfFire[0];
+                if (Math.random()<0.5){
+                    spreadDir = 1;
+                } else {
+                    spreadDir = -1;
+                }
+                double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
+                double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
+                directionOfFire[0]=Math.cos(angleTirRandom+Gamma)*signe;
+                directionOfFire[1]=Math.sin(angleTirRandom+Gamma)*signe;
+
+                addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+            }
+            
+            
         }
     }
 
