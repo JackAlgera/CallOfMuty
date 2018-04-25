@@ -7,23 +7,32 @@ public class TileType {
    
     private boolean blocksPlayers, hasSubImage, blocksBullets;
     private BufferedImage image, subImage;
+    private int specialEffect;
 
-    TileType( boolean blocksPlayers, int column, int row){
+    TileType(boolean blocksPlayers, boolean blocksBullets, int column, int row, int specialEffect){
         this.blocksPlayers = blocksPlayers;
         image = Tools.selectTile(Tools.tileset, column, row);
         hasSubImage = false;
         subImage = null;
+        this.blocksBullets = blocksBullets;
+        this.specialEffect = specialEffect;
     }
     
-    TileType(boolean blocksPlayers, int column, int row, int subImageColumn, int subImageRow){
+    TileType(boolean blocksPlayers, boolean blocksBullets, int column, int row, int subImageColumn, int subImageRow, int specialEffect){
         this.blocksPlayers = blocksPlayers;
         image = Tools.selectTile(Tools.tileset, column, row);
         hasSubImage = true;
         subImage = Tools.selectTile(Tools.tileset, subImageColumn, subImageRow);
+        this.blocksBullets = blocksBullets;
+        this.specialEffect = specialEffect;
     }
 
     public boolean blocksPlayers() {
         return blocksPlayers;
+    }
+    
+    public boolean blocksBullets() {
+        return blocksBullets;
     }
 
     public BufferedImage getImage() {

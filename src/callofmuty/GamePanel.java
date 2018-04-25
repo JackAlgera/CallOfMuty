@@ -68,8 +68,7 @@ public class GamePanel extends JPanel{
     
     
     public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
-            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4,
-            RANDOMLY_GIVEN_GUNS = 0;
+            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4;
     
     private static long gunGenerationTime = 100; //in milliseconds
     
@@ -79,7 +78,8 @@ public class GamePanel extends JPanel{
     private TileSelector tileSelector;
     private Player player;
     private ArrayList <Player> otherPlayersList;
-    private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState, gameMode;
+    private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState;
+    private GameMode gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
     private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds, mousePressed;
     private long lastGunGeneration;
@@ -102,7 +102,7 @@ public class GamePanel extends JPanel{
             Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         gameState = MAIN_MENU;
-        gameMode = RANDOMLY_GIVEN_GUNS;
+        gameMode = new GameMode();
         lastGunGeneration = System.currentTimeMillis();
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
@@ -690,7 +690,7 @@ public class GamePanel extends JPanel{
         boolean playerWasDead = player.isDead(); // used to check if player died
         // Update player movement 
         updatePlayerMovement();
-        player.update(dT, map);
+        player.update(dT, map,player);
         if(printTime){
             System.out.println("Player movement & update : " + (System.currentTimeMillis()-time));
             time = System.currentTimeMillis();
@@ -711,7 +711,7 @@ public class GamePanel extends JPanel{
             // gun generation
             if (System.currentTimeMillis() - gunGenerationTime > lastGunGeneration) {
                 lastGunGeneration = System.currentTimeMillis();
-                player.generateGun(otherPlayersList.size() + 1, gunGenerationTime); // has a probability to give local player a gun that decreases with number of players
+                player.generateGun(otherPlayersList.size() + 1, gunGenerationTime, gameMode); // has a probability to give local player a gun that decreases with number of players
             }
 
             // sql uploads
@@ -895,22 +895,23 @@ public class GamePanel extends JPanel{
     public void initialiseGame(boolean isHost) throws IOException, JavaLayerException {
         this.isHost = isHost;
         sql = new SQLManager();
-        int currentGameState = sql.getGameState();
+        int[] sqlGame = sql.getGame();
         if (isHost) {
             // Try to create a game
             ArrayList<Player> playerList = sql.getPlayerList();
             if (playerList.size()<2) { // No game is currently on
                 sql.clearTable(); //Clear previous game on SQL server
-                sql.createGame(map);
+                sql.createGame(map, gameMode.getId());
                 player.setGunId(Gun.NO_GUN);
                 player.setPlayerId(1);
+                player.setTeamId(1);
                 player.setMaxHealth();
                 player.setPosition(map);
                 player.addPlayer(sql);
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
-                if (currentGameState == PRE_GAME) {
+                if (sqlGame[0] == PRE_GAME) {
                     int confirm = JOptionPane.showOptionDialog(
                             null, "A game is already being created, to you want to join it ?",
                             "Join the game ?", JOptionPane.YES_NO_OPTION,
@@ -937,15 +938,21 @@ public class GamePanel extends JPanel{
                 }
             }
         } else { // Try to join a Pre_game
-            if (currentGameState == PRE_GAME) {
+            if (sqlGame[0] == PRE_GAME) {
                 otherPlayersList = sql.getPlayerList();
                 player.setMaxHealth();
                 player.setGunId(Gun.NO_GUN);
                 map = sql.getMap(textureSize);
                 player.setPosition(map);
-                player.setPlayerId(1); // 0 means "null", ids start at 1
+                gameMode.setId(sqlGame[1]);
+                player.setPlayerId(1); // 0 means "null", ids start at 1            
                 while (otherPlayersList.contains(player)) {
                     player.incrementId();
+                }
+                if(gameMode.getTeam()!=GameMode.ALLVSALL){
+                    player.setTeamId(player.getPlayerId()); //gameMode= ???
+                } else {
+                    player.setTeamId(player.getPlayerId());
                 }
                 player.addPlayer(sql);
                 isConnected = true;
@@ -1103,7 +1110,7 @@ public class GamePanel extends JPanel{
             Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         if(!isHost){
-            int newGameState = sql.getGameState();
+            int newGameState = sql.getGame()[0];
             if (newGameState==IN_GAME){
                 setState(IN_GAME);
             } else {

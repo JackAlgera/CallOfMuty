@@ -163,7 +163,7 @@ public class SQLManager {
         PreparedStatement requete;
         String value = "("+player.getPlayerId()+",'"+player.getName()+"',"+player.getPlayerHealth()+","
                     +(int)player.getPosX()+","+(int)player.getPosY()+","+player.getSkinIndex()+","
-                    +Player.PLAYING+","+player.getGunId()+")";
+                    +Player.PLAYING+","+player.getGunId()+","+player.getTeamId()+")";
         try {
             requete = connexion.prepareStatement("INSERT INTO players VALUES " + value);
             requete.executeUpdate();
@@ -283,10 +283,10 @@ public class SQLManager {
         return map;
     }
     
-    public void createGame(Map map){
+    public void createGame(Map map, int gameModeId){
         PreparedStatement requete;
         try {
-            requete = connexion.prepareStatement("INSERT INTO game VALUES (1,"+ GamePanel.PRE_GAME +")");
+            requete = connexion.prepareStatement("INSERT INTO game VALUES (1,"+ GamePanel.PRE_GAME +","+ gameModeId +")");
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {
@@ -317,20 +317,22 @@ public class SQLManager {
         }
     }
     
-    public int getGameState(){               
+    public int[] getGame(){               
         PreparedStatement requete;
         int gameState = -1;
+        int gameMode = -1;
         try {
-            requete = connexion.prepareStatement("SELECT gameState FROM game");
+            requete = connexion.prepareStatement("SELECT gameState, gameMode FROM game");
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) { 
                 gameState = resultat.getInt("gameState");
+                gameMode = resultat.getInt("gameMode");
             }
             requete.close();
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return gameState;
+        return new int[]{gameState,gameMode};
     }
      
     public void disconnect(){

@@ -34,5 +34,6 @@ public class TestSQL {
         
         // TODO code application logic here
     }
+    Effect effect1= new Effect(1,3);
     
 }
