@@ -117,12 +117,20 @@ public class Tools {
         }
     }
     
-    public static boolean isMapCrossable(double x, double y, int objectWidth, int objectHeight, Map map) {
-        boolean mapIsCrossable = map.getTile(x,y).blocksPlayers() 
-                                    && map.getTile(x + objectWidth, y).blocksPlayers() 
-                                    && map.getTile(x, y + objectHeight).blocksPlayers() 
-                                    && map.getTile(x + objectWidth, y + objectHeight).blocksPlayers();
-        return mapIsCrossable;
+    public static boolean playerCanCross(double x, double y, int objectWidth, int objectHeight, Map map) {
+        boolean playerCanCross = !map.getTile(x,y).blocksPlayers() 
+                                    && !map.getTile(x + objectWidth, y).blocksPlayers() 
+                                    && !map.getTile(x, y + objectHeight).blocksPlayers() 
+                                    && !map.getTile(x + objectWidth, y + objectHeight).blocksPlayers();
+        return playerCanCross;
+    }
+    
+    public static boolean bulletCanCross(double x, double y, int objectWidth, int objectHeight, Map map) {
+        boolean bulletCanCross = !map.getTile(x,y).blocksBullets() 
+                                    && !map.getTile(x + objectWidth, y).blocksBullets() 
+                                    && !map.getTile(x, y + objectHeight).blocksBullets() 
+                                    && !map.getTile(x + objectWidth, y + objectHeight).blocksBullets();
+        return bulletCanCross;
     }
     
     public static boolean isPlayerHit(Player player, Bullet bullet){

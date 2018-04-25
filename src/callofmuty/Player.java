@@ -275,12 +275,12 @@ public class Player {
                 speed[1] = 0;
             }
             // check if able to move in given direction (not trying to cross uncrossable tile)
-            if(!Tools.isMapCrossable(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
-                if (Tools.isMapCrossable(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
+            if(!Tools.playerCanCross(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
+                if (Tools.playerCanCross(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
                     wantedX = posX;
                     speed[0] = 0;
                 } else {
-                    if (Tools.isMapCrossable(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
+                    if (Tools.playerCanCross(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
                         wantedY = posY;
                         speed[1] = 0;
                     } else { // block movement

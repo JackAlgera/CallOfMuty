@@ -91,7 +91,7 @@ public class Bullet {
     }
     
     public boolean checkCollisionWithMap(Map map){
-        return !Tools.isMapCrossable(posX, posY, ballWidth, ballHeight, map);
+        return !Tools.bulletCanCross(posX, posY, ballWidth, ballHeight, map);
     }
 
     public double getPosX() {
