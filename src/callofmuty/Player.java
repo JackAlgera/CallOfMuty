@@ -3,7 +3,6 @@ package callofmuty;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -20,8 +19,6 @@ public class Player {
     private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
-    private ArrayList<Effect> playerEffect = new ArrayList<Effect>();
-    
     private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId;
     private Image image, hpBar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
@@ -34,6 +31,7 @@ public class Player {
     public ArrayList<Image> animationImages = new ArrayList<Image>();
     public Animation playerAnimation;
     private ArrayList<Player> hurtPlayers;
+    private ArrayList<Effect> effects = new ArrayList<Effect>();
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
@@ -110,9 +108,10 @@ public class Player {
         return hurtPlayers;
     }
     
-    public void setMaxHealth(){
+    public void setToMaxHealth(){
         health = maxHealth;
     }
+    
 
     public void addPlayer(SQLManager sql){
         bulletList = new ArrayList<Bullet>();
@@ -131,16 +130,18 @@ public class Player {
         this.playerState = playerState;
     }
 
-    public void setHealth(double health) throws JavaLayerException, IOException {
+    public void setHealth(double health) {
         double formerHealth = this.health;
-        this.health = health;
+        if(!isDead()){
+            this.health = health;
+        }
         if (health <= 0) {
             isDead = true;
             if (!muteSounds) {
                 try {
                     dyingSoundPlayer.play();
-                } catch (URISyntaxException ex) {
-                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (JavaLayerException | IOException | URISyntaxException ex) {
+                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         } else {
@@ -148,8 +149,8 @@ public class Player {
             if (formerHealth > health && !muteSounds) {
                 try {
                     hurtSoundPlayer.play();
-                } catch (URISyntaxException ex) {
-                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (JavaLayerException | IOException | URISyntaxException ex) {
+                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -215,25 +216,6 @@ public class Player {
     public void update(long dT, Map map){
         if(!isDead){
             
-            
-            // Update effects
-            
-            for(int i=0; i<playerEffect.size();i++){  try {
-                // playerEffect
-                playerEffect.get(i).update(this,dT);
-                } catch (IOException ex) {
-                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (JavaLayerException ex) {
-                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                if(playerEffect.get(i).endEffect(playerEffect.get(i))==true){
-                    playerEffect.remove(i);
-            
-            }
-            
-            }
-            
-            
             // Update animation
             this.playerAnimation.update(dT);
             
@@ -285,17 +267,37 @@ public class Player {
                 speed[0] = maxSpeed*Math.cos(angle);
                 speed[1] = maxSpeed*Math.sin(angle);
             }
+
+            // update & activate effects
+            int i = 0;
+            while(i<effects.size()){
+                if (effects.get(i).update(dT, this)){
+                    i++;
+                } else {
+                    effects.remove(i);
+                }
+            }
             
+            // Check tile effects
+            updateTileEffects(map);
 
             // check if player is still in the map
             wantedX = posX + speed[0]*dT;
             wantedY = posY + speed[1]*dT;
-            if (wantedX<0 || wantedX+playerWidth>map.getMapWidth()*map.getTextureSize()){ 
-                wantedX = posX;
+            if (wantedX<0){
+                wantedX = 0;
                 speed[0] = 0;
             }
-            if (wantedY<0 || wantedY+playerHeight>map.getMapHeight()*map.getTextureSize()){
+            if (wantedX+playerWidth>map.getMapWidth()*map.getTextureSize()){
+                wantedX = map.getMapWidth()*map.getTextureSize()-playerWidth;
+                speed[0] = 0;
+            }
+            if (wantedY<0){
                 wantedY = posY;
+                speed[1] = 0;
+            }
+            if(wantedY+playerHeight>map.getMapHeight()*map.getTextureSize()){
+                wantedY = map.getMapHeight()*map.getTextureSize()-playerHeight;
                 speed[1] = 0;
             }
             // check if able to move in given direction (not trying to cross uncrossable tile)
@@ -318,24 +320,34 @@ public class Player {
             posX = wantedX;
             posY = wantedY;
                         
-            if(Math.abs(speed[0]) <= 0.0001 && Math.abs(speed[1]) <= 0.0001)
-            {
+            if(Math.abs(speed[0]) <= 0.0001 && Math.abs(speed[1]) <= 0.0001){
                 playerAnimation.setIsIdle(true);
             }
-            else
-            {
+            else{
                 playerAnimation.setIsIdle(false);
             }
-            
-            
-//            if (speed[0] == 0 && acceleration[0] == 0)
-//            {
-//                directionOfTravel[0] = 0;
-//            }
-//            if (speed[1] == 0 && acceleration[1] == 0)
-//            {
-//                directionOfTravel[1] = 0;
-//            }
+        }
+    }
+    
+    public void updateTileEffects(Map map){
+        double[] xValues = new double[]{posX, posX, posX+playerWidth, posX+playerWidth};
+        double[] yValues = new double[]{posY, posY+playerHeight, posY, posY+playerHeight};
+        Effect effect;
+        for (int i = 0; i<4; i++ ) {
+            effect = map.getTile(xValues[i], yValues[i]).getEffect();
+            if (effect.getId()!=Effect.NO_EFFECT) {
+                addEffect(effect);
+            }
+        }
+    }
+    
+    public void addEffect(Effect newEffect){
+        int i = effects.indexOf(newEffect);
+        if (i>-1){
+            effects.get(i).resetDuration();
+        } else {
+            newEffect.resetDuration();
+            effects.add(newEffect);
         }
     }
 
@@ -472,6 +484,13 @@ public class Player {
                 }
             }
         }
+    }
+    
+    public void hurtSelf(double damage){ // Damage needs to go through SQL server to work properly, hence this method
+        Player player = new Player(playerId);
+        player.setMuteSounds(true);
+        player.setHealth(damage);
+        hurtPlayers.add(player);
     }
     
     public Player(int playerId){ //usefull constructor for SQL updates

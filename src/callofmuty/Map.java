@@ -8,18 +8,16 @@ import javax.swing.JOptionPane;
 
 public class Map{
     
-    private static int specialEffect = 0; // temporary variable, waiting for Effects class (healing, burning, slowing)
-    
     private int[][] map;
     private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
     private ArrayList<int[]> startTile;
-    private static TileType dirt = new TileType(false, false,1,1,specialEffect),
+    private static TileType dirt = new TileType(false, false,1,1,new Effect()),
             // map borders
-            woodt= new TileType(true, true,1,12,specialEffect), woodb= new TileType(true, true,3,12,specialEffect), woodl= new TileType(true, true,2,11,1,1,specialEffect), woodr= new TileType(true, true,2,13,1,1,specialEffect), woodtl= new TileType(true, true,1,11,specialEffect), woodbl= new TileType(true, true,3,11,specialEffect), woodtr= new TileType(true, true,1,13,specialEffect), woodbr= new TileType(true, true,3,13,specialEffect),
+            woodt= new TileType(true, true,1,12,new Effect()), woodb= new TileType(true, true,3,12,new Effect()), woodl= new TileType(true, true,2,11,1,1,new Effect()), woodr= new TileType(true, true,2,13,1,1,new Effect()), woodtl= new TileType(true, true,1,11,new Effect()), woodbl= new TileType(true, true,3,11,new Effect()), woodtr= new TileType(true, true,1,13,new Effect()), woodbr= new TileType(true, true,3,13,new Effect()),
             // obstacles
-            box = new TileType(true, true,2,6,1,1,specialEffect),
+            box = new TileType(true, true,2,6,1,1,new Effect()),
             // bad effects
-            water = new TileType(false, false,2,3,specialEffect), mud = new TileType(false, false, 3,6,specialEffect), hotGround = new TileType(false, false, 4,6,specialEffect);
+            water = new TileType(false, false,2,3,new Effect()), mud = new TileType(false, false, 3,6,new Effect(Effect.SLOWED, 300, 0.5)), hotGround = new TileType(false, false, 4,6,new Effect(Effect.BURNING, 500, 10));
     
     public Map(int[][] map, int textureSize){
         this.map=map;

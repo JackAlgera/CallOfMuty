@@ -7,24 +7,24 @@ public class TileType {
    
     private boolean blocksPlayers, hasSubImage, blocksBullets;
     private BufferedImage image, subImage;
-    private int specialEffect;
+    private Effect effect;
 
-    TileType(boolean blocksPlayers, boolean blocksBullets, int column, int row, int specialEffect){
+    TileType(boolean blocksPlayers, boolean blocksBullets, int column, int row, Effect effect){
         this.blocksPlayers = blocksPlayers;
         image = Tools.selectTile(Tools.tileset, column, row);
         hasSubImage = false;
         subImage = null;
         this.blocksBullets = blocksBullets;
-        this.specialEffect = specialEffect;
+        this.effect = effect;
     }
     
-    TileType(boolean blocksPlayers, boolean blocksBullets, int column, int row, int subImageColumn, int subImageRow, int specialEffect){
+    TileType(boolean blocksPlayers, boolean blocksBullets, int column, int row, int subImageColumn, int subImageRow, Effect effect){
         this.blocksPlayers = blocksPlayers;
         image = Tools.selectTile(Tools.tileset, column, row);
         hasSubImage = true;
         subImage = Tools.selectTile(Tools.tileset, subImageColumn, subImageRow);
         this.blocksBullets = blocksBullets;
-        this.specialEffect = specialEffect;
+        this.effect = effect;
     }
 
     public boolean blocksPlayers() {
@@ -38,10 +38,15 @@ public class TileType {
     public BufferedImage getImage() {
        return this.image;
     }
+    
     public void draw(Graphics2D g2d, int x, int y, int xTextureSize, int yTextureSize){
         if(hasSubImage){
             g2d.drawImage(subImage,x, y, xTextureSize, yTextureSize, null);
         }
         g2d.drawImage(image,x, y, xTextureSize, yTextureSize, null);
+    }
+    
+    public Effect getEffect(){
+        return effect;
     }
 }
