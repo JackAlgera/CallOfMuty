@@ -8,12 +8,18 @@ import javax.swing.JOptionPane;
 
 public class Map{
     
+    private static int specialEffect = 0; // temporary variable, waiting for Effects class (healing, burning, slowing)
+    
     private int[][] map;
     private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
     private ArrayList<int[]> startTile;
-    private static TileType dirt = new TileType(true,1,1),
-            woodt= new TileType(false,1,12), woodb= new TileType(false,3,12), woodl= new TileType(false,2,11,1,1), woodr= new TileType(false,2,13,1,1), woodtl= new TileType(false,1,11), woodbl= new TileType(false,3,11), woodtr= new TileType(false,1,13), woodbr= new TileType(false,3,13),
-            box = new TileType(false,2,6,1,1), water = new TileType(true,2,3);
+    private static TileType dirt = new TileType(false, false,1,1,specialEffect),
+            // map borders
+            woodt= new TileType(true, true,1,12,specialEffect), woodb= new TileType(true, true,3,12,specialEffect), woodl= new TileType(true, true,2,11,1,1,specialEffect), woodr= new TileType(true, true,2,13,1,1,specialEffect), woodtl= new TileType(true, true,1,11,specialEffect), woodbl= new TileType(true, true,3,11,specialEffect), woodtr= new TileType(true, true,1,13,specialEffect), woodbr= new TileType(true, true,3,13,specialEffect),
+            // obstacles
+            box = new TileType(true, true,2,6,1,1,specialEffect),
+            // bad effects
+            water = new TileType(false, false,2,3,specialEffect), mud = new TileType(false, false, 3,6,specialEffect), hotGround = new TileType(false, false, 4,6,specialEffect);
     
     public Map(int[][] map, int textureSize){
         this.map=map;
@@ -28,7 +34,7 @@ public class Map{
     
     public void addStartTile(int[] newStartTile){
         if (newStartTile.length==2){
-            if(getTile(newStartTile[0],newStartTile[1]).blocksPlayers()){
+            if(!getTile(newStartTile[0],newStartTile[1]).blocksPlayers()){
                 if (startTileIndex(newStartTile)>-1){
                     if (startTile.size()>1){
                         startTile.remove(startTileIndex(newStartTile));
@@ -129,7 +135,7 @@ public class Map{
         map[0][mapHeight-1] = 6;
         map[mapWidth-1][0] = 7;
         map[mapWidth-1][mapHeight-1] = 8;
-        map[4][1] = 10 ;map[4][2] = 10;map[1][4] = 10;map[2][4] = 9;map[4][6] = 9;map[4][7] = 9;
+        map[4][1] = 11 ;map[4][2] = 11;map[1][4] = 10;map[2][4] = 12;map[4][6] = 9;map[4][7] = 9;
         startTile = new ArrayList<>();
         startTile.add(new int[]{1,1});
     }
@@ -170,6 +176,12 @@ public class Map{
                 break;
             case 10:
                 tile = water;
+                break;
+            case 11:
+                tile = mud;
+                break;
+            case 12: 
+                tile = hotGround;
                 break;
             default :
                 tile = dirt;
@@ -230,7 +242,7 @@ public class Map{
     
     public void setTile(int i, int j, int tileType){
         if (startTileIndex(new int[]{i,j})>-1){
-            if (getTile(tileType).blocksPlayers()){
+            if (!getTile(tileType).blocksPlayers()){
                 map[i][j] = tileType;
             }
         } else {

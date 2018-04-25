@@ -17,12 +17,12 @@ public class Player {
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     private static double maxHealth = 100.0;
-    private static int initialBulletNumber = 5;
+    private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
     private ArrayList<Effect> playerEffect = new ArrayList<Effect>();
     
-    private int playerId, playerWidth, playerHeight, facedDirection, playerState;
+    private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId;
     private Image image, hpBar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
     private double[] speed, acceleration;
@@ -52,6 +52,7 @@ public class Player {
         skin = new int[2];
         this.skin[0]= 1;
         this.skin[1]= 1;
+        teamId= 0;
         image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
         
         destroyedBullets = new ArrayList();
@@ -217,9 +218,14 @@ public class Player {
             
             // Update effects
             
-            for(int i=0; i<playerEffect.size();i++){  // playerEffect
-                Effect stockage=playerEffect[0];
-                 playerEffect[i]=playerEffect[i].update(Player player1, double dT);                          
+            for(int i=0; i<playerEffect.size();i++){  try {
+                // playerEffect
+                playerEffect.get(i).update(player1,dT);
+                } catch (IOException ex) {
+                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (JavaLayerException ex) {
+                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+                }
             
             }
             
@@ -288,12 +294,12 @@ public class Player {
                 speed[1] = 0;
             }
             // check if able to move in given direction (not trying to cross uncrossable tile)
-            if(!Tools.isMapCrossable(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
-                if (Tools.isMapCrossable(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
+            if(!Tools.playerCanCross(wantedX, wantedY, playerWidth, playerHeight, map)){ // test if the tile the player is going to is crossable
+                if (Tools.playerCanCross(posX, wantedY, playerWidth, playerHeight, map)){ //try to block x movement
                     wantedX = posX;
                     speed[0] = 0;
                 } else {
-                    if (Tools.isMapCrossable(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
+                    if (Tools.playerCanCross(wantedX, posY, playerWidth, playerHeight,map)){ // try to block y movement
                         wantedY = posY;
                         speed[1] = 0;
                     } else { // block movement
@@ -390,6 +396,14 @@ public class Player {
         return this.health;
     }       
     
+    public int getTeamId(){
+        return this.teamId;
+    }
+    
+    public void setTeamId(int i){
+        this.teamId=i;
+    }
+    
     public void chooseSkin(int row, int column){
         this.skin[0]=row;
         this.skin[1]=column;
@@ -441,7 +455,7 @@ public class Player {
                     bullet.setDistanceTravelled(0);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
-                        if (Tools.isPlayerHit(otherPlayer, bullet)) {
+                        if (Tools.isPlayerHit(otherPlayer, bullet) && !this.isFriend(otherPlayer)) {
                             bullet.setActive(false);
                             hurtPlayer = new Player(otherPlayer.getPlayerId());
                             hurtPlayer.setHealth(bullet.getDamage());
@@ -460,6 +474,10 @@ public class Player {
         muteSounds = false;
     }
     
+    public boolean isFriend(Player otherPlayer){
+        return otherPlayer.teamId==teamId;
+    }
+    
     public void incrementId(){
         playerId++;
     }
@@ -474,26 +492,50 @@ public class Player {
         return test;
     }
 
-    public void generateGun(int numberOfPlayers, long gunGenerationTime) throws IOException, JavaLayerException{
-        if (gun.getId() == 0 && Math.random()<(double)gunGenerationTime/(1000*numberOfPlayers*4)){ // In average, one player gets a gun every 4 seconds
-            double gunRandom = Math.random();
-            int numberOfCartridges = Math.round((float)Math.random()); // player can get 0 or 1 cartridge
-            if (gunRandom <0.14){
-                gun.setId(Gun.PISTOL, numberOfCartridges);
-            } else if (gunRandom<0.28){
-                gun.setId(Gun.UZI, numberOfCartridges);
-            } else if (gunRandom<0.42){
-                gun.setId(Gun.SNIPER, numberOfCartridges);
-            } else if (gunRandom<0.56){
-                gun.setId(Gun.SHOTGUN, numberOfCartridges);
-            } else if (gunRandom<0.70){
-                gun.setId(Gun.AK, numberOfCartridges);
-            } else if (gunRandom<0.54){
-                gun.setId(Gun.MAGNUM, numberOfCartridges);
-            } else {
-                gun.setId(Gun.MITRAILLEUSE, numberOfCartridges);
-            }
-            
+    public void generateGun(int numberOfPlayers, long gunGenerationTime, GameMode gameMode) throws IOException, JavaLayerException {
+        switch (gameMode.getGunGestion()) {
+            case GameMode.RANDOM:
+                if (gun.getId() == 0 && Math.random() < (double) gunGenerationTime / (1000 * numberOfPlayers * 4)) { // In average, one player gets a gun every 4 seconds
+                    double gunRandom = Math.random();
+                    int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
+                    if (gunRandom < 0.20) {
+                        gun.setId(Gun.PISTOL, numberOfCartridges);
+                    } else if (gunRandom < 0.40) {
+                        gun.setId(Gun.UZI, numberOfCartridges);
+                    } else if (gunRandom < 0.47) {
+                        gun.setId(Gun.SNIPER, numberOfCartridges);
+                    } else if (gunRandom < 0.55) {
+                        gun.setId(Gun.SHOTGUN, numberOfCartridges);
+                    } else if (gunRandom < 0.70) {
+                        gun.setId(Gun.AK, numberOfCartridges);
+                    } else if (gunRandom < 0.85) {
+                        gun.setId(Gun.MAGNUM, numberOfCartridges);
+                    } else {
+                        gun.setId(Gun.MITRAILLEUSE, numberOfCartridges);
+                    }
+                }
+                break;
+            case GameMode.ALWAYSON:
+                if (gun.getId() == 0) { 
+                    double gunRandom = Math.random();
+                    int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
+                    if (gunRandom < 0.20) {
+                        gun.setId(Gun.PISTOL, numberOfCartridges);
+                    } else if (gunRandom < 0.40) {
+                        gun.setId(Gun.UZI, numberOfCartridges);
+                    } else if (gunRandom < 0.47) {
+                        gun.setId(Gun.SNIPER, numberOfCartridges);
+                    } else if (gunRandom < 0.55) {
+                        gun.setId(Gun.SHOTGUN, numberOfCartridges);
+                    } else if (gunRandom < 0.70) {
+                        gun.setId(Gun.AK, numberOfCartridges);
+                    } else if (gunRandom < 0.85) {
+                        gun.setId(Gun.MAGNUM, numberOfCartridges);
+                    } else {
+                        gun.setId(Gun.MITRAILLEUSE, numberOfCartridges);
+                    }
+                }
+                break;
         }
     }
     
