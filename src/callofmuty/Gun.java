@@ -77,7 +77,7 @@ public class Gun {
                 break;
                 
             case SHOTGUN:
-                ammunition = 5*3;
+                ammunition = 5;
                 image = shotgunImage;
                 rateOfFire = 650;
                 damage = 22;

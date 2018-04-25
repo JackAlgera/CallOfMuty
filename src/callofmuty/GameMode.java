@@ -25,7 +25,7 @@ public class GameMode {
     
     public GameMode(){
         Options= new boolean[] {false,false,false,false};
-        setId(DEFAULT);
+        setId(ROYAL);
     }
 
     public void setId(int id) {
