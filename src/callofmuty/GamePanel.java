@@ -690,7 +690,7 @@ public class GamePanel extends JPanel{
         boolean playerWasDead = player.isDead(); // used to check if player died
         // Update player movement 
         updatePlayerMovement();
-        player.update(dT, map,player);
+        player.update(dT, map);
         if(printTime){
             System.out.println("Player movement & update : " + (System.currentTimeMillis()-time));
             time = System.currentTimeMillis();

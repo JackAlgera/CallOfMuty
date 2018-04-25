@@ -212,7 +212,7 @@ public class Player {
         }
     }
     
-    public void update(long dT, Map map,Player player1){
+    public void update(long dT, Map map){
         if(!isDead){
             
             
@@ -220,14 +220,19 @@ public class Player {
             
             for(int i=0; i<playerEffect.size();i++){  try {
                 // playerEffect
-                playerEffect.get(i).update(player1,dT);
+                playerEffect.get(i).update(this,dT);
                 } catch (IOException ex) {
                     Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (JavaLayerException ex) {
                     Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                if(playerEffect.get(i).endEffect(playerEffect.get(i))==true){
+                    playerEffect.remove(i);
             
             }
+            
+            }
+            
             
             // Update animation
             this.playerAnimation.update(dT);
