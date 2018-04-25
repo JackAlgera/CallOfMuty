@@ -142,7 +142,7 @@ public class Gun {
             case NO_GUN: //draw nothing
                 break;
             default:
-                g2d.drawImage(image, (int) getGunPositionY(player), (int) player.getPosY() + 15, image.getWidth(null), image.getHeight(null), null);
+                g2d.drawImage(image, (int) getGunPositionY(player), (int) player.getPosY() + 18, image.getWidth(null), image.getHeight(null), null);
         }
         
     }
@@ -187,21 +187,40 @@ public class Gun {
     public int getGunPositionY(Player player)
     {
         int gunPos = (int)player.getPosX() - 6;
+        switch(id)
+        {
+            case PISTOL :
+                gunPos = (int)player.getPosX() + 5;
+                break;
+            case UZI :
+                gunPos = (int)player.getPosX() - 2;
+                break;
+            case SNIPER :
+                gunPos = (int)player.getPosX() - 2;
+                break;
+            case SHOTGUN :
+                gunPos = (int)player.getPosX() - 9;
+                break;
+            case AK :
+                gunPos = (int)player.getPosX() - 11;
+                break;
+            case MAGNUM :
+
+                break;
+            case MITRAILLEUSE :
+                gunPos = (int)player.getPosX() - 11;
+                break;
+        }
+        
         switch(player.getCurrentImage())
         {
-            case 1:
+            case 2:
                 gunPos += 2;
                 break;
-            case 2:
+            case 3:
                 gunPos += 4;
                 break;
-            case 3:
-                gunPos += 6;
-                break;
             case 4:
-                gunPos += 6;
-                break;
-            case 5:
                 gunPos += 2;
                 break;
         }
