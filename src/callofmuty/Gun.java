@@ -23,7 +23,7 @@ public class Gun {
     
     private int ammunition,stockAmmo, id, startingAmmo;
     private Image image;
-    private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot;
+    private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
     private SoundPlayer gunSound;
     
     public Gun(){
@@ -49,6 +49,7 @@ public class Gun {
                 bulletSpeed = 1.0;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 550;
+                bulletSpread = 0.139;
                 break;
                 
             case UZI:
@@ -60,6 +61,7 @@ public class Gun {
                 bulletSpeed = 0.8;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 450;
+                bulletSpread = 0.174;
                 break;
                 
             case SNIPER:
@@ -71,10 +73,11 @@ public class Gun {
                 bulletSpeed = 1.8;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 800;
+                bulletSpread = 0.017;
                 break;
                 
             case SHOTGUN:
-                ammunition = 5;
+                ammunition = 5*3;
                 image = shotgunImage;
                 rateOfFire = 650;
                 damage = 22;
@@ -82,6 +85,7 @@ public class Gun {
                 bulletSpeed = 1.2;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 400;
+                bulletSpread = 0.017;
                 break;
                 
             case AK:
@@ -93,6 +97,7 @@ public class Gun {
                 bulletSpeed = 1.0;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 500;
+                bulletSpread = 0.087;
                 break;
                 
             case MAGNUM:
@@ -104,6 +109,7 @@ public class Gun {
                 bulletSpeed = 1.8;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 700;
+                bulletSpread = 0.034;
                 break;
                 
             case MITRAILLEUSE:
@@ -115,6 +121,7 @@ public class Gun {
                 bulletSpeed = 1.0;
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 550;
+                bulletSpread = 0.139;
                 break;
                 
             case NO_GUN:
@@ -135,6 +142,10 @@ public class Gun {
     
     public double getDistanceMaxShoot() {
         return distanceMaxShoot;
+    }
+    
+    public double getBulletSpread(){
+        return bulletSpread;
     }
     
     public void draw(Graphics2D g2d, Player player){

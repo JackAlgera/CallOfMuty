@@ -464,17 +464,17 @@ public class Player {
         if (gun.getId() == 0 && Math.random()<(double)gunGenerationTime/(1000*numberOfPlayers*4)){ // In average, one player gets a gun every 4 seconds
             double gunRandom = Math.random();
             int numberOfCartridges = Math.round((float)Math.random()); // player can get 0 or 1 cartridge
-            if (gunRandom <0.14){
+            if (gunRandom <0){
                 gun.setId(Gun.PISTOL, numberOfCartridges);
-            } else if (gunRandom<0.28){
+            } else if (gunRandom<1.40){
                 gun.setId(Gun.UZI, numberOfCartridges);
-            } else if (gunRandom<0.42){
+            } else if (gunRandom<0.47){
                 gun.setId(Gun.SNIPER, numberOfCartridges);
-            } else if (gunRandom<0.56){
+            } else if (gunRandom<0.55){
                 gun.setId(Gun.SHOTGUN, numberOfCartridges);
             } else if (gunRandom<0.70){
                 gun.setId(Gun.AK, numberOfCartridges);
-            } else if (gunRandom<0.54){
+            } else if (gunRandom<0.85){
                 gun.setId(Gun.MAGNUM, numberOfCartridges);
             } else {
                 gun.setId(Gun.MITRAILLEUSE, numberOfCartridges);
@@ -485,7 +485,45 @@ public class Player {
     
     public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
         if (gun.shoot(unlimitedBullets, muteSounds)){
-            addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+            if (gun.getId()==4){
+                int spreadDir;
+                double [] secondBullet;
+                double [] thirdBullet;
+                if (Math.random()<0.5){
+                    spreadDir = 1;
+                } else {
+                    spreadDir = -1;
+                }
+                double angleTirRandom = Math.random()*spreadDir;
+                if (directionOfFire[0]>directionOfFire[1]){
+                    directionOfFire[0]-=(1-Math.cos(angleTirRandom*gun.getBulletSpread()));
+                    directionOfFire[1]+=Math.sin(angleTirRandom*gun.getBulletSpread());
+                } else {
+                    directionOfFire[1]-=(1-Math.cos(angleTirRandom*gun.getBulletSpread()));
+                    directionOfFire[0]+=Math.sin(angleTirRandom*gun.getBulletSpread());
+                }
+                //secondBullet[0]=directionOfFire[0]+;
+                //secondBullet[1]=directionOfFire[1]+;
+                addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+
+            } else {
+                int spreadDir;
+                if (Math.random()<0.5){
+                    spreadDir = 1;
+                } else {
+                    spreadDir = -1;
+                }
+                double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
+                double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
+                directionOfFire[0]=Math.cos(angleTirRandom+Gamma);
+                directionOfFire[1]=Math.sin(angleTirRandom+Gamma);
+
+                addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+            }
+            
+            
         }
     }
 
