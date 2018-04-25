@@ -322,7 +322,7 @@ public class SQLManager {
         int gameState = -1;
         int gameMode = -1;
         try {
-            requete = connexion.prepareStatement("SELECT gameState FROM game");
+            requete = connexion.prepareStatement("SELECT gameState, gameMode FROM game");
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) { 
                 gameState = resultat.getInt("gameState");

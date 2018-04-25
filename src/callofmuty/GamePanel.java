@@ -944,6 +944,7 @@ public class GamePanel extends JPanel{
                 player.setGunId(Gun.NO_GUN);
                 map = sql.getMap(textureSize);
                 player.setPosition(map);
+                gameMode.setId(sqlGame[1]);
                 player.setPlayerId(1); // 0 means "null", ids start at 1            
                 while (otherPlayersList.contains(player)) {
                     player.incrementId();
