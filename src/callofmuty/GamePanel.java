@@ -41,7 +41,8 @@ public class GamePanel extends JPanel{
             EditorBackground = Tools.loadImage("EditorBackground.png"),
             PreGameBackground = Tools.loadImage("PreGameBackground.png"),
             victoryScreen = Tools.loadImage("Victory.png"),
-            defeatScreen = Tools.loadImage("Defeat.png");
+            defeatScreen = Tools.loadImage("Defeat.png"),
+            GameModeBackground = Tools.loadImage("GamemodeBackground.png");
 
     public static ImageIcon joinGameIcon = Tools.loadIcon("JoinGame.png"),
             createGameIcon = Tools.loadIcon("CreateGame.png"),
@@ -85,7 +86,7 @@ public class GamePanel extends JPanel{
     private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds, mousePressed;
     private long lastGunGeneration;
     private SQLManager sql;
-    private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons;
+    private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons, GMbuttons;
     private ArrayList<Bullet> otherPlayersBullets;
     private GameTimer timer;
     private int[] mousePosition;
@@ -222,6 +223,7 @@ public class GamePanel extends JPanel{
         MEbuttons = new ArrayList<JComponent>(); //ME : Map Editor
         PGbuttons = new ArrayList<JComponent>(); // Pre game
         Ebuttons = new ArrayList<JComponent>(); // Ending (Victory or Defeat)
+        GMbuttons = new ArrayList<JComponent>(); //GM : Game Mode
         /*
         ----------------------------------------------------------------------------------------------------------------
         
@@ -314,9 +316,10 @@ public class GamePanel extends JPanel{
         gameModeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                // to do
+                setState(GAME_MODE);
             }
-        });
+            }
+        );
         
         //--------------------------------------- Right arrow for skin selection ------------------------------------   
         
@@ -670,7 +673,25 @@ public class GamePanel extends JPanel{
                 setState(IN_GAME);
             }
         });
+    
+//--------------------------------------------- Done button for the game mode ------------------------------------------  
+        
+        JButton GMdoneButton = new JButton();
+        GMdoneButton.setIcon(doneIcon);
+        GMdoneButton.setBounds(59, 512, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        GMdoneButton.setVisible(false);
+        GMdoneButton.setBorderPainted(true);
+        add(GMdoneButton);
+        GMbuttons.add(GMdoneButton);
+        
+        GMdoneButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                setState(MAIN_MENU);
+            }
+        });
     }
+
     /*
     ----------------------------------------------------------------------------------------------------------------
 
@@ -1100,6 +1121,11 @@ public class GamePanel extends JPanel{
                     g2d.drawImage(victoryScreen, (panelWidth-victoryScreen.getWidth())/2, 0, victoryScreen.getWidth(), victoryScreen.getHeight(), null);
                 }
                 break;
+                
+            case GAME_MODE:
+                g2d.drawImage(GameModeBackground, 0, 0, 16 * 64, 9 * 64, this);
+                break;
+
         }
     }
     
@@ -1163,6 +1189,9 @@ public class GamePanel extends JPanel{
                 for (JComponent component : Ebuttons) {
                     component.setVisible(false);
                 }
+                for (JComponent component : GMbuttons) {
+                    component.setVisible(false);
+                }                
                 if ((formerGameState==IN_GAME || formerGameState==ENDING) && !muteMusic) {
                     try {
                         gameMusicPlayer.stop();
@@ -1185,6 +1214,9 @@ public class GamePanel extends JPanel{
                 for (JComponent component : Ebuttons) {
                     component.setVisible(false);
                 }
+                for (JComponent component : GMbuttons) {
+                    component.setVisible(false);
+                }                
                 setStartingTile = false;
                 break;
             case PRE_GAME:
@@ -1201,6 +1233,9 @@ public class GamePanel extends JPanel{
                 for (JComponent component : Ebuttons) {
                     component.setVisible(false);
                 }
+                for (JComponent component : GMbuttons) {
+                    component.setVisible(false);
+                }                
                 break;
             case IN_GAME:
                 for (JComponent component : MMbuttons){
@@ -1215,6 +1250,9 @@ public class GamePanel extends JPanel{
                 for (JComponent component : Ebuttons) {
                     component.setVisible(false);
                 }
+                for (JComponent component : GMbuttons) {
+                    component.setVisible(false);
+                }                
                 if (!muteMusic && formerGameState != ENDING) {
                     menuMusicPlayer.stop();
                     try {
@@ -1235,12 +1273,32 @@ public class GamePanel extends JPanel{
                 for (JComponent component : PGbuttons){
                     component.setVisible(false);
                 }
+                for (JComponent component :GMbuttons){
+                    component.setVisible(false);
+                }
                 for (JComponent component : Ebuttons) {
                     if(component.getName().equals("spectateGameButton")){
                         component.setVisible(player.isDead());
                     } else {
                         component.setVisible(true);
                     }
+                   
+                }
+            case GAME_MODE:
+                for (JComponent component : MMbuttons){
+                    component.setVisible(false);
+                }
+                for (JComponent component : MEbuttons){
+                    component.setVisible(false);
+                }
+                for (JComponent component : PGbuttons){
+                    component.setVisible(false);
+                }
+                for (JComponent component : Ebuttons) {
+                    component.setVisible(false);
+                }
+                for (JComponent component : GMbuttons) {
+                    component.setVisible(true);
                 }
         }
         repaint();
