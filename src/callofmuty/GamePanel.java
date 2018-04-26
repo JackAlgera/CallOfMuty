@@ -63,12 +63,13 @@ public class GamePanel extends JPanel{
             muteSoundsIcon = Tools.loadIcon("Mute.png"),
             MusicIcon = Tools.loadIcon("Music.png"),
             muteMusicIcon = Tools.loadIcon("muteMusic.png"),
-            startGameIcon = Tools.loadIcon("StartGame.png");
-            
-    
+            startGameIcon = Tools.loadIcon("StartGame.png"),
+            mainMenuIcon = Tools.loadIcon("MainMenu.png"),
+            spectateIcon = Tools.loadIcon("Spectate.png"),
+            startingTileIcon = Tools.loadIcon("StartingTiles.png");    
     
     public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
-            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4;
+            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5;
     
     private static long gunGenerationTime = 100; //in milliseconds
     
@@ -521,14 +522,12 @@ public class GamePanel extends JPanel{
         
         //--------------------------- Button to choose the starting positions for the map editor ----------------------------- 
         
-        JButton setStartingTileButton = new JButton("Set starting tile");
+        JButton setStartingTileButton = new JButton();
         setStartingTileButton.setName("setStartingTileButton");
-        //setStartingTileButton.setIcon(startingTileIcon);
-        setStartingTileButton.setBounds(750, 30, 50, doneIcon.getIconHeight());
-        //setStartingTileButton.setPressedIcon(presseddoneIcon);
+        setStartingTileButton.setIcon(startingTileIcon);
+        setStartingTileButton.setBounds(753, 24, startingTileIcon.getIconWidth(), startingTileIcon.getIconHeight());
         setStartingTileButton.setVisible(false);
-        //setStartingTileButton.setContentAreaFilled(false);
-        //setStartingTileButton.setBorderPainted(false);
+        setStartingTileButton.setBorderPainted(true);
         add(setStartingTileButton);
         MEbuttons.add(setStartingTileButton);
         
@@ -613,7 +612,7 @@ public class GamePanel extends JPanel{
         usernameField.setBounds(56, 140, 172, mapEditorIcon.getIconHeight()+1);
         usernameField.setEditable(true);
         usernameField.setHorizontalAlignment(JTextField.CENTER);
-        usernameField.setFont(new Font("TimesRoman", Font.BOLD+Font.ITALIC, 18));
+        usernameField.setFont(new Font("Stencil", Font.BOLD, 18));
         usernameField.setBackground(new Color(230,226,211));//(new Color(221,214,192));
         usernameField.setForeground(Color.DARK_GRAY);
         usernameField.setBorder(null);
@@ -639,13 +638,11 @@ public class GamePanel extends JPanel{
         });
 
 //--------------------------------------------- Ending buttons : Return to menu ------------------------------------------  
-        JButton mainMenuButton = new JButton("Main menu");
+        JButton mainMenuButton = new JButton();
         mainMenuButton.setName("mainMenuButton");
-        //mainMenuButton.setIcon(mapEditorIcon);
-        mainMenuButton.setBounds((panelWidth-mapEditorIcon.getIconWidth())/2, 500, mapEditorIcon.getIconWidth(), mapEditorIcon.getIconHeight());
-        //mainMenuButton.setPressedIcon(pressedmapEditorIcon);
+        mainMenuButton.setIcon(mainMenuIcon);
+        mainMenuButton.setBounds((panelWidth-mainMenuIcon.getIconWidth())/2, 500, mainMenuIcon.getIconWidth(), mainMenuIcon.getIconHeight());
         mainMenuButton.setVisible(false);
-        //mainMenuButton.setContentAreaFilled(false);
         mainMenuButton.setBorderPainted(true);
         add(mainMenuButton);
         Ebuttons.add(mainMenuButton);
@@ -658,13 +655,11 @@ public class GamePanel extends JPanel{
         });
         
 //--------------------------------------------- Ending buttons : Spectate game ------------------------------------------  
-        JButton spectateGameButton = new JButton("Spectate the game");
+        JButton spectateGameButton = new JButton();
         spectateGameButton.setName("spectateGameButton");
-        //spectateGameButton.setIcon(mapEditorIcon);
-        spectateGameButton.setBounds((panelWidth-mapEditorIcon.getIconWidth())/2, 400, mapEditorIcon.getIconWidth(), mapEditorIcon.getIconHeight());
-        //spectateGameButton.setPressedIcon(pressedmapEditorIcon);
+        spectateGameButton.setIcon(spectateIcon);
+        spectateGameButton.setBounds((panelWidth-spectateIcon.getIconWidth())/2, 400, spectateIcon.getIconWidth(), spectateIcon.getIconHeight());
         spectateGameButton.setVisible(false);
-        //spectateGameButton.setContentAreaFilled(false);
         spectateGameButton.setBorderPainted(true);
         add(spectateGameButton);
         Ebuttons.add(spectateGameButton);
@@ -1033,9 +1028,18 @@ public class GamePanel extends JPanel{
         switch(gameState) {
             case PRE_GAME:
                 g2d.drawImage(PreGameBackground, 0, 0, 16*64, 9*64, this);
+                g2d.setFont(new Font("Stencil", Font.BOLD, 20));
                 map.draw(g2d, false);
-                for (int i=0; i<otherPlayersList.size(); i++){
-                    g2d.drawString(otherPlayersList.get(i).getName(), 100, 100+i*50);
+                if (isHost) {
+                    g2d.drawString(player.getName(), 80, 90);
+                    for (int i = 0; i < otherPlayersList.size(); i++) {
+                        g2d.drawString(otherPlayersList.get(i).getName(), 80, 140 + i * 50);
+                    }
+                } else {
+                    for (int i = 0; i < otherPlayersList.size(); i++) {
+                        g2d.drawString(otherPlayersList.get(i).getName(), 80, 90 + i * 50);
+                    }
+                    g2d.drawString(player.getName(), 80, 90+(otherPlayersList.size())*50);
                 }
                 break;
 
