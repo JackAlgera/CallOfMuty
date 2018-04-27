@@ -3,15 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GameTimer.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Map.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/TileType.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GamePanel.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Player.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/SoundPlayer.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Effect.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Gun.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/CallOfMuty.java</file>
+            <file>file:/Z:/CallOfMuty/src/callofmuty/GameMode.java</file>
+            <file>file:/Z:/CallOfMuty/src/callofmuty/Gun.java</file>
+            <file>file:/Z:/CallOfMuty/src/callofmuty/CallOfMuty.java</file>
+            <file>file:/Z:/CallOfMuty/src/resources/images/WeaponTileset.png</file>
+            <file>file:/Z:/CallOfMuty/src/callofmuty/GamePanel.java</file>
+            <file>file:/Z:/CallOfMuty/src/callofmuty/Bullet.java</file>
+            <file>file:/Z:/CallOfMuty/src/callofmuty/Player.java</file>
+            <file>file:/Z:/CallOfMuty/src/callofmuty/Tools.java</file>
         </group>
     </open-files>
 </project-private>

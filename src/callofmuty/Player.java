@@ -607,6 +607,11 @@ public class Player {
                 directionOfFire[1]=Math.sin(angleTirRandom+Gamma)*signe;
 
                 addBullet(getPosX() + image.getWidth(null) / 4, getPosY() + image.getHeight(null) / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                if(directionOfFire[0]<0){
+                    gun.changeGunDirection(1);
+                } else {
+                    gun.changeGunDirection(0);
+                }
             }
             
             

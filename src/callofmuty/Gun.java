@@ -21,7 +21,7 @@ public class Gun {
     private static final BufferedImage magnumImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 1, 1);
     private static final BufferedImage mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2);
     
-    private int ammunition,stockAmmo, id, startingAmmo;
+    private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
     private SoundPlayer gunSound;
@@ -50,6 +50,9 @@ public class Gun {
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 550;
                 bulletSpread = 0.139;
+                xImage = 1;
+                yImage = 1;
+                tailleGun = 1;
                 break;
                 
             case UZI:
@@ -62,6 +65,9 @@ public class Gun {
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 450;
                 bulletSpread = 0.174;
+                xImage = 2;
+                yImage = 3;
+                tailleGun = 1;
                 break;
                 
             case SNIPER:
@@ -74,6 +80,9 @@ public class Gun {
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 800;
                 bulletSpread = 0.017;
+                xImage = 3;
+                yImage = 1;
+                tailleGun = 2;
                 break;
                 
             case SHOTGUN:
@@ -86,6 +95,9 @@ public class Gun {
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 400;
                 bulletSpread = 0.017;
+                xImage = 1;
+                yImage = 7;
+                tailleGun = 2;
                 break;
                 
             case AK:
@@ -98,6 +110,9 @@ public class Gun {
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 500;
                 bulletSpread = 0.087;
+                xImage = 1;
+                yImage = 3;
+                tailleGun = 2;
                 break;
                 
             case MAGNUM:
@@ -110,6 +125,9 @@ public class Gun {
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 700;
                 bulletSpread = 0.034;
+                xImage = 2;
+                yImage = 1;
+                tailleGun = 1;
                 break;
                 
             case MITRAILLEUSE:
@@ -122,6 +140,9 @@ public class Gun {
                 gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 550;
                 bulletSpread = 0.139;
+                xImage = 2;
+                yImage = 5;
+                tailleGun = 2;
                 break;
                 
             case NO_GUN:
@@ -181,6 +202,14 @@ public class Gun {
             }
         }
         return test;
+    }
+    
+    public void changeGunDirection(int k){
+        if (k == 1){
+            this.image = Tools.selectWeaponTile(Tools.WeaponTileset, this.xImage, this.yImage +k*this.tailleGun, this.tailleGun);
+        } else {
+            this.image = Tools.selectWeaponTile(Tools.WeaponTileset, this.xImage, this.yImage , this.tailleGun);
+        }
     }
     
     public void playShootingSound() {
