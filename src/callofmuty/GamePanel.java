@@ -965,10 +965,23 @@ public class GamePanel extends JPanel{
                 while (otherPlayersList.contains(player)) {
                     player.incrementId();
                 }
-                if(gameMode.getTeam()!=GameMode.ALLVSALL){
-                    player.setTeamId(player.getPlayerId()); //gameMode= ???
-                } else {
-                    player.setTeamId(player.getPlayerId());
+                switch (gameMode.getTeam()) {
+                    case GameMode.ALLVSALL:
+                        player.setTeamId(player.getPlayerId());
+                        break;
+                    case GameMode.ALLVSONE:
+                        player.setTeamId(2);
+                        break;
+                    case GameMode.TEAMVSTEAM:
+                        if (player.getPlayerId() % 2 == 0) {
+                            player.setTeamId(2);
+                            System.out.println("rejoint eq 2");
+                        } else {
+                            player.setTeamId(1);
+                            System.out.println("rejoint eq 1");
+
+                        }
+                        break;
                 }
                 player.addPlayer(sql);
                 isConnected = true;
