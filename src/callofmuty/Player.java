@@ -4,11 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javazoom.jl.decoder.JavaLayerException;
 
 public class Player {
@@ -28,10 +25,10 @@ public class Player {
     private boolean isDead, muteSounds;  
     private int[] skin;
     private String name;
-    public ArrayList<Image> animationImages = new ArrayList<Image>();
+    public ArrayList<Image> animationImages = new ArrayList<>();
     public Animation playerAnimation;
     private ArrayList<Player> hurtPlayers;
-    private ArrayList<Effect> effects = new ArrayList<Effect>();
+    private ArrayList<Effect> effects = new ArrayList<>();
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
@@ -86,6 +83,7 @@ public class Player {
         hurtSoundPlayer = new ArrayList<>();
         hurtSoundPlayer.add(new SoundPlayer("hurtSound.mp3", false));
         hurtSoundPlayer.add(new SoundPlayer("hurtSound2.mp3", false));
+        hurtSoundPlayer.add(new SoundPlayer("hurtSound3.mp3", false));
         dyingSoundPlayer = new ArrayList<>();
         dyingSoundPlayer.add(new SoundPlayer("dyingSound.mp3", false));
     }

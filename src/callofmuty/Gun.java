@@ -3,8 +3,6 @@ package callofmuty;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javazoom.jl.decoder.JavaLayerException;
 
 public class Gun {
     
@@ -20,12 +18,14 @@ public class Gun {
     private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
-    private SoundPlayer gunSound;
+    private SoundPlayer gunSound, uziSound;
     
     public Gun(){
         ammunition = 0;
         id = NO_GUN;
         lastShotTimeStamp = System.currentTimeMillis();
+        gunSound = new SoundPlayer("shootingSound.mp3", false);
+        uziSound = new SoundPlayer("uziSound.mp3", false);
     }
     
     public double getDamage(){
@@ -43,7 +43,6 @@ public class Gun {
                 damage = 15;
                 reloadTime = 1000;
                 bulletSpeed = 1.0;
-                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 550;
                 bulletSpread = 0.139;
                 xImage = 1;
@@ -58,7 +57,6 @@ public class Gun {
                 damage = 5;
                 reloadTime = 1000;
                 bulletSpeed = 0.8;
-                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 450;
                 bulletSpread = 0.174;
                 xImage = 2;
@@ -73,7 +71,6 @@ public class Gun {
                 damage = 35;
                 reloadTime = 1000;
                 bulletSpeed = 1.8;
-                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 800;
                 bulletSpread = 0.017;
                 xImage = 3;
@@ -88,7 +85,6 @@ public class Gun {
                 damage = 22;
                 reloadTime = 1000;
                 bulletSpeed = 1.2;
-                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 400;
                 bulletSpread = 0.017;
                 xImage = 1;
@@ -103,7 +99,6 @@ public class Gun {
                 damage = 10;
                 reloadTime = 1000;
                 bulletSpeed = 1.0;
-                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 500;
                 bulletSpread = 0.087;
                 xImage = 1;
@@ -118,7 +113,6 @@ public class Gun {
                 damage = 25;
                 reloadTime = 1000;
                 bulletSpeed = 1.8;
-                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 700;
                 bulletSpread = 0.034;
                 xImage = 2;
@@ -133,7 +127,6 @@ public class Gun {
                 damage = 7;
                 reloadTime = 1250;
                 bulletSpeed = 1.0;
-                gunSound = new SoundPlayer("shootingSound.mp3", false);
                 distanceMaxShoot = 550;
                 bulletSpread = 0.139;
                 xImage = 2;
@@ -209,9 +202,15 @@ public class Gun {
     }
     
     public void playShootingSound() {
-        if (id != NO_GUN) {
-            gunSound.play();
-        }
+        switch (id) {
+            case NO_GUN:
+                break;
+            case UZI:
+                uziSound.play();
+                break;
+            default:
+                gunSound.play();
+            }
     }
     
     public int getGunPositionY(Player player)
