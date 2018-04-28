@@ -25,7 +25,7 @@ public class GameMode {
     
     public GameMode(){
         Options= new boolean[] {false,false,false,false};
-        setId(TEAMVSTEAM);
+        setId(DEFAULT);
     }
 
     public void setId(int id) {

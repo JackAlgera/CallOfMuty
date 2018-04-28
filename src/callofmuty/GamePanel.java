@@ -1297,6 +1297,7 @@ public class GamePanel extends JPanel{
                     }
                    
                 }
+                break;
             case GAME_MODE:
                 for (JComponent component : MMbuttons){
                     component.setVisible(false);
