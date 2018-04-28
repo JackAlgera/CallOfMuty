@@ -407,6 +407,15 @@ public class Player {
         return this.isDead;
     }
     
+    public boolean isTeamkilled(ArrayList <Player> otherPlayerList, boolean otherTeam){
+        for(int i=0; i <otherPlayerList.size();i++){
+            if(otherTeam^(otherPlayerList.get(i).getTeamId()==this.getTeamId()) && !otherPlayerList.get(i).isDead){
+                return false;
+            }
+        }
+        return true;
+    }
+    
     public double getPlayerHealth(){
         return this.health;
     }       
