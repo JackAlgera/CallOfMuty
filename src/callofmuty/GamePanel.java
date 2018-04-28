@@ -83,7 +83,7 @@ public class GamePanel extends JPanel{
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState;
     private GameMode gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
-    private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds, mousePressed;
+    private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds, mousePressed,endShowed;
     private long lastGunGeneration;
     private SQLManager sql;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons, GMbuttons;
@@ -125,6 +125,7 @@ public class GamePanel extends JPanel{
         mapKeys();
         mousePressed = false;
         mousePosition = new int[]{0,0};
+        endShowed = false;
         
         setFocusable(true);
         buildInterface(); 
@@ -735,8 +736,9 @@ public class GamePanel extends JPanel{
             if (printTime) {
                 System.out.println("Uploads : " + (System.currentTimeMillis() - time));
             }
-        } else if(TeamWasKilled){ // team just died : show defeat screen
+        } else if(TeamWasKilled && !endShowed){ // team just died : show defeat screen
             setState(ENDING);
+            endShowed = true;
         }
         if(player.isTeamkilled(otherPlayersList, true)){ // Game is ended
             if (!TeamWasKilled || !player.isDead()){ // Local team/player won : show victory screen
@@ -1016,6 +1018,7 @@ public class GamePanel extends JPanel{
     }
     
     public void endGame() {
+        endShowed =false;
         int formerGameState = gameState;
         setState(MAIN_MENU);
         if (isConnected){

@@ -19,13 +19,13 @@ public class GameMode {
     private int gunGestion;
     private int Team;
     
-    public static final int DEFAULT=0,ROYAL=1,TEAM=2,
+    public static final int DEFAULT=0,ROYAL=1,TEAM=2, ALONE=3,
                 RANDOM =0, ALWAYSON = 1,
                 ALLVSALL = 0, ALLVSONE = 1, TEAMVSTEAM = 2;
     
     public GameMode(){
         Options= new boolean[] {false,false,false,false};
-        setId(ROYAL);
+        setId(TEAM);
     }
 
     public void setId(int id) {
@@ -43,6 +43,9 @@ public class GameMode {
                 gunGestion = ALWAYSON;
                 Team = TEAMVSTEAM;
             break;
+            case ALONE:
+                gunGestion = ALWAYSON;
+                Team = ALLVSONE;
         }
     }
     
