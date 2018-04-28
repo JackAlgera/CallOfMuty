@@ -17,7 +17,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -83,7 +82,7 @@ public class GamePanel extends JPanel{
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState;
     private GameMode gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
-    private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds, mousePressed;
+    private boolean isHost, setStartingTile, isConnected, muteMusic, muteSounds, leftMousePressed, rightMousePressed;
     private long lastGunGeneration;
     private SQLManager sql;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons, GMbuttons;
@@ -98,11 +97,8 @@ public class GamePanel extends JPanel{
         clicSoundPlayer = new SoundPlayer("clicSound.mp3", false);
         muteMusic = false;
         muteSounds = false;
-        try {
-            menuMusicPlayer.play();
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        menuMusicPlayer.play();
+        
         gameState = MAIN_MENU;
         gameMode = new GameMode();
         lastGunGeneration = System.currentTimeMillis();
@@ -117,13 +113,14 @@ public class GamePanel extends JPanel{
         tileSelector = new TileSelector(textureSize);
         map.setDrawingParameters(MAIN_MENU); // small map in main menu
         player = new Player(200,200);
-        pressedButtons = new ArrayList<Integer>();
-        releasedButtons = new ArrayList<Integer>();
-        otherPlayersBullets = new ArrayList<Bullet>();
-        otherPlayersList = new ArrayList<Player>();
+        pressedButtons = new ArrayList<>();
+        releasedButtons = new ArrayList<>();
+        otherPlayersBullets = new ArrayList<>();
+        otherPlayersList = new ArrayList<>();
         this.timer = timer;
         mapKeys();
-        mousePressed = false;
+        leftMousePressed = false;
+        rightMousePressed = false;
         mousePosition = new int[]{0,0};
         
         setFocusable(true);
@@ -147,35 +144,26 @@ public class GamePanel extends JPanel{
             public void mouseExited(MouseEvent e) {
             }@Override
             public void mousePressed(MouseEvent e) {
-                mousePressed = true;
+                if(e.getButton()==MouseEvent.BUTTON1){
+                    leftMousePressed = true;
+                }
+                if(e.getButton()==MouseEvent.BUTTON3){
+                    rightMousePressed = true;
+                }
                 mousePosition[0] = e.getX();
                 mousePosition[1] = e.getY();
-                switch (gameState) {
-                    case IN_GAME:
-                        break;
-                    case MAP_EDITOR:
-                        int[] mapClicked = map.clickedTile(e.getX(), e.getY());
-                        if (mapClicked[0] > -1) { // map was clicked
-                            playClicSound();
-                            if (!setStartingTile) {
-                                map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
-                            } else {
-                                map.addStartTile(new int[]{mapClicked[1], mapClicked[2]});
-                            }
-                        } else { // check if tileSelector was clicked and select the tile if so
-                            if (tileSelector.clickedTile(e.getX(), e.getY())[0] > -1) {
-                                playClicSound();
-                                setStartingTile = false;
-                            }
-                        }
-                        repaint();
-                        break;
-                    default:
+                if(gameState==MAP_EDITOR){
+                    mapClicked();
                 }
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                mousePressed = false;
+                if(e.getButton()==MouseEvent.BUTTON1){
+                    leftMousePressed = false;
+                }
+                if(e.getButton()==MouseEvent.BUTTON3){
+                    rightMousePressed = false;
+                }
             }
         });  
         
@@ -186,12 +174,14 @@ public class GamePanel extends JPanel{
                 while (true) {
                     switch (gameState) {
                         case IN_GAME:
-                            if (mousePressed) {
+                            if (leftMousePressed) {
                                 playershoot();
+                            } else if(rightMousePressed){
+                                meleeAttack();
                             }
                             break;
                         case MAP_EDITOR:
-                            if (mousePressed) {
+                            if (leftMousePressed) {
                                 int[] mapClicked = map.clickedTile(mousePosition[0], mousePosition[1]);
                                 if (mapClicked[0] > -1) { // map was clicked
                                     if (!setStartingTile) {
@@ -538,6 +528,7 @@ public class GamePanel extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
                 setStartingTile = true;
+                repaint();
             }
         });
         
@@ -599,12 +590,8 @@ public class GamePanel extends JPanel{
                     muteMusicButton.setIcon(muteMusicIcon);
                     menuMusicPlayer.stop();
                 } else {
-                    muteMusicButton.setIcon(MusicIcon);              
-                    try {
-                        menuMusicPlayer.play();
-                    } catch (JavaLayerException | IOException | URISyntaxException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    muteMusicButton.setIcon(MusicIcon);
+                    menuMusicPlayer.play();
                 }
             }
         });
@@ -813,8 +800,26 @@ public class GamePanel extends JPanel{
         }
     }
     
+    public void mapClicked() {
+        int[] mapClicked = map.clickedTile(mousePosition[0], mousePosition[1]);
+        if (mapClicked[0] > -1) { // map was clicked
+            playClicSound();
+            if (!setStartingTile) {
+                map.setTile(mapClicked[1], mapClicked[2], tileSelector.getSelectedTile());
+            } else {
+                map.addStartTile(new int[]{mapClicked[1], mapClicked[2]});
+            }
+        } else { // check if tileSelector was clicked and select the tile if so
+            if (tileSelector.clickedTile(mousePosition[0], mousePosition[1])[0] > -1) {
+                playClicSound();
+                setStartingTile = false;
+            }
+        }
+        repaint();
+    }
+    
     public void mapKeys(){
-        ArrayList<String> keyStrokeList = new ArrayList();
+        ArrayList<String> keyStrokeList = new ArrayList<>();
         keyStrokeList.add("S"); keyStrokeList.add("Z"); keyStrokeList.add("Q"); keyStrokeList.add("D");
         keyStrokeList.add("DOWN"); keyStrokeList.add("UP"); keyStrokeList.add("LEFT"); keyStrokeList.add("RIGHT"); keyStrokeList.add("ESCAPE");
         for (String key : keyStrokeList)
@@ -1046,13 +1051,11 @@ public class GamePanel extends JPanel{
         directionOfFire[0] = directionOfFire[0] / norme;
         directionOfFire[1] = directionOfFire[1] / norme;
 
-        {
-            try {
-                player.shoot(directionOfFire, sql, false);
-            } catch (JavaLayerException | IOException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        player.shoot(directionOfFire, sql, false);
+    }
+    
+    public void meleeAttack(){
+        
     }
     
     @Override
@@ -1206,12 +1209,8 @@ public class GamePanel extends JPanel{
                     component.setVisible(false);
                 }                
                 if ((formerGameState==IN_GAME || formerGameState==ENDING) && !muteMusic) {
-                    try {
                         gameMusicPlayer.stop();
                         menuMusicPlayer.play();
-                    } catch (JavaLayerException | IOException | URISyntaxException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                 }
                 break;
             case MAP_EDITOR:
@@ -1268,11 +1267,7 @@ public class GamePanel extends JPanel{
                 }                
                 if (!muteMusic && formerGameState != ENDING) {
                     menuMusicPlayer.stop();
-                    try {
-                        gameMusicPlayer.play();
-                    } catch (JavaLayerException | IOException | URISyntaxException ex) {
-                        Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    gameMusicPlayer.play();
                 }
                 timer.update();
                 break;
@@ -1320,11 +1315,7 @@ public class GamePanel extends JPanel{
     
     public void playClicSound(){
         if (!muteSounds) {
-            try {
-                clicSoundPlayer.play();
-            } catch (JavaLayerException | IOException | URISyntaxException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            clicSoundPlayer.play();
         }
     }
 }

@@ -35,12 +35,9 @@ public class Player {
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
-    private SoundPlayer  hurtSoundPlayer, dyingSoundPlayer;
+    private ArrayList<SoundPlayer>  hurtSoundPlayer, dyingSoundPlayer;
         
     public Player(double x,double y) throws IOException, JavaLayerException{
-        
-        hurtSoundPlayer = new SoundPlayer("hurtSound.mp3", false);
-        dyingSoundPlayer = new SoundPlayer("dyingSound.mp3", false);
         muteSounds = false;
         facedDirection = 0;
         this.posX=x;
@@ -53,7 +50,7 @@ public class Player {
         teamId= 0;
         image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
         
-        destroyedBullets = new ArrayList();
+        destroyedBullets = new ArrayList<>();
         
         this.playerAnimation = new Animation(160,7,4,6,1,0); // en ms
         for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
@@ -79,11 +76,20 @@ public class Player {
         hpBar = normalHealthBar;
         name = "Username";
         playerState = 0; 
-        hurtPlayers = new ArrayList<Player>();
+        hurtPlayers = new ArrayList<>();
         bulletList = new ArrayList<>();
         gun = new Gun();
+        fillSoundPlayers();
     }
 
+    public void fillSoundPlayers(){
+        hurtSoundPlayer = new ArrayList<>();
+        hurtSoundPlayer.add(new SoundPlayer("hurtSound.mp3", false));
+        hurtSoundPlayer.add(new SoundPlayer("hurtSound2.mp3", false));
+        dyingSoundPlayer = new ArrayList<>();
+        dyingSoundPlayer.add(new SoundPlayer("dyingSound.mp3", false));
+    }
+    
     public void setMuteSounds(Boolean muteSounds){
         this.muteSounds = muteSounds;
     }
@@ -114,7 +120,7 @@ public class Player {
     
 
     public void addPlayer(SQLManager sql){
-        bulletList = new ArrayList<Bullet>();
+        bulletList = new ArrayList<>();
         for (int i = 1; i<=initialBulletNumber; i++){ //bulletId starts at 1, 0 is SQL's "null"
             bulletList.add(new Bullet(playerId, i));
         }
@@ -123,7 +129,7 @@ public class Player {
     }
     
     public void resetHurtPlayers(){
-        hurtPlayers = new ArrayList<Player>();
+        hurtPlayers = new ArrayList<>();
     }
     
     public void setPlayerState(int playerState) {
@@ -138,20 +144,12 @@ public class Player {
         if (health <= 0) {
             isDead = true;
             if (!muteSounds) {
-                try {
-                    dyingSoundPlayer.play();
-                } catch (JavaLayerException | IOException | URISyntaxException ex) {
-                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                dyingSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, dyingSoundPlayer.size())).play();
             }
         } else {
             isDead = false;
             if (formerHealth > health && !muteSounds) {
-                try {
-                    hurtSoundPlayer.play();
-                } catch (JavaLayerException | IOException | URISyntaxException ex) {
-                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                hurtSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, hurtSoundPlayer.size())).play();
             }
         }
         if (health < 0.15*maxHealth){
@@ -565,7 +563,7 @@ public class Player {
         }
     }
     
-    public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets) throws JavaLayerException, IOException{
+    public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets){
         if (gun.shoot(unlimitedBullets, muteSounds)){
             if (gun.getId()==400){ //spread shotgun in progress
                 int spreadDir;

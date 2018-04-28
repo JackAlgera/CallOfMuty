@@ -8,9 +8,6 @@ import javax.swing.JOptionPane;
 
 public class Map{
     
-    private int[][] map;
-    private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
-    private ArrayList<int[]> startTile;
     private static TileType dirt = new TileType(false, false,1,1,new Effect()),
             // map borders
             woodt= new TileType(true, true,1,12,new Effect()), woodb= new TileType(true, true,3,12,new Effect()), woodl= new TileType(true, true,2,11,1,1,new Effect()), woodr= new TileType(true, true,2,13,1,1,new Effect()), woodtl= new TileType(true, true,1,11,new Effect()), woodbl= new TileType(true, true,3,11,new Effect()), woodtr= new TileType(true, true,1,13,new Effect()), woodbr= new TileType(true, true,3,13,new Effect()),
@@ -18,6 +15,10 @@ public class Map{
             box = new TileType(true, true,2,6,1,1,new Effect()),
             // bad effects
             water = new TileType(false, false,2,3,new Effect()), mud = new TileType(false, false, 3,6,new Effect(Effect.SLOWED, 300, 0.5)), hotGround = new TileType(false, false, 4,6,new Effect(Effect.BURNING, 500, 10));
+        
+    private int[][] map;
+    private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
+    private ArrayList<int[]> startTile;
     
     public Map(int[][] map, int textureSize){
         this.map=map;
@@ -206,7 +207,7 @@ public class Map{
         return map;
     }
     
-        public void draw(Graphics2D g2d, boolean drawStartingTile){
+    public void draw(Graphics2D g2d, boolean drawStartingTile){
         int newXTextureSize = drawWidth/mapWidth, newYTextureSize = drawHeight/mapHeight;
         for (int i = 0 ; i<mapWidth ; i++){
             for (int j = 0; j<mapHeight; j++){

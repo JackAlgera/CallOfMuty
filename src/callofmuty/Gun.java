@@ -3,11 +3,7 @@ package callofmuty;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javazoom.jl.decoder.JavaLayerException;
 
 public class Gun {
@@ -36,7 +32,7 @@ public class Gun {
         return damage;
     }
     
-    public void setId(int id, int numberOfCartridges)throws IOException, JavaLayerException{
+    public void setId(int id, int numberOfCartridges){
         this.id = id;
         
         switch(this.id){
@@ -179,7 +175,7 @@ public class Gun {
         
     }
     
-    public boolean shoot(boolean unlimitedBullets, boolean muteShootingSound)throws IOException, JavaLayerException{ // if gun can shoot, shoots and returns true, else returns false
+    public boolean shoot(boolean unlimitedBullets, boolean muteShootingSound){ // if gun can shoot, shoots and returns true, else returns false
         boolean test = (unlimitedBullets || ammunition>0) && System.currentTimeMillis()-rateOfFire>=lastShotTimeStamp;
         if (test){
             if(!unlimitedBullets){
@@ -214,13 +210,7 @@ public class Gun {
     
     public void playShootingSound() {
         if (id != NO_GUN) {
-            try {
-                gunSound.play();
-            } catch (FileNotFoundException | URISyntaxException ex) {
-                Logger.getLogger(Gun.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (JavaLayerException | IOException ex) {
-                Logger.getLogger(Gun.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            gunSound.play();
         }
     }
     

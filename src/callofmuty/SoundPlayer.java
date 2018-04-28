@@ -1,9 +1,7 @@
 package callofmuty;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javazoom.jl.decoder.JavaLayerException;
@@ -18,15 +16,23 @@ public class SoundPlayer {
     private long pauseLocation, totalSongLength;
     private String name;
     
-    public SoundPlayer(String name, boolean repeat) throws IOException, JavaLayerException{
+    public SoundPlayer(String name, boolean repeat){
         this.name = name;
         this.repeat = repeat;
     }
 
-    public void play() throws FileNotFoundException, JavaLayerException, IOException, URISyntaxException {
+    public void play(){
         inputStream = this.getClass().getResourceAsStream("/resources/audio/"+name);
-        totalSongLength = inputStream.available();
-        player = new Player(inputStream);
+        try {
+            totalSongLength = inputStream.available();
+        } catch (IOException ex) {
+            Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            player = new Player(inputStream);
+        } catch (JavaLayerException ex) {
+            Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         new Thread() {
             @Override
@@ -37,30 +43,36 @@ public class SoundPlayer {
                     if (player.isComplete() && repeat) {
                         play();
                     }
-                } catch (JavaLayerException | IOException ex) {
+                } catch (JavaLayerException ex) {
                     System.err.println("There was an error to play /resources/audio/"+name);
-                } catch (URISyntaxException ex) {
-                    Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }.start();
     }
 
-    public void resume() throws FileNotFoundException, JavaLayerException, IOException, URISyntaxException {
-        paused = false;
-        inputStream = this.getClass().getResourceAsStream("/resources/audio/"+name);
-        inputStream.skip(totalSongLength - pauseLocation);
-        player = new Player(inputStream);
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    player.play();
-                } catch (JavaLayerException ex) {
-                    System.err.println("::: there was an error to play " + "/resources/audio/"+name);
-                }
+    public void resume(){
+        try {
+            paused = false;
+            inputStream = this.getClass().getResourceAsStream("/resources/audio/"+name);
+            try {
+                inputStream.skip(totalSongLength - pauseLocation);
+            } catch (IOException ex) {
+                Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }.start();
+            player = new Player(inputStream);
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        player.play();
+                    } catch (JavaLayerException ex) {
+                        System.err.println("::: there was an error to play " + "/resources/audio/"+name);
+                    }
+                }
+            }.start();
+        } catch (JavaLayerException ex) {
+            Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void stop() {
