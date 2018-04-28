@@ -375,6 +375,7 @@ public class SQLManager {
             while (resultat.next()) {
                 newPlayer = new Player(resultat.getDouble("posX"),resultat.getDouble("posY"));
                 newPlayer.setPlayerId(resultat.getInt("id"));
+                newPlayer.setTeamId(resultat.getInt("teamId"));
                 newPlayer.setSkin(resultat.getInt("skinId"));
                 newPlayer.setName(resultat.getString("name"));
                 newPlayer.setPlayerState(resultat.getInt("playerState"));
@@ -409,6 +410,7 @@ public class SQLManager {
                     newPlayer.setPlayerState(resultat.getInt("playerState"));
                 } else { // Player was not yet in the list
                     newPlayer.setSkin(resultat.getInt("skinId"));
+                    newPlayer.setTeamId(resultat.getInt("TeamId"));
                     newPlayer.setName(resultat.getString("name"));
                     newPlayer.setPlayerState(resultat.getInt("playerState"));
                     newPlayer.setHealth(resultat.getDouble("playerHp"));

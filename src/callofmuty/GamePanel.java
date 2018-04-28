@@ -703,7 +703,6 @@ public class GamePanel extends JPanel{
     public void updateGame(long dT) throws JavaLayerException, IOException{
         boolean printTime = false; // Set to true if you want to print the time taken by each method in updateGame
         long time = System.currentTimeMillis();
-        boolean playerWasDead = player.isDead(); // used to check if player died
         // Update player movement 
         updatePlayerMovement();
         player.update(dT, map);
@@ -713,6 +712,7 @@ public class GamePanel extends JPanel{
         }
         // sql downloads
         sql.downloadPlayersAndBullets(player, otherPlayersList, otherPlayersBullets);
+        boolean TeamWasKilled = player.isTeamkilled(otherPlayersList, false); // used to check if team died
         if(printTime){
             System.out.println("Downloads : " + (System.currentTimeMillis()-time));
             time = System.currentTimeMillis();
@@ -735,11 +735,11 @@ public class GamePanel extends JPanel{
             if (printTime) {
                 System.out.println("Uploads : " + (System.currentTimeMillis() - time));
             }
-        } else if(!playerWasDead){ // player just died : show defeat screen
+        } else if(TeamWasKilled){ // team just died : show defeat screen
             setState(ENDING);
         }
-        if(otherPlayersList.isEmpty()){ // Game is ended
-            if (!player.isDead()){ // Local player won : show victory screen
+        if(player.isTeamkilled(otherPlayersList, true)){ // Game is ended
+            if (!TeamWasKilled || !player.isDead()){ // Local team/player won : show victory screen
                 setState(ENDING);
             } else { // quit game
                 endGame();
@@ -975,11 +975,10 @@ public class GamePanel extends JPanel{
                     case GameMode.TEAMVSTEAM:
                         if (player.getPlayerId() % 2 == 0) {
                             player.setTeamId(2);
-                            System.out.println("rejoint eq 2");
+                            System.out.println(GameMode.TEAMVSTEAM);
                         } else {
                             player.setTeamId(1);
                             System.out.println("rejoint eq 1");
-
                         }
                         break;
                 }
@@ -1128,13 +1127,13 @@ public class GamePanel extends JPanel{
                 for (int i=0; i<otherPlayersBullets.size(); i++){
                     otherPlayersBullets.get(i).draw(g2d, textureSize);
                 }
-                if (player.isDead()){
-                    g2d.drawImage(defeatScreen, (panelWidth-defeatScreen.getWidth())/2, 0, defeatScreen.getWidth(), defeatScreen.getHeight(), null);
+                if (player.isTeamkilled(otherPlayersList, true)) {
+                    g2d.drawImage(victoryScreen, (panelWidth - victoryScreen.getWidth()) / 2, 0, victoryScreen.getWidth(), victoryScreen.getHeight(), null);
                 } else {
-                    g2d.drawImage(victoryScreen, (panelWidth-victoryScreen.getWidth())/2, 0, victoryScreen.getWidth(), victoryScreen.getHeight(), null);
+                    g2d.drawImage(defeatScreen, (panelWidth - defeatScreen.getWidth()) / 2, 0, defeatScreen.getWidth(), defeatScreen.getHeight(), null);
                 }
                 break;
-                
+
             case GAME_MODE:
                 g2d.drawImage(GameModeBackground, 0, 0, 16 * 64, 9 * 64, this);
                 break;
