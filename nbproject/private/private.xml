@@ -3,27 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
             <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Map.java</file>
             <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/GamePanel.java</file>
+            <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Gun.java</file>
             <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/SQLManager.java</file>
-            <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Tools.java</file>
-            <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/GameMode.java</file>
+            <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/SoundPlayer.java</file>
             <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Effect.java</file>
             <file>file:/C:/Users/Bertin/Documents/Ensmm/µ2%20-%20Vert/Informatique/CallOfMuty/src/callofmuty/Player.java</file>
-=======
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GameTimer.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GameMode.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Map.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/TileType.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GamePanel.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Player.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/SoundPlayer.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Effect.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/SQLManager.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Gun.java</file>
-            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/CallOfMuty.java</file>
->>>>>>> 3c4f7472d7c72c5fdf206ec097f95fb4091b934b
         </group>
     </open-files>
 </project-private>

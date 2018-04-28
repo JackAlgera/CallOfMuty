@@ -34,7 +34,7 @@ public class Player {
     private Gun gun;
     private ArrayList<SoundPlayer>  hurtSoundPlayer, dyingSoundPlayer;
         
-    public Player(double x,double y) throws IOException, JavaLayerException{
+    public Player(double x,double y){
         muteSounds = false;
         facedDirection = 0;
         this.posX=x;
@@ -100,7 +100,7 @@ public class Player {
         return name;
     }
     
-    public void setGunId(int gunId)throws IOException, JavaLayerException{
+    public void setGunId(int gunId){
         gun.setId(gunId, 0);
     }
     

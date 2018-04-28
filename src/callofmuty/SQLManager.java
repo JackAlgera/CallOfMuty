@@ -365,8 +365,8 @@ public class SQLManager {
         }
     }
     
-    public ArrayList<Player> getPlayerList() throws IOException, JavaLayerException{ // used only before adding local player to database, when connecting to the game
-        ArrayList<Player> players = new ArrayList<Player>();
+    public ArrayList<Player> getPlayerList(){ // used only before adding local player to database, when connecting to the game
+        ArrayList<Player> players = new ArrayList<>();
         PreparedStatement requete;
         Player newPlayer;
         try {

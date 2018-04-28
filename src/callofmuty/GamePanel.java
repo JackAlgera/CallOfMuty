@@ -210,11 +210,11 @@ public class GamePanel extends JPanel{
     
     private void buildInterface(){
         setLayout(null);
-        MMbuttons = new ArrayList<JComponent>(); //MM : Main menu
-        MEbuttons = new ArrayList<JComponent>(); //ME : Map Editor
-        PGbuttons = new ArrayList<JComponent>(); // Pre game
-        Ebuttons = new ArrayList<JComponent>(); // Ending (Victory or Defeat)
-        GMbuttons = new ArrayList<JComponent>(); //GM : Game Mode
+        MMbuttons = new ArrayList<>(); //MM : Main menu
+        MEbuttons = new ArrayList<>(); //ME : Map Editor
+        PGbuttons = new ArrayList<>(); // Pre game
+        Ebuttons = new ArrayList<>(); // Ending (Victory or Defeat)
+        GMbuttons = new ArrayList<>(); //GM : Game Mode
         /*
         ----------------------------------------------------------------------------------------------------------------
         
@@ -238,13 +238,7 @@ public class GamePanel extends JPanel{
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                try {
-                    initialiseGame(false);
-                } catch (IOException ex) {
-                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (JavaLayerException ex) {
-                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                initialiseGame(false, false);
             }
         });
         
@@ -260,18 +254,19 @@ public class GamePanel extends JPanel{
         add(gameCreateButton);
         MMbuttons.add(gameCreateButton);
         
-        gameCreateButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                playClicSound();
-                try{
-                initialiseGame(true);
-                } catch (IOException ex) {
-                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (JavaLayerException ex) {
-                    Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+        gameCreateButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getButton()==MouseEvent.BUTTON1){ // left mouse button
+                    playClicSound();
+                    initialiseGame(true, false);
+                }
+                if (e.getButton() == MouseEvent.BUTTON3) { // right mouse button
+                    playClicSound();
+                    initialiseGame(true, true);
                 }
             }
-        });
+        });  
         
         //---------------------------------------------- Exit button --------------------------------------------    
         
@@ -915,7 +910,7 @@ public class GamePanel extends JPanel{
 
     ----------------------------------------------------------------------------------------------------------------
     */
-    public void initialiseGame(boolean isHost) throws IOException, JavaLayerException {
+    public void initialiseGame(boolean isHost, boolean forceDatabaseClear) {
         this.isHost = isHost;
         sql = new SQLManager();
         int[] sqlGame = sql.getGame();
@@ -934,29 +929,40 @@ public class GamePanel extends JPanel{
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
-                if (sqlGame[0] == PRE_GAME) {
+                if (forceDatabaseClear) {
                     int confirm = JOptionPane.showOptionDialog(
-                            null, "A game is already being created, to you want to join it ?",
-                            "Join the game ?", JOptionPane.YES_NO_OPTION,
+                            null, "Do you really want to clear the database (this will cancel any game currently running)?",
+                            "Clear the database", JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE, null, null, null);
                     if (confirm == 0) {
-                        initialiseGame(false);
-                    } else {
-                        sql.disconnect();
+                        sql.clearTable();
+                        initialiseGame(true, false);
                     }
-                } else { // A game is already on
-                    int confirm = JOptionPane.showOptionDialog(
-                            null, "A game is already on, do you want to spectate it ?",
-                            "Spectate the game ?", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, null, null, null);
-                    if (confirm == 0) {
-                        otherPlayersList = sql.getPlayerList();
-                        player.setHealth(0);
-                        map = sql.getMap(textureSize);
-                        setState(IN_GAME);
-                        isConnected = true;
-                    } else {
-                        sql.disconnect();
+                } else {
+                    if (sqlGame[0] == PRE_GAME) {
+                        int confirm = JOptionPane.showOptionDialog(
+                                null, "A game is already being created, to you want to join it ?",
+                                "Join the game ?", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE, null, null, null);
+                        if (confirm == 0) {
+                            initialiseGame(false, false);
+                        } else {
+                            sql.disconnect();
+                        }
+                    } else { // A game is already on
+                        int confirm = JOptionPane.showOptionDialog(
+                                null, "A game is already on, do you want to spectate it ?",
+                                "Spectate the game ?", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE, null, null, null);
+                        if (confirm == 0) {
+                            otherPlayersList = sql.getPlayerList();
+                            player.setHealth(0);
+                            map = sql.getMap(textureSize);
+                            setState(IN_GAME);
+                            isConnected = true;
+                        } else {
+                            sql.disconnect();
+                        }
                     }
                 }
             }
@@ -999,7 +1005,7 @@ public class GamePanel extends JPanel{
                             "Create the game ?", JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE, null, null, null);
                     if (confirm == 0) {
-                        initialiseGame(true);
+                        initialiseGame(true, false);
                     } else {
                         sql.disconnect();
                     }
@@ -1030,12 +1036,8 @@ public class GamePanel extends JPanel{
             if(!player.isDead()){
                 sql.removePlayer(player);
             }
-            try {
-                if(sql.getPlayerList().isEmpty() || (isHost && formerGameState==PRE_GAME) ){
-                    sql.clearTable();
-                }
-            } catch (IOException | JavaLayerException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            if (sql.getPlayerList().isEmpty() || (isHost && formerGameState == PRE_GAME)) {
+                sql.clearTable();
             }
             sql.disconnect();
         }
