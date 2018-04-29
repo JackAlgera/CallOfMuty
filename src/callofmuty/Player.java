@@ -12,7 +12,7 @@ public class Player {
 
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
-    private static double maxHealth = 100.0;
+    private static double maxHealth = 100.0, timeBetweenHurtSounds = 300; // in milliseconds
     private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
@@ -21,7 +21,7 @@ public class Player {
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
     private double[] speed, acceleration;
     private int[] directionOfTravel;
-    private double health;
+    private double health, timeSinceLastHurtSound;
     private boolean isDead, muteSounds, justTeleported;  
     private int[] skin;
     private String name;
@@ -36,6 +36,7 @@ public class Player {
         
     public Player(double x,double y){
         muteSounds = false;
+        timeSinceLastHurtSound = System.currentTimeMillis();
         facedDirection = 0;
         this.posX=x;
         this.posY=y;
@@ -147,8 +148,9 @@ public class Player {
             }
         } else {
             isDead = false;
-            if (formerHealth > health && !muteSounds) {
+            if (formerHealth > health && !muteSounds && System.currentTimeMillis()-timeBetweenHurtSounds > timeSinceLastHurtSound) {
                 hurtSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, hurtSoundPlayer.size())).play();
+                timeSinceLastHurtSound = System.currentTimeMillis();
             }
         }
         if (health < 0.15*maxHealth){
@@ -519,6 +521,7 @@ public class Player {
     public Player(int playerId){ //usefull constructor for SQL updates
         this.playerId = playerId;
         muteSounds = false;
+        timeSinceLastHurtSound = System.currentTimeMillis()-timeBetweenHurtSounds;
     }
     
     public boolean isFriend(Player otherPlayer){

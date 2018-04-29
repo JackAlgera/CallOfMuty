@@ -366,6 +366,14 @@ public class GamePanel extends JPanel{
         add(MEtopSkinArrow);
         MEbuttons.add(MEtopSkinArrow);
         
+        MEtopSkinArrow.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                tileSelector.changeSelectedRow(-1);
+                repaint();
+            }
+        });
+        
         //--------------------------------------- Down arrow for the map editor ------------------------------------ 
         
         JButton MEBottomSkinArrow = new JButton();
@@ -378,6 +386,13 @@ public class GamePanel extends JPanel{
         add(MEBottomSkinArrow);
         MEbuttons.add(MEBottomSkinArrow);        
         
+        MEBottomSkinArrow.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                tileSelector.changeSelectedRow(1);
+                repaint();
+            }
+        });
         //--------------------------------------- Right arrow map selection ------------------------------------  
         
         JButton rightMapArrow = new JButton();

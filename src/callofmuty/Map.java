@@ -15,10 +15,11 @@ public class Map{
             // obstacles
             box = new TileType(true, true,2,6,1,1,new Effect()),
             // bad effects
-            water = new TileType(false, false,2,3,new Effect()), mud = new TileType(false, false, 3,6,new Effect(Effect.SLOWED, 300, 0.5)), hotGround = new TileType(false, false, 4,6,new Effect(Effect.BURNING, 500, 10)),
+            hole = new TileType(false, false,3,7,new Effect()), mud = new TileType(false, false, 3,6,new Effect(Effect.SLOWED, 300, 0.5)), hotGround = new TileType(false, false, 4,6,new Effect(Effect.BURNING, 500, 10)),
             // other
             teleporter = new TileType(false, false, 5,6, new Effect());
     private static int TELEPORTER_ID = 13;
+    public static int NUMBER_OF_TILETYPES = 14;
         
     private int[][] map;
     private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
@@ -205,7 +206,7 @@ public class Map{
                 tile = box;
                 break;
             case 10:
-                tile = water;
+                tile = hole;
                 break;
             case 11:
                 tile = mud;
