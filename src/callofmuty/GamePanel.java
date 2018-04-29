@@ -834,29 +834,31 @@ public class GamePanel extends JPanel{
         ArrayList<String> keyStrokeList = new ArrayList<>();
         keyStrokeList.add("S"); keyStrokeList.add("Z"); keyStrokeList.add("Q"); keyStrokeList.add("D");
         keyStrokeList.add("DOWN"); keyStrokeList.add("UP"); keyStrokeList.add("LEFT"); keyStrokeList.add("RIGHT"); keyStrokeList.add("ESCAPE");
-        for (String key : keyStrokeList)
-        {
-            this.getInputMap().put(KeyStroke.getKeyStroke(key), key + "Pressed");
-            this.getInputMap().put(KeyStroke.getKeyStroke("released " + key), key + "Released");
+        for (String key : keyStrokeList){
+            getInputMap().put(KeyStroke.getKeyStroke(key), key + "Pressed");
+            getInputMap().put(KeyStroke.getKeyStroke("released " + key), key + "Released");
         }
+        getInputMap().put(KeyStroke.getKeyStroke("F"), "FPressed");
         
-        this.getActionMap().put("ZPressed", new KeyPressed(KeyEvent.VK_Z));
-        this.getActionMap().put("ZReleased", new KeyReleased(KeyEvent.VK_Z) );
-        this.getActionMap().put("SPressed", new KeyPressed(KeyEvent.VK_S));
-        this.getActionMap().put("SReleased", new KeyReleased(KeyEvent.VK_S) );
-        this.getActionMap().put("QPressed", new KeyPressed(KeyEvent.VK_Q));
-        this.getActionMap().put("QReleased", new KeyReleased(KeyEvent.VK_Q) );
-        this.getActionMap().put("DPressed", new KeyPressed(KeyEvent.VK_D));
-        this.getActionMap().put("DReleased", new KeyReleased(KeyEvent.VK_D) );
-        this.getActionMap().put("UPPressed", new KeyPressed(KeyEvent.VK_UP));
-        this.getActionMap().put("UPReleased", new KeyReleased(KeyEvent.VK_UP) );
-        this.getActionMap().put("DOWNPressed", new KeyPressed(KeyEvent.VK_DOWN));
-        this.getActionMap().put("DOWNReleased", new KeyReleased(KeyEvent.VK_DOWN) );
-        this.getActionMap().put("LEFTPressed", new KeyPressed(KeyEvent.VK_LEFT));
-        this.getActionMap().put("LEFTReleased", new KeyReleased(KeyEvent.VK_LEFT) );
-        this.getActionMap().put("RIGHTPressed", new KeyPressed(KeyEvent.VK_RIGHT));
-        this.getActionMap().put("RIGHTReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
-        this.getActionMap().put("ESCAPEPressed", new EscapePressed());
+        
+        getActionMap().put("ZPressed", new KeyPressed(KeyEvent.VK_Z));
+        getActionMap().put("ZReleased", new KeyReleased(KeyEvent.VK_Z) );
+        getActionMap().put("SPressed", new KeyPressed(KeyEvent.VK_S));
+        getActionMap().put("SReleased", new KeyReleased(KeyEvent.VK_S) );
+        getActionMap().put("QPressed", new KeyPressed(KeyEvent.VK_Q));
+        getActionMap().put("QReleased", new KeyReleased(KeyEvent.VK_Q) );
+        getActionMap().put("DPressed", new KeyPressed(KeyEvent.VK_D));
+        getActionMap().put("DReleased", new KeyReleased(KeyEvent.VK_D) );
+        getActionMap().put("UPPressed", new KeyPressed(KeyEvent.VK_UP));
+        getActionMap().put("UPReleased", new KeyReleased(KeyEvent.VK_UP) );
+        getActionMap().put("DOWNPressed", new KeyPressed(KeyEvent.VK_DOWN));
+        getActionMap().put("DOWNReleased", new KeyReleased(KeyEvent.VK_DOWN) );
+        getActionMap().put("LEFTPressed", new KeyPressed(KeyEvent.VK_LEFT));
+        getActionMap().put("LEFTReleased", new KeyReleased(KeyEvent.VK_LEFT) );
+        getActionMap().put("RIGHTPressed", new KeyPressed(KeyEvent.VK_RIGHT));
+        getActionMap().put("RIGHTReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
+        getActionMap().put("ESCAPEPressed", new EscapePressed());
+        getActionMap().put("FPressed", new Taunt());
     }
     
        //Use of KeyBindings
@@ -914,6 +916,19 @@ public class GamePanel extends JPanel{
                         endGame();
                     }
                 }
+            }
+        }
+    }
+    
+    private class Taunt extends AbstractAction{
+        
+        public Taunt(){
+        }
+        
+        @Override
+        public void actionPerformed( ActionEvent tf ){
+            if(gameState==IN_GAME){
+                player.taunt();
             }
         }
     }

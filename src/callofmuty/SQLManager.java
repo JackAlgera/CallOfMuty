@@ -22,7 +22,7 @@ public class SQLManager {
 */
     public SQLManager(){         
         try {
-            connexion=DriverManager.getConnection("jdbc:mysql://voussac.home:3306/callofmuty?serverTimezone=UTC","thomas", "thomas");//"jdbc:mysql://nemrod.ens2m.fr:3306/20172018_s2_vs2_tp4?serverTimezone=UTC","vs2tp4", "vs2tp4");
+            connexion=DriverManager.getConnection("jdbc:mysql://nemrod.ens2m.fr:3306/20172018_s2_vs2_tp4?serverTimezone=UTC","vs2tp4", "vs2tp4");
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }

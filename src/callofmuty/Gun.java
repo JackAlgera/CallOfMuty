@@ -72,7 +72,7 @@ public class Gun {
                 reloadTime = 1000;
                 bulletSpeed = 1.8;
                 distanceMaxShoot = 800;
-                bulletSpread = 0.017;
+                bulletSpread = 0.0017;
                 xImage = 3;
                 yImage = 1;
                 tailleGun = 2;
@@ -100,7 +100,7 @@ public class Gun {
                 reloadTime = 1000;
                 bulletSpeed = 1.0;
                 distanceMaxShoot = 500;
-                bulletSpread = 0.087;
+                bulletSpread = 0.037;
                 xImage = 1;
                 yImage = 3;
                 tailleGun = 2;

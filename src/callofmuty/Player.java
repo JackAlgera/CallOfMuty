@@ -34,7 +34,7 @@ public class Player {
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
     private SoundPlayer fallingSoundPlayer;
-    private ArrayList<SoundPlayer>  hurtSoundPlayer, dyingSoundPlayer;
+    private ArrayList<SoundPlayer>  hurtSoundPlayer, dyingSoundPlayer, tauntSoundPlayer;
         
     public Player(double x,double y){
         muteSounds = false;
@@ -90,7 +90,10 @@ public class Player {
         hurtSoundPlayer.add(new SoundPlayer("hurtSound3.mp3", false));
         dyingSoundPlayer = new ArrayList<>();
         dyingSoundPlayer.add(new SoundPlayer("dyingSound.mp3", false));
+        dyingSoundPlayer.add(new SoundPlayer("dyingSound2.mp3", false));
         fallingSoundPlayer = new SoundPlayer("fallingSound.mp3", false);
+        tauntSoundPlayer = new ArrayList<>();
+        tauntSoundPlayer.add(new SoundPlayer("taunt.mp3", false));
     }
     
     public void reset(Map map, boolean muteSounds) {
@@ -100,6 +103,12 @@ public class Player {
         resetEffects();
         setPosition(map);
         resetHurtPlayers();
+    }
+    
+    public void taunt(){
+        if (!isDead && !muteSounds){
+            tauntSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, tauntSoundPlayer.size())).play();
+        }
     }
     
     public void setMuteSounds(Boolean muteSounds){
@@ -674,10 +683,10 @@ public class Player {
     }
 
     void dieByFall() {
-        hurtSelf(health+1);
         if(!muteSounds){
             fallingSoundPlayer.play();
             setMuteSounds(true);
         }
+        hurtSelf(health+1);
     }
 }

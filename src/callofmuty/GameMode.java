@@ -13,7 +13,7 @@ public class GameMode {
     
     public GameMode(){
         Options= new boolean[] {false,false,false,false};
-        setId(TEAM);
+        setId(DEFAULT);
     }
 
     public void setId(int id) {
