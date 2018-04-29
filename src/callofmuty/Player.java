@@ -94,6 +94,9 @@ public class Player {
         fallingSoundPlayer = new SoundPlayer("fallingSound.mp3", false);
         tauntSoundPlayer = new ArrayList<>();
         tauntSoundPlayer.add(new SoundPlayer("taunt.mp3", false));
+        tauntSoundPlayer.add(new SoundPlayer("taunt2.mp3", false));
+        tauntSoundPlayer.add(new SoundPlayer("taunt3.mp3", false));
+        tauntSoundPlayer.add(new SoundPlayer("taunt4.mp3", false));
     }
     
     public void reset(Map map, boolean muteSounds) {

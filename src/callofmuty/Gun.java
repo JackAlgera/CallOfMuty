@@ -18,7 +18,7 @@ public class Gun {
     private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
-    private SoundPlayer gunSound, uziSound;
+    private SoundPlayer gunSound, uziSound, sniperSound,shotgunSound;
     
     public Gun(){
         ammunition = 0;
@@ -26,6 +26,8 @@ public class Gun {
         lastShotTimeStamp = System.currentTimeMillis();
         gunSound = new SoundPlayer("shootingSound.mp3", false);
         uziSound = new SoundPlayer("uziSound.mp3", false);
+        sniperSound = new SoundPlayer("sniperSound.mp3", false);
+        shotgunSound = new SoundPlayer("shotgunSound.mp3", false);
     }
     
     public double getDamage(){
@@ -207,6 +209,12 @@ public class Gun {
                 break;
             case UZI:
                 uziSound.play();
+                break;
+            case SNIPER:
+                sniperSound.play();
+                break;
+            case SHOTGUN:
+                shotgunSound.play();
                 break;
             default:
                 gunSound.play();
