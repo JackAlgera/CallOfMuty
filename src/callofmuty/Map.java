@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.JOptionPane;
 
 public class Map{
@@ -14,11 +15,15 @@ public class Map{
             // obstacles
             box = new TileType(true, true,2,6,1,1,new Effect()),
             // bad effects
-            water = new TileType(false, false,2,3,new Effect()), mud = new TileType(false, false, 3,6,new Effect(Effect.SLOWED, 300, 0.5)), hotGround = new TileType(false, false, 4,6,new Effect(Effect.BURNING, 500, 10));
+            water = new TileType(false, false,2,3,new Effect()), mud = new TileType(false, false, 3,6,new Effect(Effect.SLOWED, 300, 0.5)), hotGround = new TileType(false, false, 4,6,new Effect(Effect.BURNING, 500, 10)),
+            // other
+            teleporter = new TileType(false, false, 5,6, new Effect());
+    private static int TELEPORTER_ID = 13;
         
     private int[][] map;
     private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
     private ArrayList<int[]> startTile;
+    private ArrayList<int[]> teleporters;
     
     public Map(int[][] map, int textureSize){
         this.map=map;
@@ -29,6 +34,15 @@ public class Map{
         yPos=0;
         drawWidth = mapWidth*textureSize;
         drawHeight = mapHeight*textureSize;
+        teleporters = new ArrayList<>();
+        for (int i = 0; i < mapWidth; i++){
+            for (int j = 0; j < mapHeight; j++){
+                if (map[i][j]==TELEPORTER_ID){
+                    teleporters.add(new int[]{i,j});
+                }
+            }
+        }
+        startTile = new ArrayList<>();
     }
     
     public void addStartTile(int[] newStartTile){
@@ -53,6 +67,20 @@ public class Map{
         boolean tileFound = false;
         while(!tileFound && i<startTile.size()){
             tileFound = (tile[0]==startTile.get(i)[0]) && (tile[1]==startTile.get(i)[1]);
+            i++;
+        }
+        if(tileFound){
+            index = i-1;
+        }
+        return index;
+    }
+    
+    public int teleportersIndex(int[] tile){
+        int index = -1;
+        int i = 0;
+        boolean tileFound = false;
+        while(!tileFound && i<teleporters.size()){
+            tileFound = (tile[0]==teleporters.get(i)[0]) && (tile[1]==teleporters.get(i)[1]);
             i++;
         }
         if(tileFound){
@@ -134,9 +162,12 @@ public class Map{
         map[0][mapHeight-1] = 6;
         map[mapWidth-1][0] = 7;
         map[mapWidth-1][mapHeight-1] = 8;
-        map[4][1] = 11 ;map[4][2] = 11;map[1][4] = 10;map[2][4] = 12;map[4][6] = 9;map[4][7] = 9;
+        map[4][1] = 13 ;map[4][2] = 11;map[1][4] = 10;map[2][4] = 12;map[4][6] = 9;map[4][7] = 13;
         startTile = new ArrayList<>();
         startTile.add(new int[]{1,1});
+        teleporters = new ArrayList<>();
+        teleporters.add(new int[]{4,1});
+        teleporters.add(new int[]{4,7});
     }
     
     public TileType getTile(int i, int j){
@@ -181,6 +212,9 @@ public class Map{
                 break;
             case 12: 
                 tile = hotGround;
+                break;
+            case 13:
+                tile = teleporter;
                 break;
             default :
                 tile = dirt;
@@ -242,10 +276,22 @@ public class Map{
     public void setTile(int i, int j, int tileType){
         if (startTileIndex(new int[]{i,j})>-1){
             if (!getTile(tileType).blocksPlayers()){
+                if (map[i][j]==TELEPORTER_ID){
+                    teleporters.remove(teleportersIndex(new int[]{i,j}));
+                }
                 map[i][j] = tileType;
+                if(map[i][j]==TELEPORTER_ID){
+                    teleporters.add(new int[]{i,j});
+                }
             }
         } else {
+            if (map[i][j] == TELEPORTER_ID) {
+                teleporters.remove(teleportersIndex(new int[]{i, j}));
+            }
             map[i][j] = tileType;
+            if (map[i][j] == TELEPORTER_ID) {
+                teleporters.add(new int[]{i, j});
+            }
         }
     }
     
@@ -257,6 +303,34 @@ public class Map{
             tileType = map[i][j];
         }
         return new int[]{tileType, i, j};
+    }
+    
+    // checks if player is on a teleporter, returns destination if he is, else returns {-1,-1}
+    public int[] teleporterDestination(double[] xValues, double[] yValues){
+        int teleporterIndex;
+        boolean isOnTeleporter = false;
+        int[] destination = new int[]{-1,-1};
+        int valuesIndex = 0;
+        int i,j;
+        while(!isOnTeleporter && valuesIndex < xValues.length){
+            i = ((int)xValues[valuesIndex]-xPos) * mapWidth/drawWidth;
+            j = ((int)yValues[valuesIndex]-yPos) * mapHeight/drawHeight;
+            isOnTeleporter = map[i][j]==TELEPORTER_ID;
+            valuesIndex++;
+        }
+        if(isOnTeleporter){
+            valuesIndex--;
+            i = ((int)xValues[valuesIndex]-xPos) * mapWidth/drawWidth;
+            j = ((int)yValues[valuesIndex]-yPos) * mapHeight/drawHeight;
+            teleporterIndex = teleportersIndex(new int[]{i,j});
+            int[] entryTeleporter = teleporters.remove(teleporterIndex);
+            int destinationIndex = ThreadLocalRandom.current().nextInt(0, teleporters.size());
+            int[] destinationTile = teleporters.get(destinationIndex);
+            destination[0] = destinationTile[0]*textureSize;
+            destination[1] = destinationTile[1]*textureSize;
+            teleporters.add(entryTeleporter);
+        }
+        return destination;
     }
         
 }

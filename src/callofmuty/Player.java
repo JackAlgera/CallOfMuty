@@ -22,7 +22,7 @@ public class Player {
     private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health;
-    private boolean isDead, muteSounds;  
+    private boolean isDead, muteSounds, justTeleported;  
     private int[] skin;
     private String name;
     public ArrayList<Image> animationImages = new ArrayList<>();
@@ -45,6 +45,7 @@ public class Player {
         this.skin[0]= 1;
         this.skin[1]= 1;
         teamId= 0;
+        justTeleported = false;
         image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
         
         destroyedBullets = new ArrayList<>();
@@ -313,8 +314,12 @@ public class Player {
                     }
                 }
             }
+            
+            checkTeleports(map);
+            
             posX = wantedX;
             posY = wantedY;
+            
                         
             if(Math.abs(speed[0]) <= 0.0001 && Math.abs(speed[1]) <= 0.0001){
                 playerAnimation.setIsIdle(true);
@@ -327,13 +332,26 @@ public class Player {
     
     public void updateTileEffects(Map map){
         double[] xValues = new double[]{posX, posX, posX+playerWidth, posX+playerWidth};
-        double[] yValues = new double[]{posY, posY+playerHeight, posY, posY+playerHeight};
+        double[] yValues = new double[]{posY+playerHeight*0.6, posY+playerHeight, posY+playerHeight*0.6, posY+playerHeight};
         Effect effect;
         for (int i = 0; i<4; i++ ) {
             effect = map.getTile(xValues[i], yValues[i]).getEffect();
             if (effect.getId()!=Effect.NO_EFFECT) {
                 addEffect(effect);
             }
+        }
+    }
+    
+    public void checkTeleports(Map map){
+        double[] xValues = new double[]{posX, posX, posX+playerWidth, posX+playerWidth};
+        double[] yValues = new double[]{posY+playerHeight*0.6, posY+playerHeight, posY+playerHeight*0.6, posY+playerHeight};
+        int[] destination = map.teleporterDestination(xValues, yValues); // returns {-1, -1} if not on a teleporter, else returns new position
+        if(justTeleported){
+            justTeleported = destination[0]!=-1;
+        } else if(destination[0]!=-1){
+            wantedX = destination[0];
+            wantedY = destination[1];
+            justTeleported = true;
         }
     }
     
