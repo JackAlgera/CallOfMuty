@@ -988,10 +988,8 @@ public class GamePanel extends JPanel{
                     case GameMode.TEAMVSTEAM:
                         if (player.getPlayerId() % 2 == 0) {
                             player.setTeamId(2);
-                            System.out.println(GameMode.TEAMVSTEAM);
                         } else {
                             player.setTeamId(1);
-                            System.out.println("rejoint eq 1");
                         }
                         break;
                 }
