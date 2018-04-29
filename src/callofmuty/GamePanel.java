@@ -938,7 +938,9 @@ public class GamePanel extends JPanel{
                 player.setGunId(Gun.NO_GUN);
                 player.setPlayerId(1);
                 player.setTeamId(1);
-                player.setToMaxHealth();
+                player.setHealth(Player.maxHealth);
+                player.setMuteSounds(muteSounds);
+                player.resetEffects();
                 player.setPosition(map);
                 player.addPlayer(sql);
                 isConnected = true;
@@ -984,9 +986,11 @@ public class GamePanel extends JPanel{
         } else { // Try to join a Pre_game
             if (sqlGame[0] == PRE_GAME) {
                 otherPlayersList = sql.getPlayerList();
-                player.setToMaxHealth();
+                player.setHealth(Player.maxHealth);
+                player.setMuteSounds(muteSounds);
                 player.setGunId(Gun.NO_GUN);
                 map = sql.getMap(textureSize);
+                player.resetEffects();
                 player.setPosition(map);
                 gameMode.setId(sqlGame[1]);
                 player.setPlayerId(1); // 0 means "null", ids start at 1            

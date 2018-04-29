@@ -12,7 +12,8 @@ public class Player {
 
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
-    private static double maxHealth = 100.0, timeBetweenHurtSounds = 300; // in milliseconds
+    public static double maxHealth = 100.0;
+    private static double timeBetweenHurtSounds = 300; // in milliseconds
     private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
@@ -32,6 +33,7 @@ public class Player {
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
+    private SoundPlayer fallingSoundPlayer;
     private ArrayList<SoundPlayer>  hurtSoundPlayer, dyingSoundPlayer;
         
     public Player(double x,double y){
@@ -88,6 +90,7 @@ public class Player {
         hurtSoundPlayer.add(new SoundPlayer("hurtSound3.mp3", false));
         dyingSoundPlayer = new ArrayList<>();
         dyingSoundPlayer.add(new SoundPlayer("dyingSound.mp3", false));
+        fallingSoundPlayer = new SoundPlayer("fallingSound.mp3", false);
     }
     
     public void setMuteSounds(Boolean muteSounds){
@@ -114,10 +117,6 @@ public class Player {
         return hurtPlayers;
     }
     
-    public void setToMaxHealth(){
-        health = maxHealth;
-    }
-    
 
     public void addPlayer(SQLManager sql){
         bulletList = new ArrayList<>();
@@ -132,15 +131,18 @@ public class Player {
         hurtPlayers = new ArrayList<>();
     }
     
+    public void resetEffects(){
+        effects = new ArrayList<>();
+    }
+    
     public void setPlayerState(int playerState) {
         this.playerState = playerState;
     }
 
     public void setHealth(double health) {
         double formerHealth = this.health;
-        if(!isDead()){
-            this.health = health;
-        }
+        this.health = health;
+        
         if (health <= 0) {
             isDead = true;
             if (!muteSounds) {
@@ -660,5 +662,13 @@ public class Player {
     public void setSpeed(double[] speed1){
         speed[0]=speed1[0];
         speed[1] =speed1[1];       
+    }
+
+    void dieByFall() {
+        hurtSelf(health+1);
+        if(!muteSounds){
+            fallingSoundPlayer.play();
+            setMuteSounds(true);
+        }
     }
 }

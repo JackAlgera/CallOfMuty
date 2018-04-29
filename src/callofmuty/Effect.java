@@ -3,7 +3,7 @@ package callofmuty;
 public class Effect {
     
     public final static int NO_EFFECT = 0, HEALING = 0, FASTER = 1,
-                    BURNING = 2, SLOWED = 3, STUNED = 4;
+                    BURNING = 2, SLOWED = 3, STUNED = 4, FALL_TO_DEATH = 5;
     
     private int id;
     private double value;
@@ -24,18 +24,22 @@ public class Effect {
 
     public boolean update (long dT, Player player) { // Returns true if this effect is still active
         timeLeft -= dT;
-        if(timeLeft>0){
-            switch(id){
+        if (timeLeft > 0) {
+            switch (id) {
                 case HEALING:
-                    player.hurtSelf(-dT*value/1000);
+                    player.hurtSelf(-dT * value / 1000);
                     break;
                 case FASTER:
                 case SLOWED:
                     double[] formerSpeed = player.getSpeed();
-                    player.setSpeed(new double[]{formerSpeed[0]*value,formerSpeed[1]*value});
+                    player.setSpeed(new double[]{formerSpeed[0] * value, formerSpeed[1] * value});
                     break;
                 case BURNING:
-                    player.hurtSelf(dT*value/1000);
+                    player.hurtSelf(dT * value / 1000);
+                    break;
+                case FALL_TO_DEATH:
+                    player.dieByFall();
+                    timeLeft = 0;
             }
         }
         return timeLeft>0;
