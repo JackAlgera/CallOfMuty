@@ -935,13 +935,9 @@ public class GamePanel extends JPanel{
             if (playerList.size()<2) { // No game is currently on
                 sql.clearTable(); //Clear previous game on SQL server
                 sql.createGame(map, gameMode.getId());
-                player.setGunId(Gun.NO_GUN);
+                player.reset(map, muteSounds);
                 player.setPlayerId(1);
                 player.setTeamId(1);
-                player.setHealth(Player.maxHealth);
-                player.setMuteSounds(muteSounds);
-                player.resetEffects();
-                player.setPosition(map);
                 player.addPlayer(sql);
                 isConnected = true;
                 setState(PRE_GAME);
@@ -986,12 +982,8 @@ public class GamePanel extends JPanel{
         } else { // Try to join a Pre_game
             if (sqlGame[0] == PRE_GAME) {
                 otherPlayersList = sql.getPlayerList();
-                player.setHealth(Player.maxHealth);
-                player.setMuteSounds(muteSounds);
-                player.setGunId(Gun.NO_GUN);
                 map = sql.getMap(textureSize);
-                player.resetEffects();
-                player.setPosition(map);
+                player.reset(map, muteSounds);
                 gameMode.setId(sqlGame[1]);
                 player.setPlayerId(1); // 0 means "null", ids start at 1            
                 while (otherPlayersList.contains(player)) {

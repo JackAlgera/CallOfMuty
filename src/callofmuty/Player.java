@@ -93,6 +93,15 @@ public class Player {
         fallingSoundPlayer = new SoundPlayer("fallingSound.mp3", false);
     }
     
+    public void reset(Map map, boolean muteSounds) {
+        setHealth(Player.maxHealth);
+        setMuteSounds(muteSounds);
+        setGunId(Gun.NO_GUN);
+        resetEffects();
+        setPosition(map);
+        resetHurtPlayers();
+    }
+    
     public void setMuteSounds(Boolean muteSounds){
         this.muteSounds = muteSounds;
     }
