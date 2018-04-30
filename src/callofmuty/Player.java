@@ -29,7 +29,7 @@ public class Player {
     public Animation playerAnimation;
     private ArrayList<Player> hurtPlayers;
     private ArrayList<Effect> effects = new ArrayList<>();
-    private long currentRollTime, timeSinceTaunt;
+    private long currentRollTime, lastTauntTimeStamp;
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
@@ -50,6 +50,7 @@ public class Player {
         teamId= 0;
         justTeleported = false;
         isRolling = false;
+        isTaunting = false;
         image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
         currentRollTime = 0;
         destroyedBullets = new ArrayList<>();
@@ -74,7 +75,7 @@ public class Player {
         directionOfTravel[1] = 0; // =-1 -> wants to go up, =+1 -> wants to go down, =0 -> stands still on y axis
         this.accelerationValue = 0.002;
         isDead = false;
-        isTaunting = false;
+        lastTauntTimeStamp = System.currentTimeMillis() - timeBetweenTaunts;
         health=maxHealth;
         hpBar = normalHealthBar;
         name = "Username";
@@ -111,9 +112,9 @@ public class Player {
     }
     
     public void taunt(){
-        if (!isDead && !isTaunting){
+        if (!isDead && System.currentTimeMillis() - lastTauntTimeStamp > timeBetweenTaunts){
+            lastTauntTimeStamp = System.currentTimeMillis();
             isTaunting = true;
-            timeSinceTaunt = 0;
             if(!muteSounds){
                 tauntSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, tauntSoundPlayer.size())).play();
             }
@@ -369,8 +370,7 @@ public class Player {
                 playerAnimation.setIsIdle(false);
             }
             if(isTaunting){
-                timeSinceTaunt+=dT;
-                if(timeSinceTaunt > timeBetweenTaunts){
+                if(System.currentTimeMillis() - lastTauntTimeStamp > timeBetweenTaunts){
                     isTaunting = false;
                 }
             }
@@ -572,6 +572,7 @@ public class Player {
         muteSounds = false;
         isTaunting = false;
         timeSinceLastHurtSound = System.currentTimeMillis()-timeBetweenHurtSounds;
+        lastTauntTimeStamp = System.currentTimeMillis()-timeBetweenTaunts;
     }
     
     public boolean isFriend(Player otherPlayer){
