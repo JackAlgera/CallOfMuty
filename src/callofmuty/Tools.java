@@ -23,10 +23,15 @@ public class Tools {
                 WeaponTileset = loadImage("WeaponTileset.png");
     
     public static int tileSize = 32; //Size of a tile in a tileset image
+    public static int playerTileSize = 64; //Size of a tile in a tileset image
 
     
     public static BufferedImage selectTile(BufferedImage tileset, int column, int row){
         return tileset.getSubimage(tileSize*(row-1),tileSize*(column-1), tileSize, tileSize);
+    }
+    
+    public static BufferedImage selectPlayerTile(BufferedImage tileset, int column, int row){
+        return tileset.getSubimage(playerTileSize*(row-1),playerTileSize*(column-1), playerTileSize, playerTileSize);
     }
     
     public static BufferedImage selectWeaponTile(BufferedImage tileset, int column, int row, int taille){

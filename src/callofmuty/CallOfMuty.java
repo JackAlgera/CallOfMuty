@@ -69,7 +69,13 @@ public class CallOfMuty {
                     }
                     game.repaint();
                     break;
-
+                    
+                    /*
+                case GamePanel.MAIN_MENU:
+                    dT = timer.update();
+                    game.updatePlayerAnimation(dT);
+                    break;
+                    */
                 default: {
                     try {
                         Thread.sleep(50);

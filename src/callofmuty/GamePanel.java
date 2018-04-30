@@ -89,6 +89,7 @@ public class GamePanel extends JPanel{
     private ArrayList<Bullet> otherPlayersBullets;
     private GameTimer timer;
     private int[] mousePosition;
+    private int numberOfSkins = 3;
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer){
         super();
@@ -322,9 +323,7 @@ public class GamePanel extends JPanel{
         rightSkinArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                int skinIndex = player.getSkinIndex();
-                skinIndex = (skinIndex%5)+1;
-                getPlayer().setSkin(skinIndex);
+                getPlayer().setSkin((player.getSkinIndex() % numberOfSkins) + 1);
                 repaint();
             }
         });
@@ -346,8 +345,8 @@ public class GamePanel extends JPanel{
                 playClicSound();
                 int skinIndex = player.getSkinIndex();
                 skinIndex--;
-                if (skinIndex<1){
-                    skinIndex=5;
+                if (skinIndex < 1){
+                    skinIndex = numberOfSkins;
                 }
                 getPlayer().setSkin(skinIndex);
                 repaint();
@@ -703,7 +702,13 @@ public class GamePanel extends JPanel{
         long time = System.currentTimeMillis();
         // Update player movement 
         updatePlayerMovement();
+        
         player.update(dT, map);
+        for(Player player : otherPlayersList)
+        {
+            player.updateAnimation(dT);
+        }
+        
         if(printTime){
             System.out.println("Player movement & update : " + (System.currentTimeMillis()-time));
             time = System.currentTimeMillis();
@@ -767,12 +772,12 @@ public class GamePanel extends JPanel{
             player.setDirectionOfTravel(1, -1);
         }
         if (pressedButtons.contains(KeyEvent.VK_Q) || pressedButtons.contains(KeyEvent.VK_LEFT)){
-//            player.setFacedDirection(1);
+            player.setFacedDirection(1);
             player.setAcceleration(0, -1);
             player.setDirectionOfTravel(0, -1);
         }
         if (pressedButtons.contains(KeyEvent.VK_D) || pressedButtons.contains(KeyEvent.VK_RIGHT)){
-//            player.setFacedDirection(2);
+            player.setFacedDirection(2);
             player.setAcceleration(0, 1);
             player.setDirectionOfTravel(0, 1);
         }
@@ -1360,5 +1365,9 @@ public class GamePanel extends JPanel{
         if (!muteSounds) {
             clicSoundPlayer.play();
         }
+    }
+    
+    public void updatePlayerAnimation(long dT){
+        player.updateAnimation(dT);
     }
 }

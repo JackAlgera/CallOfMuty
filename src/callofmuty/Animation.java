@@ -5,11 +5,14 @@ public class Animation {
     int[] numberOfImagesAnimation;
     int currentImage, firstImage, animationImageLength, row, type; // currentImage starts at 1
     boolean isIdle;
+    int skinId, numberOfSkins;
     
     public static final int PLAYER = 0, GUN = 1, STILL_IMAGE = 2;
     
     public Animation(double switchTime, int numberOfImagesX, int numberOfImagesY, int animationImageLength, int firstImage, int type)
     {
+        skinId = 1;
+        numberOfSkins = 3;
         this.type = type;
         row = 1;
         this.totalTime = 0;
@@ -64,14 +67,7 @@ public class Animation {
         switch(type)
         {
             case PLAYER:
-                if (isIdle)
-                {
-                    image = ((row-1)*numberOfImagesAnimation[0] + currentImage - 1);
-                }
-                else
-                {
-                    image = 0;//(row*numberOfImagesAnimation[0] + firstImage + 1);
-                }
+                image = ((row-1)*numberOfImagesAnimation[0] + currentImage - 1);
                 break;
                 
             case GUN:
@@ -95,9 +91,31 @@ public class Animation {
         this.row = row;
     }
     
-    public void setIsIdle(boolean isIdle)
+    public void setIsIdle(boolean isIdle, int direction)
     {
         this.isIdle = isIdle;
+        if(isIdle)
+        {
+            switch(direction)
+            {
+                case 1:
+                    row = (skinId - 1) * 4 + 4;
+                    break;
+                case 2:
+                    row = (skinId - 1) * 4 + 3;
+            }
+        }
+        else
+        {
+            switch(direction)
+            {
+                case 1:
+                    row = (skinId - 1) * 4 + 2;
+                    break;
+                case 2:
+                    row = (skinId - 1) * 4 + 1;
+            }
+        }
     }
     
     public boolean endOfAnimation()
@@ -115,4 +133,8 @@ public class Animation {
         return currentImage;
     }
     
+    public void setSkinId(int skinId)
+    {
+        this.skinId = skinId;
+    }
 }
