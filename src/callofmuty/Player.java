@@ -602,50 +602,37 @@ public class Player {
 
 
     public void generateGun(int numberOfPlayers, long gunGenerationTime, GameMode gameMode) {
+        boolean generateWeapon;
         switch (gameMode.getGunGestion()) {
             case GameMode.RANDOM:
-                if (gun.getId() == 0 && Math.random() < (double) gunGenerationTime / (1000 * numberOfPlayers * 4)) { // In average, one player gets a gun every 4 seconds
-                    double gunRandom = Math.random();
-                    int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-                    if (gunRandom < 0.20) {
-                        gun.setId(Gun.PISTOL, numberOfCartridges);
-                    } else if (gunRandom < 0.40) {
-                        gun.setId(Gun.UZI, numberOfCartridges);
-                    } else if (gunRandom < 0.47) {
-                        gun.setId(Gun.SNIPER, numberOfCartridges);
-                    } else if (gunRandom < 0.55) {
-                        gun.setId(Gun.SHOTGUN, numberOfCartridges);
-                    } else if (gunRandom < 0.70) {
-                        gun.setId(Gun.AK, numberOfCartridges);
-                    } else if (gunRandom < 0.85) {
-                        gun.setId(Gun.MAGNUM, numberOfCartridges);
-                    } else {
-                        gun.setId(Gun.MITRAILLEUSE, numberOfCartridges);
-                    }
-                }
+                generateWeapon = gun.getId() == 0 && Math.random() < (double) gunGenerationTime / (1000 * numberOfPlayers * 4); // In average, one player gets a gun every 4 seconds
                 break;
             case GameMode.ALWAYSON:
-                if (gun.getId() == 0) { 
-                    double gunRandom = Math.random();
-                    int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-                    if (gunRandom < 0.20) {
-                        gun.setId(Gun.PISTOL, numberOfCartridges);
-                    } else if (gunRandom < 0.40) {
-                        gun.setId(Gun.UZI, numberOfCartridges);
-                    } else if (gunRandom < 0.47) {
-                        gun.setId(Gun.SNIPER, numberOfCartridges);
-                    } else if (gunRandom < 0.55) {
-                        gun.setId(Gun.SHOTGUN, numberOfCartridges);
-                    } else if (gunRandom < 0.70) {
-                        gun.setId(Gun.AK, numberOfCartridges);
-                    } else if (gunRandom < 0.85) {
-                        gun.setId(Gun.MAGNUM, numberOfCartridges);
-                    } else {
-                        gun.setId(Gun.MITRAILLEUSE, numberOfCartridges);
-                    }
-                }
+                generateWeapon = true;
                 break;
-
+            default:
+                generateWeapon = true;
+        }
+        if(generateWeapon){
+            double gunRandom = Math.random();
+            int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
+            if (gunRandom < 0.15) {
+                gun.setId(Gun.PISTOL, numberOfCartridges);
+            } else if(gunRandom < 0.2){
+                gun.setId(Gun.LEGENDARY_WEAPON, numberOfCartridges);
+            } else if (gunRandom < 0.40) {
+                gun.setId(Gun.UZI, numberOfCartridges);
+            } else if (gunRandom < 0.47) {
+                gun.setId(Gun.SNIPER, numberOfCartridges);
+            } else if (gunRandom < 0.55) {
+                gun.setId(Gun.SHOTGUN, numberOfCartridges);
+            } else if (gunRandom < 0.70) {
+                gun.setId(Gun.AK, numberOfCartridges);
+            } else if (gunRandom < 0.85) {
+                gun.setId(Gun.MAGNUM, numberOfCartridges);
+            } else {
+                gun.setId(Gun.MITRAILLEUSE, numberOfCartridges);
+            }
         }
     }
     

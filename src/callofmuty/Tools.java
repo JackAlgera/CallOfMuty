@@ -34,9 +34,9 @@ public class Tools {
         return tileset.getSubimage(playerTileSize*(row-1),playerTileSize*(column-1), playerTileSize, playerTileSize);
     }
     
-    public static BufferedImage selectWeaponTile(BufferedImage tileset, int column, int row, int taille){
+    public static BufferedImage selectWeaponTile(BufferedImage tileset, int column, int row, int size){
         BufferedImage gunImage;
-        switch(taille) {
+        switch(size) {
             case 1:
                     gunImage = tileset.getSubimage(tileSize*(row-1),tileSize*(column-1), tileSize, tileSize);
                     break;

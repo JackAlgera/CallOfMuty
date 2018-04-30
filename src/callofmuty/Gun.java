@@ -6,19 +6,20 @@ import java.awt.image.BufferedImage;
 
 public class Gun {
     
-    public static final int NO_GUN = 0, PISTOL = 1, UZI = 2, SNIPER = 3, SHOTGUN = 4, AK = 5, MAGNUM = 6, MITRAILLEUSE = 7;
-    private static final BufferedImage pistolImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 1, 1);
-    private static final BufferedImage uziImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 3, 1); 
-    private static final BufferedImage sniperImage = Tools.selectWeaponTile(Tools.WeaponTileset, 3, 1, 2);  
-    private static final BufferedImage shotgunImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 7, 2); 
-    private static final BufferedImage akImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 3, 2); 
-    private static final BufferedImage magnumImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 1, 1);
-    private static final BufferedImage mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2);
+    public static final int NO_GUN = 0, PISTOL = 1, UZI = 2, SNIPER = 3, SHOTGUN = 4, AK = 5, MAGNUM = 6, MITRAILLEUSE = 7, LEGENDARY_WEAPON = 8;
+    private static final BufferedImage pistolImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 1, 1),
+            uziImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 3, 1),
+            sniperImage = Tools.selectWeaponTile(Tools.WeaponTileset, 3, 1, 2),
+            shotgunImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 7, 2),
+            akImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 3, 2),
+            magnumImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 1, 1),
+            mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2),
+            legendaryWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1);
     
     private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
-    private SoundPlayer gunSound, uziSound, sniperSound,shotgunSound;
+    private SoundPlayer gunSound, uziSound, sniperSound,shotgunSound, legendaryWeaponSound;
     
     public Gun(){
         ammunition = 0;
@@ -28,6 +29,7 @@ public class Gun {
         uziSound = new SoundPlayer("uziSound.mp3", false);
         sniperSound = new SoundPlayer("sniperSound.mp3", false);
         shotgunSound = new SoundPlayer("shotgunSound.mp3", false);
+        legendaryWeaponSound = new SoundPlayer("legendaryWeaponSound.mp3", false);
     }
     
     public double getDamage(){
@@ -135,6 +137,20 @@ public class Gun {
                 yImage = 5;
                 tailleGun = 2;
                 break;
+            
+            case LEGENDARY_WEAPON:
+                ammunition = 5;
+                image = legendaryWeaponImage;
+                rateOfFire = 700;
+                damage = 35;
+                reloadTime = 1000;
+                bulletSpeed = 1.8;
+                distanceMaxShoot = 700;
+                bulletSpread = 0.034;
+                xImage = 2;
+                yImage = 9;
+                tailleGun = 1;
+                break;
                 
             case NO_GUN:
                 ammunition = 0;       
@@ -215,6 +231,9 @@ public class Gun {
                 break;
             case SHOTGUN:
                 shotgunSound.play();
+                break;
+            case LEGENDARY_WEAPON:
+                legendaryWeaponSound.play();
                 break;
             default:
                 gunSound.play();
