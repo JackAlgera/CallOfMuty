@@ -112,6 +112,7 @@ public class Player {
         resetEffects();
         setPosition(map);
         resetHurtPlayers();
+        speed = new double[]{0.0,0.0};
     }
     
     public void taunt(){
@@ -725,9 +726,9 @@ public class Player {
     
     public boolean isCloseToHole(Map map){
         boolean test = false;
-        double[] xValues = new double[]{posX-playerWidth*0.5, posX-playerWidth*0.5, posX+playerWidth*1.5, posX+playerWidth*1.5};
-        double[] yValues = new double[]{posY+playerHeight*0.2, posY+playerHeight*1.5, posY+playerHeight*0.2, posY+playerHeight*1.5};
-        for (int i = 0; i<4; i++ ) {
+        double[] xValues = new double[]{posX-playerWidth*0.5, posX-playerWidth*0.5, posX-playerWidth*0.5, posX+playerWidth*0.5, posX+playerWidth*0.5, posX+playerWidth*0.5, posX+playerWidth*1.5, posX+playerWidth*1.5, posX+playerWidth*1.5};
+        double[] yValues = new double[]{posY, posY+playerHeight*0.75, posY+playerHeight*1.5, posY, posY+playerHeight*0.75, posY+playerHeight*1.5, posY, posY+playerHeight*0.75, posY+playerHeight*1.5};
+        for (int i = 0; i<xValues.length; i++ ) {
             if (map.getTile(xValues[i], yValues[i]).getEffect().getId()==Effect.FALL_TO_DEATH) {
                 test = true;
             }
@@ -737,9 +738,9 @@ public class Player {
     
     public boolean isCloseToTeleporter(Map map){
         boolean test = false;
-        double[] xValues = new double[]{posX-playerWidth*0.5, posX-playerWidth*0.5, posX+playerWidth*1.5, posX+playerWidth*1.5};
-        double[] yValues = new double[]{posY+playerHeight*0.2, posY+playerHeight*1.5, posY+playerHeight*0.2, posY+playerHeight*1.5};
-        for (int i = 0; i<4; i++ ) {
+        double[] xValues = new double[]{posX-playerWidth*0.5, posX-playerWidth*0.5, posX-playerWidth*0.5, posX+playerWidth*0.5, posX+playerWidth*0.5, posX+playerWidth*0.5, posX+playerWidth*1.5, posX+playerWidth*1.5, posX+playerWidth*1.5};
+        double[] yValues = new double[]{posY, posY+playerHeight*0.75, posY+playerHeight*1.5, posY, posY+playerHeight*0.75, posY+playerHeight*1.5, posY, posY+playerHeight*0.75, posY+playerHeight*1.5};
+        for (int i = 0; i<xValues.length; i++ ) {
             if (map.getTileId(xValues[i], yValues[i])==Map.TELEPORTER_ID) {
                 test = true;
             }
