@@ -34,7 +34,7 @@ public class Player {
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
     private SoundPlayer fallingSoundPlayer;
-    private ArrayList<SoundPlayer>  hurtSoundPlayer, dyingSoundPlayer, tauntSoundPlayer;
+    private ArrayList<SoundPlayer>  hurtSoundPlayer, dyingSoundPlayer, tauntSoundPlayer, teleportSoundPlayer;
         
     public Player(double x,double y){
         muteSounds = false;
@@ -100,6 +100,9 @@ public class Player {
         tauntSoundPlayer.add(new SoundPlayer("taunt2.mp3", false));
         tauntSoundPlayer.add(new SoundPlayer("taunt3.mp3", false));
         tauntSoundPlayer.add(new SoundPlayer("taunt4.mp3", false));
+        teleportSoundPlayer = new ArrayList<>();
+        teleportSoundPlayer.add(new SoundPlayer("teleportSound.mp3", false));
+        teleportSoundPlayer.add(new SoundPlayer("teleportSound2.mp3", false));
     }
     
     public void reset(Map map, boolean muteSounds) {
@@ -116,7 +119,7 @@ public class Player {
             lastTauntTimeStamp = System.currentTimeMillis();
             isTaunting = true;
             if(!muteSounds){
-                tauntSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, tauntSoundPlayer.size())).play();
+                Tools.playRandomSoundFromList(tauntSoundPlayer);
             }
         }
     }
@@ -174,12 +177,12 @@ public class Player {
         if (health <= 0) {
             isDead = true;
             if (!muteSounds) {
-                dyingSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, dyingSoundPlayer.size())).play();
+                Tools.playRandomSoundFromList(dyingSoundPlayer);
             }
         } else {
             isDead = false;
             if (formerHealth > health && !muteSounds && System.currentTimeMillis()-timeBetweenHurtSounds > timeSinceLastHurtSound) {
-                hurtSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, hurtSoundPlayer.size())).play();
+                Tools.playRandomSoundFromList(hurtSoundPlayer);
                 timeSinceLastHurtSound = System.currentTimeMillis();
             }
         }
@@ -400,6 +403,9 @@ public class Player {
         if(justTeleported){
             justTeleported = destination[0]!=-1;
         } else if(destination[0]!=-1){
+            if(!muteSounds){
+                Tools.playRandomSoundFromList(teleportSoundPlayer);
+            }
             wantedX = destination[0];
             wantedY = destination[1];
             justTeleported = true;
@@ -452,13 +458,11 @@ public class Player {
         posY = map.getStartTile().get(index)[1]*map.getTextureSize();
     }
     
-    public void setPlayerId(int playerId)
-    {
+    public void setPlayerId(int playerId){
         this.playerId = playerId;
     }
     
-    public int getPlayerId()
-    {
+    public int getPlayerId(){
         return this.playerId;
     }
     
@@ -694,6 +698,12 @@ public class Player {
             
         }
     }
+    
+    public void playTeleportSound(){
+        if(!muteSounds){
+            Tools.playRandomSoundFromList(teleportSoundPlayer);
+        }
+    }
 
     public void playShootSound() {
         if(!muteSounds){
@@ -703,7 +713,7 @@ public class Player {
     
     public void playDieSound() {
         if(!muteSounds){
-            dyingSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, dyingSoundPlayer.size())).play();
+            Tools.playRandomSoundFromList(dyingSoundPlayer);
         }
     }
     
@@ -725,8 +735,19 @@ public class Player {
         return test;
     }
     
-    public int getCurrentImage()
-    {
+    public boolean isCloseToTeleporter(Map map){
+        boolean test = false;
+        double[] xValues = new double[]{posX-playerWidth*0.5, posX-playerWidth*0.5, posX+playerWidth*1.5, posX+playerWidth*1.5};
+        double[] yValues = new double[]{posY+playerHeight*0.2, posY+playerHeight*1.5, posY+playerHeight*0.2, posY+playerHeight*1.5};
+        for (int i = 0; i<4; i++ ) {
+            if (map.getTileId(xValues[i], yValues[i])==Map.TELEPORTER_ID) {
+                test = true;
+            }
+        }
+        return test;
+    }
+    
+    public int getCurrentImage(){
         return playerAnimation.getCurrentImageValue();
     }
     public double[] getSpeed(){

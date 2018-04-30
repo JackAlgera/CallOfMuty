@@ -18,8 +18,7 @@ public class Map{
             hole = new TileType(false, false,3,7,new Effect(Effect.FALL_TO_DEATH, 1000000, 0)), mud = new TileType(false, false, 3,6,new Effect(Effect.SLOWED, 300, 0.5)), hotGround = new TileType(false, false, 4,6,new Effect(Effect.BURNING, 500, 10)),
             // other
             teleporter = new TileType(false, false, 5,6, new Effect());
-    private static int TELEPORTER_ID = 13;
-    public static int NUMBER_OF_TILETYPES = 14;
+    public static int TELEPORTER_ID = 13, NUMBER_OF_TILETYPES = 14;
         
     private int[][] map;
     private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
@@ -221,6 +220,21 @@ public class Map{
                 tile = dirt;
         }
         return tile;
+    }
+    
+    public int getTileId(double x, double y){
+        int i = (int)x/textureSize;
+        int j = (int)y/textureSize;
+        
+        if (i > mapWidth-1)
+            i = mapWidth-1;
+        if (i < 0)
+            i = 0;
+        if (j > mapHeight-1)
+            j = mapHeight-1;
+        if (j < 0)
+            j = 0;
+        return map[i][j];
     }
     
     public TileType getTile(double x, double y){

@@ -78,10 +78,8 @@ public class SQLManager {
     // Downloads other players' positions, health and bullet positions and local player's health
     public void downloadPlayersAndBullets(Player player, ArrayList<Player> otherPlayersList, ArrayList<Bullet> otherBulletsList, Map map) {
         PreparedStatement requete;
-        int playerId = -1;
-        int playerIndex;
-        int bulletId;
-        int bulletIndex;
+        int playerId = -1, playerIndex, bulletId, bulletIndex;
+        double formerX, formerY;
         double[] position = new double[2];
         ArrayList<Bullet> updatedBullets = new ArrayList<>(); //saves which bullets were updated, others will be erased
         ArrayList<Player> updatedPlayers = new ArrayList<>(); //same
@@ -101,7 +99,12 @@ public class SQLManager {
                             if(resultat.getInt("isTaunting")!=0){
                                 otherPlayersList.get(playerIndex).taunt();
                             }
+                            formerX = otherPlayersList.get(playerIndex).getPosX();
+                            formerY = otherPlayersList.get(playerIndex).getPosY();
                             otherPlayersList.get(playerIndex).setPosition(position);
+                            if(Math.sqrt(Math.pow(position[0]-formerX, 2)+Math.pow(position[1]-formerY, 2))>map.getTextureSize() && otherPlayersList.get(playerIndex).isCloseToTeleporter(map)){ // if player seems to have teleported, play teleport sound
+                                player.playTeleportSound();
+                            }
                             otherPlayersList.get(playerIndex).setHealth(resultat.getDouble("players.playerHp"));
                             otherPlayersList.get(playerIndex).setGunId(resultat.getInt("players.gunId"));
                             otherPlayersList.get(playerIndex).setMuteSounds(player.getMuteSounds());

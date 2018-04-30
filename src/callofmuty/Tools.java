@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
@@ -139,5 +140,9 @@ public class Tools {
                         && bullet.posY < player.getPosY() + player.getPlayerHeight()
                         && bullet.posY + bullet.getBallHeight() > player.getPosY();
         return test;
+    }
+    
+    public static void playRandomSoundFromList(ArrayList<SoundPlayer> list){
+        list.get(ThreadLocalRandom.current().nextInt(0, list.size())).play();
     }
 }
