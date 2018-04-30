@@ -3,17 +3,16 @@ package callofmuty;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-import javazoom.jl.decoder.JavaLayerException;
 
 public class Player {
 
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
-    private static double timeBetweenHurtSounds = 300; // in milliseconds
+    private static double rollSpeedMultiplier = 3;
+    private static long timeBetweenHurtSounds = 300, rollTime = 150; // in milliseconds
     private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
@@ -23,13 +22,14 @@ public class Player {
     private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health, timeSinceLastHurtSound;
-    private boolean isDead, muteSounds, justTeleported;  
+    private boolean isDead, muteSounds, justTeleported, isRolling;  
     private int[] skin;
     private String name;
     public ArrayList<Image> animationImages = new ArrayList<>();
     public Animation playerAnimation;
     private ArrayList<Player> hurtPlayers;
     private ArrayList<Effect> effects = new ArrayList<>();
+    private long currentRollTime;
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
@@ -49,8 +49,9 @@ public class Player {
         this.skin[1]= 1;
         teamId= 0;
         justTeleported = false;
+        isRolling = false;
         image=Tools.selectTile(Tools.playerTileset, skin[0], skin[1]);
-        
+        currentRollTime = 0;
         destroyedBullets = new ArrayList<>();
         
         this.playerAnimation = new Animation(160,7,4,6,1,0); // en ms
@@ -251,43 +252,51 @@ public class Player {
             }
 
             //Calculate speed vector
-            speed[0] += acceleration[0]*dT;
-            speed[1] += acceleration[1]*dT;
-
-            // Deceleration
-            if (directionOfTravel[0] == 1 && acceleration[0] < 0 && speed[0]<0){
-                speed[0] = 0;
-                acceleration[0] = 0;
-            }
-            if (directionOfTravel[0] == -1 && acceleration[0] > 0 && speed[0]>0){
-                speed[0] = 0;
-                acceleration[0] = 0;
-            }
-            if (directionOfTravel[1] == 1 && acceleration[1] < 0 && speed[1]<0){
-                speed[1] = 0;
-                acceleration[1] = 0;
-            }
-            if (directionOfTravel[1] == -1 && acceleration[1] > 0 && speed[1]>0){
-                speed[1] = 0;
-                acceleration[1] = 0;
-            }
-            
-            double speedNorm = Math.sqrt(Math.pow(speed[0], 2) + Math.pow(speed[1], 2));
-            double angle;
-
-            if (speedNorm == 0) {
-                angle = 0;
-            } else {
-                angle = Math.acos(speed[0]/speedNorm); //Angle between speed vector and [1,0]+
-            }
-            if (speedNorm>maxSpeed ){
-
-                if (directionOfTravel[1] == -1) {
-                    angle = -angle;
+            if (!isRolling) {
+                speed[0] += acceleration[0] * dT;
+                speed[1] += acceleration[1] * dT;
+                // Deceleration
+                if (directionOfTravel[0] == 1 && acceleration[0] < 0 && speed[0] < 0) {
+                    speed[0] = 0;
+                    acceleration[0] = 0;
                 }
-                
-                speed[0] = maxSpeed*Math.cos(angle);
-                speed[1] = maxSpeed*Math.sin(angle);
+                if (directionOfTravel[0] == -1 && acceleration[0] > 0 && speed[0] > 0) {
+                    speed[0] = 0;
+                    acceleration[0] = 0;
+                }
+                if (directionOfTravel[1] == 1 && acceleration[1] < 0 && speed[1] < 0) {
+                    speed[1] = 0;
+                    acceleration[1] = 0;
+                }
+                if (directionOfTravel[1] == -1 && acceleration[1] > 0 && speed[1] > 0) {
+                    speed[1] = 0;
+                    acceleration[1] = 0;
+                }
+
+                double speedNorm = Math.sqrt(Math.pow(speed[0], 2) + Math.pow(speed[1], 2));
+                double angle;
+
+                if (speedNorm == 0) {
+                    angle = 0;
+                } else {
+                    angle = Math.acos(speed[0] / speedNorm); //Angle between speed vector and [1,0]+
+                }
+                if (speedNorm > maxSpeed) {
+
+                    if (directionOfTravel[1] == -1) {
+                        angle = -angle;
+                    }
+
+                    speed[0] = maxSpeed * Math.cos(angle);
+                    speed[1] = maxSpeed * Math.sin(angle);
+                }
+            } else {
+                currentRollTime += dT;
+                if (currentRollTime > rollTime){
+                    isRolling = false;
+                    speed[0] /= rollSpeedMultiplier;
+                    speed[1] /= rollSpeedMultiplier;
+                }
             }
 
             // update & activate effects
@@ -301,8 +310,10 @@ public class Player {
             }
             
             // Check tile effects
-            updateTileEffects(map);
-
+            if(!isRolling){
+                updateTileEffects(map);
+            }
+            
             // check if player is still in the map
             wantedX = posX + speed[0]*dT;
             wantedY = posY + speed[1]*dT;
@@ -339,9 +350,9 @@ public class Player {
                     }
                 }
             }
-            
-            checkTeleports(map);
-            
+            if(!isRolling){
+                checkTeleports(map);
+            }
             posX = wantedX;
             posY = wantedY;
             
@@ -356,8 +367,8 @@ public class Player {
     }
     
     public void updateTileEffects(Map map){
-        double[] xValues = new double[]{posX, posX, posX+playerWidth, posX+playerWidth};
-        double[] yValues = new double[]{posY+playerHeight*0.6, posY+playerHeight, posY+playerHeight*0.6, posY+playerHeight};
+        double[] xValues = new double[]{posX+playerWidth*0.05, posX+playerWidth*0.05, posX+playerWidth*0.95, posX+playerWidth*0.95};
+        double[] yValues = new double[]{posY+playerHeight*0.65, posY+playerHeight, posY+playerHeight*0.65, posY+playerHeight};
         Effect effect;
         for (int i = 0; i<4; i++ ) {
             effect = map.getTile(xValues[i], yValues[i]).getEffect();
@@ -368,8 +379,8 @@ public class Player {
     }
     
     public void checkTeleports(Map map){
-        double[] xValues = new double[]{posX, posX, posX+playerWidth, posX+playerWidth};
-        double[] yValues = new double[]{posY+playerHeight*0.6, posY+playerHeight, posY+playerHeight*0.6, posY+playerHeight};
+        double[] xValues = new double[]{posX+playerWidth*0.05, posX+playerWidth*0.05, posX+playerWidth*0.95, posX+playerWidth*0.95};
+        double[] yValues = new double[]{posY+playerHeight*0.65, posY+playerHeight, posY+playerHeight*0.65, posY+playerHeight};
         int[] destination = map.teleporterDestination(xValues, yValues); // returns {-1, -1} if not on a teleporter, else returns new position
         if(justTeleported){
             justTeleported = destination[0]!=-1;
@@ -503,7 +514,7 @@ public class Player {
         return image;
     }
     
-    public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList) throws JavaLayerException, IOException {
+    public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList){
         Bullet bullet;
         Player hurtPlayer;
         for (int i = 0; i<bulletList.size(); i++) {
@@ -566,7 +577,7 @@ public class Player {
     }
 
 
-    public void generateGun(int numberOfPlayers, long gunGenerationTime, GameMode gameMode) throws IOException, JavaLayerException {
+    public void generateGun(int numberOfPlayers, long gunGenerationTime, GameMode gameMode) {
         switch (gameMode.getGunGestion()) {
             case GameMode.RANDOM:
                 if (gun.getId() == 0 && Math.random() < (double) gunGenerationTime / (1000 * numberOfPlayers * 4)) { // In average, one player gets a gun every 4 seconds
@@ -685,11 +696,20 @@ public class Player {
         speed[1] =speed1[1];       
     }
 
-    void dieByFall() {
+    public void dieByFall() {
         if(!muteSounds){
             fallingSoundPlayer.play();
             setMuteSounds(true);
         }
         hurtSelf(health+1);
+    }
+
+    public void roll() {
+        if(!isDead && !isRolling){
+            currentRollTime = 0;
+            isRolling = true;
+            speed[0] *=rollSpeedMultiplier;
+            speed[1] *=rollSpeedMultiplier;
+        }
     }
 }

@@ -1,28 +1,29 @@
 package callofmuty;
 
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
-import javazoom.jl.decoder.JavaLayerException;
 
 public class CallOfMuty {
     
-    public static void main(String[] args) throws InterruptedException, IOException, JavaLayerException {
-        
+    public static void main(String[] args) {
+
         int textureSize, mapWidth, mapHeight, maxFPS;
         long dT, minUpdateTime;
-        
+
         // Game variables   
         maxFPS = 60;
         String frameTitle = "Call of µty";
-        
+
         // Map dimensions
-        textureSize=64;
-        mapWidth= 16;
-        mapHeight= 9;
-        
+        textureSize = 64;
+        mapWidth = 16;
+        mapHeight = 9;
+
         // Game initialisation
         GameTimer timer = new GameTimer();
         GamePanel game = new GamePanel(textureSize, mapWidth, mapHeight, timer);
@@ -33,34 +34,49 @@ public class CallOfMuty {
                 game.quitGame();
             }
         };
-        
+
         frame.addWindowListener(exitListener);
         game.requestFocusInWindow();
         game.revalidate();
         game.repaint();
-        minUpdateTime =(long) 1000/maxFPS;
-        
-        while(true){
-            switch (game.getState()){
+        minUpdateTime = (long) 1000 / maxFPS;
+
+        while (true) {
+            switch (game.getState()) {
                 case GamePanel.PRE_GAME:
                     game.preGameUpdate();
                     game.repaint();
-                    Thread.sleep(50);
+                     {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(CallOfMuty.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                     timer.update();
-                break;
-                        
+                    break;
+
                 case GamePanel.IN_GAME:
                     dT = timer.update();
                     game.updateGame(dT);
-                    
+
                     if (dT < minUpdateTime) {
-                        Thread.sleep(minUpdateTime - dT);
+                        try {
+                            Thread.sleep(minUpdateTime - dT);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(CallOfMuty.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                     game.repaint();
-                break;
-                
-                default:
-                    Thread.sleep(50);
+                    break;
+
+                default: {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(CallOfMuty.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                 break;
             }
         }
@@ -70,6 +86,7 @@ public class CallOfMuty {
     private static JFrame createJFrame(String frameTitle, GamePanel game) {
         JFrame frame = new JFrame();
         frame.setTitle(frameTitle);
+        frame.setBackground(Color.black);
         frame.setResizable(false);
         frame.setVisible(true);
         frame.add(game);

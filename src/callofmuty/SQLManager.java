@@ -70,7 +70,7 @@ public class SQLManager {
     }
     
     // Downloads other players' positions, health and bullet positions and local player's health
-    public void downloadPlayersAndBullets(Player player, ArrayList<Player> otherPlayersList, ArrayList<Bullet> otherBulletsList) throws JavaLayerException, IOException {
+    public void downloadPlayersAndBullets(Player player, ArrayList<Player> otherPlayersList, ArrayList<Bullet> otherBulletsList) {
         PreparedStatement requete;
         int playerId = -1;
         int playerIndex;

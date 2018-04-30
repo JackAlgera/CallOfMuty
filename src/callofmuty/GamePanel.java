@@ -90,7 +90,7 @@ public class GamePanel extends JPanel{
     private GameTimer timer;
     private int[] mousePosition;
     
-    public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer) throws IOException, JavaLayerException{
+    public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer){
         super();
         menuMusicPlayer = new SoundPlayer("menuMusic.mp3", true);
         gameMusicPlayer = new SoundPlayer("gameMusic.mp3", true);
@@ -698,7 +698,7 @@ public class GamePanel extends JPanel{
     ----------------------------------------------------------------------------------------------------------------
     */
     
-    public void updateGame(long dT) throws JavaLayerException, IOException{
+    public void updateGame(long dT){
         boolean printTime = false; // Set to true if you want to print the time taken by each method in updateGame
         long time = System.currentTimeMillis();
         // Update player movement 
@@ -839,6 +839,7 @@ public class GamePanel extends JPanel{
             getInputMap().put(KeyStroke.getKeyStroke("released " + key), key + "Released");
         }
         getInputMap().put(KeyStroke.getKeyStroke("F"), "FPressed");
+        getInputMap().put(KeyStroke.getKeyStroke(' '), "spacePressed");
         
         
         getActionMap().put("ZPressed", new KeyPressed(KeyEvent.VK_Z));
@@ -859,6 +860,7 @@ public class GamePanel extends JPanel{
         getActionMap().put("RIGHTReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
         getActionMap().put("ESCAPEPressed", new EscapePressed());
         getActionMap().put("FPressed", new Taunt());
+        getActionMap().put("spacePressed", new spaceBarPressed());
     }
     
        //Use of KeyBindings
@@ -929,6 +931,19 @@ public class GamePanel extends JPanel{
         public void actionPerformed( ActionEvent tf ){
             if(gameState==IN_GAME){
                 player.taunt();
+            }
+        }
+    }
+    
+    private class spaceBarPressed extends AbstractAction{
+        
+        public spaceBarPressed(){
+        }
+        
+        @Override
+        public void actionPerformed( ActionEvent tf ){
+            if(gameState==IN_GAME){
+                player.roll();
             }
         }
     }
