@@ -241,14 +241,18 @@ public class Map{
         int i = (int)x/textureSize;
         int j = (int)y/textureSize;
         
-        if (i > mapWidth-1)
+        if (i > mapWidth-1){
             i = mapWidth-1;
-        if (i < 0)
+        }
+        if (i < 0){
             i = 0;
-        if (j > mapHeight-1)
+        }
+        if (j > mapHeight-1){
             j = mapHeight-1;
-        if (j < 0)
+        }
+        if (j < 0){
             j = 0;
+        }
         return getTile(i,j);
     }
     
@@ -330,6 +334,16 @@ public class Map{
         while(!isOnTeleporter && valuesIndex < xValues.length){
             i = ((int)xValues[valuesIndex]-xPos) * mapWidth/drawWidth;
             j = ((int)yValues[valuesIndex]-yPos) * mapHeight/drawHeight;
+            if (i<0){
+                i=0;
+            } else if(i>=mapWidth){
+                i = mapWidth-1;
+            }
+            if (j<0){
+                j=0;
+            } else if(j>=mapHeight){
+                j = mapHeight-1;
+            }
             isOnTeleporter = map[i][j]==TELEPORTER_ID;
             valuesIndex++;
         }
