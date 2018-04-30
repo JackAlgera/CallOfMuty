@@ -71,11 +71,12 @@ public class CallOfMuty {
                     break;
                     
                     /*
-                case GamePanel.MAIN_MENU:
+                case GamePanel.MAIN_MENU: //Animation during main menu skin selecing 
                     dT = timer.update();
                     game.updatePlayerAnimation(dT);
                     break;
                     */
+                    
                 default: {
                     try {
                         Thread.sleep(50);
