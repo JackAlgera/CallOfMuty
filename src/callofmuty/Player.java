@@ -12,7 +12,7 @@ public class Player {
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
     private static double rollSpeedMultiplier = 3;
-    private static long timeBetweenHurtSounds = 300, rollTime = 150; // in milliseconds
+    private static long timeBetweenHurtSounds = 300, rollTime = 150, timeBetweenTaunts = 1000; // in milliseconds
     private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
@@ -22,14 +22,14 @@ public class Player {
     private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health, timeSinceLastHurtSound;
-    private boolean isDead, muteSounds, justTeleported, isRolling;  
+    private boolean isDead, muteSounds, justTeleported, isRolling, isTaunting;  
     private int[] skin;
     private String name;
     public ArrayList<Image> animationImages = new ArrayList<>();
     public Animation playerAnimation;
     private ArrayList<Player> hurtPlayers;
     private ArrayList<Effect> effects = new ArrayList<>();
-    private long currentRollTime;
+    private long currentRollTime, timeSinceTaunt;
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
@@ -74,6 +74,7 @@ public class Player {
         directionOfTravel[1] = 0; // =-1 -> wants to go up, =+1 -> wants to go down, =0 -> stands still on y axis
         this.accelerationValue = 0.002;
         isDead = false;
+        isTaunting = false;
         health=maxHealth;
         hpBar = normalHealthBar;
         name = "Username";
@@ -110,8 +111,12 @@ public class Player {
     }
     
     public void taunt(){
-        if (!isDead && !muteSounds){
-            tauntSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, tauntSoundPlayer.size())).play();
+        if (!isDead && !isTaunting){
+            isTaunting = true;
+            timeSinceTaunt = 0;
+            if(!muteSounds){
+                tauntSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, tauntSoundPlayer.size())).play();
+            }
         }
     }
     
@@ -363,7 +368,17 @@ public class Player {
             else{
                 playerAnimation.setIsIdle(false);
             }
+            if(isTaunting){
+                timeSinceTaunt+=dT;
+                if(timeSinceTaunt > timeBetweenTaunts){
+                    isTaunting = false;
+                }
+            }
         }
+    }
+    
+    public boolean isTaunting(){
+        return isTaunting;
     }
     
     public void updateTileEffects(Map map){
@@ -555,6 +570,7 @@ public class Player {
     public Player(int playerId){ //usefull constructor for SQL updates
         this.playerId = playerId;
         muteSounds = false;
+        isTaunting = false;
         timeSinceLastHurtSound = System.currentTimeMillis()-timeBetweenHurtSounds;
     }
     
@@ -682,6 +698,30 @@ public class Player {
         if(!muteSounds){
             gun.playShootingSound();
         }
+    }
+    
+    public void playDieSound() {
+        if(!muteSounds){
+            dyingSoundPlayer.get(ThreadLocalRandom.current().nextInt(0, dyingSoundPlayer.size())).play();
+        }
+    }
+    
+    public void playFallSound() {
+        if(!muteSounds){
+            fallingSoundPlayer.play();
+        }
+    }
+    
+    public boolean isCloseToHole(Map map){
+        boolean test = false;
+        double[] xValues = new double[]{posX-playerWidth*0.5, posX-playerWidth*0.5, posX+playerWidth*1.5, posX+playerWidth*1.5};
+        double[] yValues = new double[]{posY+playerHeight*0.2, posY+playerHeight*1.5, posY+playerHeight*0.2, posY+playerHeight*1.5};
+        for (int i = 0; i<4; i++ ) {
+            if (map.getTile(xValues[i], yValues[i]).getEffect().getId()==Effect.FALL_TO_DEATH) {
+                test = true;
+            }
+        }
+        return test;
     }
     
     public int getCurrentImage()

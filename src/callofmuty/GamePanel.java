@@ -709,7 +709,7 @@ public class GamePanel extends JPanel{
             time = System.currentTimeMillis();
         }
         // sql downloads
-        sql.downloadPlayersAndBullets(player, otherPlayersList, otherPlayersBullets);
+        sql.downloadPlayersAndBullets(player, otherPlayersList, otherPlayersBullets, map);
         boolean TeamWasKilled = player.isTeamkilled(otherPlayersList, false); // used to check if team died
         if(printTime){
             System.out.println("Downloads : " + (System.currentTimeMillis()-time));
