@@ -16,7 +16,7 @@ public class Player {
     private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
-    private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId;
+    private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId, numeroBalleShotgun;
     private Image hpBar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
     private double[] speed, acceleration;
@@ -88,6 +88,7 @@ public class Player {
         bulletList = new ArrayList<>();
         gun = new Gun();
         fillSoundPlayers();
+        
     }
 
     public void fillSoundPlayers(){
@@ -616,15 +617,15 @@ public class Player {
         if(generateWeapon){
             double gunRandom = Math.random();
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-            if (gunRandom < 0.15) {
+            if (gunRandom < 0.20) {
                 gun.setId(Gun.PISTOL, numberOfCartridges);
-            } else if(gunRandom < 0.2){
+            } else if(gunRandom < 0.21){
                 gun.setId(Gun.LEGENDARY_WEAPON, numberOfCartridges);
             } else if (gunRandom < 0.40) {
                 gun.setId(Gun.UZI, numberOfCartridges);
-            } else if (gunRandom < 0.47) {
+            } else if (gunRandom < 0.50) {
                 gun.setId(Gun.SNIPER, numberOfCartridges);
-            } else if (gunRandom < 0.55) {
+            } else if (gunRandom < 0.60) {
                 gun.setId(Gun.SHOTGUN, numberOfCartridges);
             } else if (gunRandom < 0.70) {
                 gun.setId(Gun.AK, numberOfCartridges);
@@ -638,32 +639,54 @@ public class Player {
     
     public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets){
         if (gun.shoot(unlimitedBullets, muteSounds)){
-            if (gun.getId()==400){ //spread shotgun in progress
+            if (gun.getId()==4){ //spread shotgun in progress
                 int spreadDir;
-                double [] secondBullet = directionOfFire;
-                double [] thirdBullet = directionOfFire;
-                double dispersionShotgun = 0.523;
+                this.gun.setRateOfFire(1);
+                double angle;
+                double gunDirection=0;
                 double signe = Math.abs(directionOfFire[0])/directionOfFire[0];
-                if (Math.random()<0.5){
-                    spreadDir = 1;
-                } else {
-                    spreadDir = -1;
+                    if (Math.random()<0.5){
+                        spreadDir = 1;
+                    } else {
+                        spreadDir = -1;
+                    }
+                    double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
+                    double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
+                if (numeroBalleShotgun == 0){ 
+                    angle = 0;
+                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
+                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
+                    numeroBalleShotgun+=1;
+                    gunDirection = directionOfFire[0];
+                } else if (numeroBalleShotgun == 1){
+                    angle = 0.0872665;
+                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
+                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
+                    numeroBalleShotgun+=1;
+                } else if (numeroBalleShotgun == 2){
+                    angle = 0.0872665*2;
+                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
+                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
+                    numeroBalleShotgun+=1;
+                } else if (numeroBalleShotgun == 3) {
+                    angle = -0.0872665;
+                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
+                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
+                    numeroBalleShotgun+=1;
+                } else if (numeroBalleShotgun == 4){
+                    angle = -0.0872665*2;
+                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
+                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
+                    numeroBalleShotgun=0;
+                    this.gun.setRateOfFire(650);
                 }
-                double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
-                double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
-                directionOfFire[0]=Math.cos(angleTirRandom+Gamma)*signe;
-                directionOfFire[1]=Math.sin(angleTirRandom+Gamma)*signe;
-                
-                double alpha = Math.atan(directionOfFire[1]/directionOfFire[0]);
-                
-                secondBullet[0]=Math.cos(alpha+dispersionShotgun)*signe;
-                secondBullet[1]=Math.cos(alpha+dispersionShotgun)*signe;
-                thirdBullet[0]=Math.cos(alpha-dispersionShotgun)*signe;
-                thirdBullet[1]=Math.cos(alpha-dispersionShotgun)*signe;
                 addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, secondBullet, gun.getBulletSpeed(), sql, gun.getDamage());
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, thirdBullet, gun.getBulletSpeed(), sql, gun.getDamage());
-
+                    if(gunDirection<0){
+                        gun.changeGunDirection(1);
+                    } else {
+                        gun.changeGunDirection(0);
+                    }               
+                
             } else { //Fonction spreadBullet
                 int spreadDir;
                 double signe = Math.abs(directionOfFire[0])/directionOfFire[0];

@@ -83,10 +83,10 @@ public class Gun {
                 break;
                 
             case SHOTGUN:
-                ammunition = 5;
+                ammunition = 5*5;
                 image = shotgunImage;
-                rateOfFire = 650;
-                damage = 22;
+                rateOfFire = 1;
+                damage = 12;
                 reloadTime = 1000;
                 bulletSpeed = 1.2;
                 distanceMaxShoot = 400;
@@ -174,6 +174,10 @@ public class Gun {
     
     public double getBulletSpread(){
         return bulletSpread;
+    }
+    
+    public void setRateOfFire(double rateOfFire){
+        this.rateOfFire = rateOfFire;
     }
     
     public void draw(Graphics2D g2d, Player player){
