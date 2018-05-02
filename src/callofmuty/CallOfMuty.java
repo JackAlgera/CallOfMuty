@@ -42,6 +42,7 @@ public class CallOfMuty {
         minUpdateTime = (long) 1000 / maxFPS;
 
         while (true) {
+            dT = timer.update();
             switch (game.getState()) {
                 case GamePanel.PRE_GAME:
                     game.preGameUpdate();
@@ -57,9 +58,7 @@ public class CallOfMuty {
                     break;
 
                 case GamePanel.IN_GAME:
-                    dT = timer.update();
                     game.updateGame(dT);
-
                     if (dT < minUpdateTime) {
                         try {
                             Thread.sleep(minUpdateTime - dT);
@@ -70,12 +69,10 @@ public class CallOfMuty {
                     game.repaint();
                     break;
                     
-                    /*
                 case GamePanel.MAIN_MENU: //Animation during main menu skin selecing 
-                    dT = timer.update();
                     game.updatePlayerAnimation(dT);
+                    game.repaint();
                     break;
-                    */
                     
                 default: {
                     try {
