@@ -193,6 +193,10 @@ public class Gun {
         return this.ammunition;
     }
     
+    public double getReloadTime(){
+        return this.reloadTime;
+    }
+    
     public void draw(Graphics2D g2d, Player player){
         switch(id){
             case NO_GUN: //draw nothing
