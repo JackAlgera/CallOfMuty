@@ -626,7 +626,7 @@ public class Player {
     
     public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets){
         if (gun.shoot(unlimitedBullets, muteSounds)){
-            if (gun.getId()==4){ //spread shotgun in progress
+            if (gun.getId()==Gun.SHOTGUN){ //spread shotgun in progress
                 int spreadDir;
                 this.gun.setRateOfFire(1);
                 double angle;

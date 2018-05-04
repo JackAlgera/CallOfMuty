@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -66,7 +68,9 @@ public class GamePanel extends JPanel{
             startGameIcon = Tools.loadIcon("StartGame.png"),
             mainMenuIcon = Tools.loadIcon("MainMenu.png"),
             spectateIcon = Tools.loadIcon("Spectate.png"),
-            startingTileIcon = Tools.loadIcon("StartingTiles.png");    
+            startingTileIcon = Tools.loadIcon("StartingTiles.png"),
+            checkedIcon = Tools.loadIcon("check.png"),
+            uncheckedIcon = Tools.loadIcon("Uncheck.png");    
     
     public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
             MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5;
@@ -670,7 +674,223 @@ public class GamePanel extends JPanel{
                 setState(IN_GAME);
             }
         });
+//--------------------------------------------- Game mode menu buttons ------------------------------------------  
+// buttons need to be added in the same order as gameMode ids
+
+        JTextArea descriptionText = new JTextArea(20,50); // needs to be declared before buttons because they use it, but needs to be added to GMbuttons after gameMode buttons
+
+        JButton defaultButton = new JButton("Default");
+        //defaultButton.setIcon();
+        defaultButton.setBounds(100, 250, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        defaultButton.setVisible(false);
+        defaultButton.setBorderPainted(true);
+        add(defaultButton);
+        GMbuttons.add(defaultButton);
+        
+        defaultButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                gameMode.setId(GameMode.DEFAULT);
+                descriptionText.setText(gameMode.getDescription());
+                repaint();
+            }
+        });
+        
+        JButton royalButton = new JButton("Royal");
+        //royalButton.setIcon();
+        royalButton.setBounds(100, 300, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        royalButton.setVisible(false);
+        royalButton.setBorderPainted(true);
+        add(royalButton);
+        GMbuttons.add(royalButton);
+        
+        royalButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                gameMode.setId(GameMode.ROYAL);
+                descriptionText.setText(gameMode.getDescription());
+                repaint();
+            }
+        });
+        
+        JButton teamButton = new JButton("Team");
+        //teamButton.setIcon();
+        teamButton.setBounds(100, 350, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        teamButton.setVisible(false);
+        teamButton.setBorderPainted(true);
+        add(teamButton);
+        GMbuttons.add(teamButton);
+        
+        teamButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                gameMode.setId(GameMode.TEAM);
+                descriptionText.setText(gameMode.getDescription());
+                repaint();
+            }
+        });
+        
+        JButton aloneButton = new JButton("Alone");
+        //aloneButton.setIcon();
+        aloneButton.setBounds(100, 400, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        aloneButton.setVisible(false);
+        aloneButton.setBorderPainted(true);
+        add(aloneButton);
+        GMbuttons.add(aloneButton);
+        
+        aloneButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                gameMode.setId(GameMode.ALONE);
+                descriptionText.setText(gameMode.getDescription());
+                repaint();
+            }
+        });
+        
+        descriptionText.setBounds(480, 200, 470, 160);
+        descriptionText.setText(gameMode.getDescription());
+        descriptionText.setEditable(false);
+        descriptionText.setFont(new Font("Stencil", Font.BOLD, 18));
+        descriptionText.setBackground(new Color(230,226,211));
+        descriptionText.setForeground(Color.DARK_GRAY);
+        descriptionText.setBorder(null);
+        descriptionText.setVisible(false);
+        add(descriptionText);
+        GMbuttons.add(descriptionText);
+//--------------------------------------------- Options for the game mode ------------------------------------------  
     
+        JTextField suggestedMapText = new JTextField("Use suggested map");
+        suggestedMapText.setBounds(390, 460, 180, 30);
+        suggestedMapText.setEditable(false);
+        suggestedMapText.setHorizontalAlignment(JTextField.CENTER);
+        suggestedMapText.setFont(new Font("Stencil", Font.BOLD, 18));
+        suggestedMapText.setBackground(new Color(230,226,211));
+        suggestedMapText.setForeground(Color.DARK_GRAY);
+        suggestedMapText.setBorder(null);
+        suggestedMapText.setVisible(false);
+        add(suggestedMapText);
+        GMbuttons.add(suggestedMapText);
+
+        JButton suggestedMapButton = new JButton();
+        suggestedMapButton.setIcon(uncheckedIcon);
+        suggestedMapButton.setBounds(480-uncheckedIcon.getIconWidth()/2, 490, uncheckedIcon.getIconWidth(), uncheckedIcon.getIconHeight());
+        suggestedMapButton.setVisible(false);
+        suggestedMapButton.setBorderPainted(true);
+        add(suggestedMapButton);
+        GMbuttons.add(suggestedMapButton);
+        
+        suggestedMapButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                if(gameMode.getOption(0)){
+                    gameMode.setOption(0, false);
+                    suggestedMapButton.setIcon(uncheckedIcon);
+                } else {
+                    gameMode.setOption(0, true);
+                    suggestedMapButton.setIcon(checkedIcon);
+                }
+            }
+        });
+        
+        JTextField rubberBallsText = new JTextField("Rubber balls");
+        rubberBallsText.setBounds(580, 460, 120, 30);
+        rubberBallsText.setEditable(false);
+        rubberBallsText.setHorizontalAlignment(JTextField.CENTER);
+        rubberBallsText.setFont(new Font("Stencil", Font.BOLD, 18));
+        rubberBallsText.setBackground(new Color(230,226,211));
+        rubberBallsText.setForeground(Color.DARK_GRAY);
+        rubberBallsText.setBorder(null);
+        rubberBallsText.setVisible(false);
+        add(rubberBallsText);
+        GMbuttons.add(rubberBallsText);
+
+        JButton rubberBallsButton = new JButton();
+        rubberBallsButton.setIcon(uncheckedIcon);
+        rubberBallsButton.setBounds(640-uncheckedIcon.getIconWidth()/2, 490, uncheckedIcon.getIconWidth(), uncheckedIcon.getIconHeight());
+        rubberBallsButton.setVisible(false);
+        rubberBallsButton.setBorderPainted(true);
+        add(rubberBallsButton);
+        GMbuttons.add(rubberBallsButton);
+        
+        rubberBallsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                if(gameMode.getOption(1)){
+                    gameMode.setOption(1, false);
+                    rubberBallsButton.setIcon(uncheckedIcon);
+                } else {
+                    gameMode.setOption(1, true);
+                    rubberBallsButton.setIcon(checkedIcon);
+                }
+            }
+        });
+        
+        JTextField bonusItemsText = new JTextField("Bonus items");
+        bonusItemsText.setBounds(710, 460, 120, 30);
+        bonusItemsText.setEditable(false);
+        bonusItemsText.setHorizontalAlignment(JTextField.CENTER);
+        bonusItemsText.setFont(new Font("Stencil", Font.BOLD, 18));
+        bonusItemsText.setBackground(new Color(230,226,211));
+        bonusItemsText.setForeground(Color.DARK_GRAY);
+        bonusItemsText.setBorder(null);
+        bonusItemsText.setVisible(false);
+        add(bonusItemsText);
+        GMbuttons.add(bonusItemsText);
+
+        JButton bonusItemsButton = new JButton();
+        bonusItemsButton.setIcon(uncheckedIcon);
+        bonusItemsButton.setBounds(770-uncheckedIcon.getIconWidth()/2, 490, uncheckedIcon.getIconWidth(), uncheckedIcon.getIconHeight());
+        bonusItemsButton.setVisible(false);
+        bonusItemsButton.setBorderPainted(true);
+        add(bonusItemsButton);
+        GMbuttons.add(bonusItemsButton);
+        
+        bonusItemsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                if(gameMode.getOption(2)){
+                    gameMode.setOption(2, false);
+                    bonusItemsButton.setIcon(uncheckedIcon);
+                } else {
+                    gameMode.setOption(2, true);
+                    bonusItemsButton.setIcon(checkedIcon);
+                }
+            }
+        });
+        
+        JTextField fastModeText = new JTextField("Fast mode");
+        fastModeText.setBounds(840, 460, 120, 30);
+        fastModeText.setEditable(false);
+        fastModeText.setHorizontalAlignment(JTextField.CENTER);
+        fastModeText.setFont(new Font("Stencil", Font.BOLD, 18));
+        fastModeText.setBackground(new Color(230,226,211));
+        fastModeText.setForeground(Color.DARK_GRAY);
+        fastModeText.setBorder(null);
+        fastModeText.setVisible(false);
+        add(fastModeText);
+        GMbuttons.add(fastModeText);
+
+        JButton fastModeButton = new JButton();
+        fastModeButton.setIcon(uncheckedIcon);
+        fastModeButton.setBounds(900-uncheckedIcon.getIconWidth()/2, 490, uncheckedIcon.getIconWidth(), uncheckedIcon.getIconHeight());
+        fastModeButton.setVisible(false);
+        fastModeButton.setBorderPainted(true);
+        add(fastModeButton);
+        GMbuttons.add(fastModeButton);
+        
+        fastModeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                if(gameMode.getOption(3)){
+                    gameMode.setOption(3, false);
+                    fastModeButton.setIcon(uncheckedIcon);
+                } else {
+                    gameMode.setOption(3, true);
+                    fastModeButton.setIcon(checkedIcon);
+                }
+            }
+        });
+
 //--------------------------------------------- Done button for the game mode ------------------------------------------  
         
         JButton GMdoneButton = new JButton();
@@ -1188,6 +1408,10 @@ public class GamePanel extends JPanel{
 
             case GAME_MODE:
                 g2d.drawImage(GameModeBackground, 0, 0, 16 * 64, 9 * 64, this);
+                Rectangle bounds = GMbuttons.get(gameMode.getId()).getBounds();
+                g2d.setColor(Color.BLACK);
+                g2d.setStroke(new BasicStroke(5));
+                g2d.drawRect(bounds.x-3, bounds.y-3, bounds.width+5, bounds.height+5);
                 break;
 
         }
