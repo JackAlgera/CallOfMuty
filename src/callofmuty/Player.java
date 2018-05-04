@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Player {
@@ -614,26 +615,10 @@ public class Player {
             default:
                 generateWeapon = true;
         }
-        if(generateWeapon){
-            double gunRandom = Math.random();
+        if(generateWeapon && this.gun.getId()==0){
+            Random gunRandom = new Random();
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-            if (gunRandom < 0.20) {
-                gun.setId(Gun.PISTOL, numberOfCartridges);
-            } else if(gunRandom < 0.21){
-                gun.setId(Gun.LEGENDARY_WEAPON, numberOfCartridges);
-            } else if (gunRandom < 0.40) {
-                gun.setId(Gun.UZI, numberOfCartridges);
-            } else if (gunRandom < 0.50) {
-                gun.setId(Gun.SNIPER, numberOfCartridges);
-            } else if (gunRandom < 0.60) {
-                gun.setId(Gun.SHOTGUN, numberOfCartridges);
-            } else if (gunRandom < 0.70) {
-                gun.setId(Gun.AK, numberOfCartridges);
-            } else if (gunRandom < 0.85) {
-                gun.setId(Gun.MAGNUM, numberOfCartridges);
-            } else {
-                gun.setId(Gun.MITRAILLEUSE, numberOfCartridges);
-            }
+            gun.setId(gunRandom.nextInt(8), numberOfCartridges);
         }
     }
     
