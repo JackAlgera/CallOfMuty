@@ -16,7 +16,7 @@ public class Gun {
             mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2),
             legendaryWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1);
     
-    private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun;
+    private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, numeroBalle;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
     private SoundPlayer gunSound, uziSound, sniperSound,shotgunSound, legendaryWeaponSound;
@@ -85,7 +85,7 @@ public class Gun {
             case SHOTGUN:
                 ammunition = 5*5;
                 image = shotgunImage;
-                rateOfFire = 1;
+                rateOfFire = 650;
                 damage = 12;
                 reloadTime = 1000;
                 bulletSpeed = 1.2;
@@ -94,6 +94,7 @@ public class Gun {
                 xImage = 1;
                 yImage = 7;
                 tailleGun = 2;
+                numeroBalle = 0;
                 break;
                 
             case AK:
@@ -180,6 +181,18 @@ public class Gun {
         this.rateOfFire = rateOfFire;
     }
     
+    public int getNumeroBalleShotgun(){
+        return this.numeroBalle;
+    }
+    
+    public void setNumeroBalleShotgun(int numero){
+        this.numeroBalle=numero;
+    }
+    
+    public int getAmmunition(){
+        return this.ammunition;
+    }
+    
     public void draw(Graphics2D g2d, Player player){
         switch(id){
             case NO_GUN: //draw nothing
@@ -204,6 +217,9 @@ public class Gun {
                     ammunition=startingAmmo;
                     rateOfFire+=reloadTime;
                 } else {
+                    if (id == 4){
+                        numeroBalle=0;
+                    }
                     setId(NO_GUN, 0);
                 }
                 
