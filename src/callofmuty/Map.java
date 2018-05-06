@@ -21,7 +21,8 @@ public class Map{
     public static int TELEPORTER_ID = 13, NUMBER_OF_TILETYPES = 14;
         
     private int[][] map;
-    private int mapWidth,mapHeight, textureSize, xPos, yPos, drawWidth, drawHeight;
+    private int mapWidth,mapHeight, textureSize;
+    private double xPos, yPos, drawWidth, drawHeight;
     private ArrayList<int[]> startTile;
     private ArrayList<int[]> teleporters;
     
@@ -105,7 +106,7 @@ public class Map{
         return textureSize;
     }
     
-    public void setDrawingParameters(int xPos, int yPos, int drawWidth, int drawHeight){
+    public void setDrawingParameters(double xPos, double yPos, double drawWidth, double drawHeight){
         this.xPos = xPos;
         this.yPos = yPos;
         this.drawHeight = drawHeight;
@@ -113,18 +114,21 @@ public class Map{
     }
     
     public void setDrawingParameters(int gameState){
+        double gameWidth = (double)(mapWidth+1)*textureSize;
+        double gameHeight = (double)(mapHeight+1)*textureSize;
         switch (gameState){
             case GamePanel.MAIN_MENU:
-                setDrawingParameters(530, 185, 462, 260);
+                setDrawingParameters(0.517578*gameWidth, 0.3212*gameHeight, 0.4512*gameWidth, 0.4514*gameHeight);
                 break;
             case GamePanel.MAP_EDITOR:
-                setDrawingParameters(100,100,mapWidth*textureSize - 100, mapHeight*textureSize-100);
+                setDrawingParameters(0.0977*gameWidth,0.1736*gameHeight,0.82*gameWidth, 0.82*gameHeight);
                 break;
             case GamePanel.IN_GAME:
                 setDrawingParameters(0, 0, mapWidth*textureSize, mapHeight*textureSize);
                 break;
             case GamePanel.PRE_GAME:
-                setDrawingParameters(585, 330, 425, 230);
+                setDrawingParameters(0.5713*gameWidth, 0.5729*gameHeight, 0.4150*gameWidth, 0.3993*gameHeight);
+
         }
     }
 
@@ -132,7 +136,7 @@ public class Map{
         this.startTile = startTile;
     }
     
-    public Map(int mapWidth, int mapHeight, int tileSize){
+    public Map(int mapWidth, int mapHeight, int tileSize, GamePanel game){
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.textureSize = tileSize;
@@ -168,6 +172,7 @@ public class Map{
         teleporters = new ArrayList<>();
         teleporters.add(new int[]{4,1});
         teleporters.add(new int[]{4,7});
+        setDrawingParameters(GamePanel.MAIN_MENU);
     }
     
     public TileType getTile(int i, int j){
@@ -260,35 +265,36 @@ public class Map{
         return map;
     }
     
-    public void draw(Graphics2D g2d, boolean drawStartingTile){
-        int newXTextureSize = drawWidth/mapWidth, newYTextureSize = drawHeight/mapHeight;
+    public void draw(Graphics2D g2d, boolean drawStartingTile, GamePanel game){
+        double zoomRatio = game.getZoomRatio();
+        int newXTextureSize = (int)(drawWidth/mapWidth*zoomRatio), newYTextureSize = (int)(drawHeight/mapHeight*zoomRatio);
         for (int i = 0 ; i<mapWidth ; i++){
             for (int j = 0; j<mapHeight; j++){
-                getTile(map[i][j]).draw(g2d, xPos+i*newXTextureSize, yPos+j*newYTextureSize, newXTextureSize, newYTextureSize);
+                getTile(map[i][j]).draw(g2d, game.getGameX()+(int)(xPos*zoomRatio)+i*newXTextureSize,(int)(yPos*zoomRatio)+j*newYTextureSize, newXTextureSize, newYTextureSize);
             }
         }
         if(drawStartingTile){
             g2d.setStroke(new BasicStroke(5));
             g2d.setColor(Color.lightGray);
             for (int[] startingTile : startTile){
-                g2d.drawRect(xPos+startingTile[0]*newXTextureSize, yPos+startingTile[1]*newYTextureSize, newXTextureSize, newYTextureSize);
+                g2d.drawRect(game.getGameX()+(int)(xPos*zoomRatio)+startingTile[0]*newXTextureSize, (int)(yPos*zoomRatio)+startingTile[1]*newYTextureSize, newXTextureSize, newYTextureSize);
             }
         }
     }
 
-    public int getxPos() {
+    public double getxPos() {
         return xPos;
     }
 
-    public int getyPos() {
+    public double getyPos() {
         return yPos;
     }
 
-    public int getDrawWidth() {
+    public double getDrawWidth() {
         return drawWidth;
     }
 
-    public int getDrawHeight() {
+    public double getDrawHeight() {
         return drawHeight;
     }
     
@@ -316,8 +322,8 @@ public class Map{
     
     public int[] clickedTile(int clickedX, int clickedY){
         int tileType = -1; // -1 means that no tile was clicked on
-        int i = (clickedX-xPos) * mapWidth/drawWidth;
-        int j = (clickedY-yPos) * mapHeight/drawHeight;
+        int i = (int)((clickedX-xPos) * mapWidth/drawWidth);
+        int j = (int)((clickedY-yPos) * mapHeight/drawHeight);
         if (xPos <= clickedX && clickedX<xPos + drawWidth && yPos<=clickedY && clickedY < yPos + drawHeight){
             tileType = map[i][j];
         }
@@ -332,8 +338,8 @@ public class Map{
         int valuesIndex = 0;
         int i,j;
         while(!isOnTeleporter && valuesIndex < xValues.length){
-            i = ((int)xValues[valuesIndex]-xPos) * mapWidth/drawWidth;
-            j = ((int)yValues[valuesIndex]-yPos) * mapHeight/drawHeight;
+            i = (int)(((int)xValues[valuesIndex]-xPos) * mapWidth/drawWidth);
+            j = (int)(((int)yValues[valuesIndex]-yPos) * mapHeight/drawHeight);
             if (i<0){
                 i=0;
             } else if(i>=mapWidth){
@@ -349,8 +355,8 @@ public class Map{
         }
         if(isOnTeleporter){
             valuesIndex--;
-            i = ((int)xValues[valuesIndex]-xPos) * mapWidth/drawWidth;
-            j = ((int)yValues[valuesIndex]-yPos) * mapHeight/drawHeight;
+            i = (int)(((int)xValues[valuesIndex]-xPos) * mapWidth/drawWidth);
+            j = (int)(((int)yValues[valuesIndex]-yPos) * mapHeight/drawHeight);
             teleporterIndex = teleportersIndex(new int[]{i,j});
             int[] entryTeleporter = teleporters.remove(teleporterIndex);
             int destinationIndex = ThreadLocalRandom.current().nextInt(0, teleporters.size());

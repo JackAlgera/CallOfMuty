@@ -197,12 +197,13 @@ public class Gun {
         return this.reloadTime;
     }
     
-    public void draw(Graphics2D g2d, Player player){
+    public void draw(Graphics2D g2d, Player player, GamePanel game){
         switch(id){
             case NO_GUN: //draw nothing
                 break;
             default:
-                g2d.drawImage(image, (int) getGunPositionY(player), (int) player.getPosY() + 18, image.getWidth(null), image.getHeight(null), null);
+                double zoomRatio = game.getZoomRatio();
+                g2d.drawImage(image, game.getGameX()+(int)(getGunPositionY(player)*zoomRatio), (int)((player.getPosY()+18)*zoomRatio), (int)(image.getWidth(null)*zoomRatio), (int)(image.getHeight(null)*zoomRatio), null);
         }
         
     }

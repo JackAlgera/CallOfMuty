@@ -10,7 +10,8 @@ public class GameMode {
     
     public static final int DEFAULT=0,ROYAL=1,TEAM=2, ALONE=3,
                 RANDOM =0, ALWAYSON = 1,
-                ALLVSALL = 0, ALLVSONE = 1, TEAMVSTEAM = 2;
+                ALLVSALL = 0, ALLVSONE = 1, TEAMVSTEAM = 2,
+                NUMBER_OF_OPTIONS = 4;
     
     private static String DEFAULT_DESCRIPTION = "Bla bla default gamemode description",
             ROYAL_DESCRIPTION = "PAN PAN EVERYWHERE",

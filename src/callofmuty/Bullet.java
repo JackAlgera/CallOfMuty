@@ -83,10 +83,10 @@ public class Bullet {
         }
     }
     
-    public void draw(Graphics2D g2d, int texturesize){
+    public void draw(Graphics2D g2d, int texturesize, GamePanel game){
         if (isActive) {
-            g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
-            //g2d.drawImage(image, (int) posX, (int) posY, texturesize / 2, texturesize / 2, null);
+            double zoomRatio = game.getZoomRatio();
+            g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),game.getGameX()+(int)(posX*zoomRatio),(int)(posY*zoomRatio),(int)(texturesize/2*zoomRatio),(int)(texturesize/2*zoomRatio), null);
         }
     }
     

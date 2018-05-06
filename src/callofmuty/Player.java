@@ -233,22 +233,23 @@ public class Player {
         posY += speed[1]*dT;
     }
     
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g, GamePanel game) {
         if (!isDead) {
-            g.drawImage(animationImages.get(playerAnimation.getCurrentImage()), (int) posX + playerWidth / 2 - imageWidth, (int) posY + playerHeight / 2 - imageHeight, imageWidth * 2, imageHeight * 2, null);
-            g.drawImage(hpBar, (int) posX + playerWidth / 2 - imageWidth, (int) posY + playerHeight / 2 - imageHeight - 12, imageWidth * 2, imageHeight * 2, null);
-            gun.draw(g, this);
+            double zoomRatio = game.getZoomRatio();
+            g.drawImage(animationImages.get(playerAnimation.getCurrentImage()), game.getGameX()+(int)((posX + playerWidth/2 - imageWidth)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight)*zoomRatio), (int)(imageWidth * 2*zoomRatio), (int)(imageHeight * 2*zoomRatio), null);
+            g.drawImage(hpBar, game.getGameX()+(int)((posX + playerWidth/2 - imageWidth)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 12)*zoomRatio), (int)(imageWidth * 2*zoomRatio), (int)(imageHeight * 2*zoomRatio), null);
+            gun.draw(g, this, game);
             g.setColor(Color.RED);
-            g.fillRect((int) posX + playerWidth / 2 - imageWidth + 12, (int) posY + playerHeight / 2 - imageHeight - 6, (int) ((int) (imageWidth * 2 - 24) * health / maxHealth), 2);
+            g.fillRect(game.getGameX()+(int)((posX + playerWidth / 2 - imageWidth + 12)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 6)*zoomRatio), (int) ((imageWidth * 2 - 24) * health / maxHealth*zoomRatio), (int)(2*zoomRatio));
         }
     }
     
-    public void drawBullets(Graphics2D g,int texturesize) {
+    public void drawBullets(Graphics2D g,int texturesize, GamePanel game) {
         for (Bullet bullet : bulletList) {
-            bullet.draw(g, texturesize);
+            bullet.draw(g, texturesize, game);
         }
         for (Bullet bullet : destroyedBullets){
-            bullet.draw(g, texturesize);
+            bullet.draw(g, texturesize, game);
         }
     }
     
