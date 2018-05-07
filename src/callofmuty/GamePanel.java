@@ -79,7 +79,7 @@ public class GamePanel extends JPanel{
     
     private static long gunGenerationTime = 100; //in milliseconds
     
-    private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer;
+    private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer, victorySoundPlayer, defeatSoundPlayer;
     
     private Map map;
     private TileSelector tileSelector;
@@ -106,6 +106,8 @@ public class GamePanel extends JPanel{
         menuMusicPlayer = new SoundPlayer("menuMusic.mp3", true);
         gameMusicPlayer = new SoundPlayer("gameMusic.mp3", true);
         clicSoundPlayer = new SoundPlayer("clicSound.mp3", false);
+        victorySoundPlayer = new SoundPlayer("victorySound.mp3", false);
+        defeatSoundPlayer = new SoundPlayer("defeatSound.mp3", false);
         muteMusic = false;
         muteSounds = false;
         menuMusicPlayer.play();
@@ -1242,10 +1244,16 @@ public class GamePanel extends JPanel{
         } else if(TeamWasKilled && !endShowed){ // team just died : show defeat screen
             setState(ENDING);
             endShowed = true;
+            if (!muteSounds){
+                    defeatSoundPlayer.play();
+                }
         }
         if(player.isTeamkilled(otherPlayersList, true)){ // Game is ended
             if (!TeamWasKilled || !player.isDead()){ // Local team/player won : show victory screen
                 setState(ENDING);
+                if (!muteSounds){
+                    victorySoundPlayer.play();
+                }
             } else { // quit game
                 endGame();
             }

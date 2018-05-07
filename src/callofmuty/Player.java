@@ -17,7 +17,7 @@ public class Player {
     private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
-    private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId;
+    private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId, lifeCounter;
     private Image hpBar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY, lastKickTimeStamp; 
     private double[] speed, acceleration;
@@ -55,6 +55,7 @@ public class Player {
         isTaunting = false;
         currentRollTime = 0;
         destroyedBullets = new ArrayList<>();
+        lifeCounter = 5;
         
         this.playerAnimation = new Animation(115,8,12,8,1,0); // en ms
         
@@ -627,7 +628,7 @@ public class Player {
             Random gunRandom = new Random();
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
 
-            gun.setId(gunRandom.nextInt(8)+1, numberOfCartridges);
+            gun.setId(gunRandom.nextInt(9)+1, numberOfCartridges);
 
         }
     }
@@ -775,6 +776,15 @@ public class Player {
     public double[] getSpeed(){
         return speed;
     }
+    
+    public void setLifeCounter(int life){
+        this.lifeCounter = life;
+    }
+    
+    public int getLifeCounter(){
+        return this.lifeCounter;
+    }
+    
     public void setSpeed(double[] speed1){
         speed[0]=speed1[0];
         speed[1] =speed1[1];       
