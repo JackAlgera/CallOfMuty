@@ -118,7 +118,7 @@ public class Map{
         double gameHeight = (double)(mapHeight+1)*textureSize;
         switch (gameState){
             case GamePanel.MAIN_MENU:
-                setDrawingParameters(0.517578*gameWidth, 0.3212*gameHeight, 0.4512*gameWidth, 0.4514*gameHeight);
+                setDrawingParameters(0.517578*gameWidth-5, 0.3212*gameHeight-8, 0.4512*gameWidth, 0.4514*gameHeight);
                 break;
             case GamePanel.MAP_EDITOR:
                 setDrawingParameters(0.0977*gameWidth,0.1736*gameHeight,0.82*gameWidth, 0.82*gameHeight);

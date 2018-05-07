@@ -190,7 +190,8 @@ public class GamePanel extends JPanel{
                             if (leftMousePressed) {
                                 playershoot();
                             } else if(rightMousePressed){
-                                meleeAttack();
+                       
+                            meleeAttack();
                             }
                             break;
                         case MAP_EDITOR:
@@ -498,7 +499,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------------- Map editor button ------------------------------------------  
         
         JButton mapEditorButton = new JButton();
-        bounds = new Rectangle((int)(0.5244*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1709*panelWidth), (int)(0.0729*panelHeight));
+        bounds = new Rectangle((int)(0.5244*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1709*panelWidth), (int)(0.0729*panelHeight)-10);
         mapEditorButton.setBounds(bounds);
         mapEditorButton.setIcon(new ImageIcon(mapEditorIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //mapEditorButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -725,7 +726,7 @@ public class GamePanel extends JPanel{
         MMpressedIcons.add(null);
         usernameField.setEditable(true);
         usernameField.setHorizontalAlignment(JTextField.CENTER);
-        usernameField.setFont(new Font("Stencil", Font.BOLD, 18));
+        usernameField.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
         usernameField.setBackground(new Color(230,226,211));//(new Color(221,214,192));
         usernameField.setForeground(Color.DARK_GRAY);
         usernameField.setBorder(null);
@@ -794,11 +795,12 @@ public class GamePanel extends JPanel{
 //--------------------------------------------- Game mode menu buttons ------------------------------------------  
 // buttons need to be added in the same order as gameMode ids
 
-        JTextArea descriptionText = new JTextArea(20,50); // needs to be declared before buttons because they use it, but needs to be added to GMbuttons after gameMode buttons
-
+        JTextArea descriptionText = new JTextArea((int)(20*getZoomRatio()),(int) (50*getZoomRatio())); // needs to be declared before buttons because they use it, but needs to be added to GMbuttons after gameMode buttons
+        descriptionText.setSize((int)(20*getZoomRatio()),(int) (50*getZoomRatio()));
+        
         JButton defaultButton = new JButton("Default");
         //bounds = new Rectangle((int)(0.0547*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1680*panelWidth), (int)(0.1040*panelHeight));
-        bounds = new Rectangle(100, 250, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        bounds = new Rectangle(100, 350, doneIcon.getIconWidth(), doneIcon.getIconHeight());
         defaultButton.setBounds(bounds);
         //defaultButton.setIcon(new ImageIcon(spectateIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //defaultButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -820,7 +822,7 @@ public class GamePanel extends JPanel{
         
         JButton royalButton = new JButton("Royal");
         //bounds = new Rectangle((int)(0.0547*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1680*panelWidth), (int)(0.1040*panelHeight));
-        bounds = new Rectangle(100, 300, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        bounds = new Rectangle(100, 400, doneIcon.getIconWidth(), doneIcon.getIconHeight());
         royalButton.setBounds(bounds);
         //defaultButton.setIcon(new ImageIcon(spectateIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //defaultButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -842,7 +844,7 @@ public class GamePanel extends JPanel{
         
         JButton teamButton = new JButton("Team");
         //bounds = new Rectangle((int)(0.0547*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1680*panelWidth), (int)(0.1040*panelHeight));
-        bounds = new Rectangle(100, 350, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        bounds = new Rectangle(100, 450, doneIcon.getIconWidth(), doneIcon.getIconHeight());
         teamButton.setBounds(bounds);
         //teamButton.setIcon(new ImageIcon(spectateIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //teamButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -864,7 +866,7 @@ public class GamePanel extends JPanel{
         
         JButton aloneButton = new JButton("Alone");
         //bounds = new Rectangle((int)(0.0547*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1680*panelWidth), (int)(0.1040*panelHeight));
-        bounds = new Rectangle(100, 400, doneIcon.getIconWidth(), doneIcon.getIconHeight());
+        bounds = new Rectangle(100, 500, doneIcon.getIconWidth(), doneIcon.getIconHeight());
         aloneButton.setBounds(bounds);
         //teamButton.setIcon(new ImageIcon(spectateIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //teamButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -890,7 +892,7 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         descriptionText.setText(gameMode.getDescription());
         descriptionText.setEditable(false);
-        descriptionText.setFont(new Font("Stencil", Font.BOLD, 18));
+        descriptionText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
         descriptionText.setBackground(new Color(230,226,211));
         descriptionText.setForeground(Color.DARK_GRAY);
         descriptionText.setBorder(null);
@@ -1614,7 +1616,15 @@ public class GamePanel extends JPanel{
     }
     
     public void meleeAttack(){
+        double[] directionOfFire = new double[2];
+        directionOfFire[0] = mousePosition[0] - player.getPosX() - textureSize / 2;
+        directionOfFire[1] = mousePosition[1] - player.getPosY() - textureSize / 2;
+
+        double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
+        directionOfFire[0] = directionOfFire[0] / norme;
+        directionOfFire[1] = directionOfFire[1] / norme;
         
+        player.kick(directionOfFire, sql);
     }
     
     @Override
@@ -1627,15 +1637,15 @@ public class GamePanel extends JPanel{
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int)(20*getZoomRatio())));
                 map.draw(g2d, false, this);
                 if (isHost) {
-                    g2d.drawString(player.getName(),(getWidth()-panelWidth)/2 + (int)(80*getZoomRatio()), (int)(90*getZoomRatio()));
+                    g2d.drawString(player.getName(),(getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)(140*getZoomRatio()));
                     for (int i = 0; i < otherPlayersList.size(); i++) {
-                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(80*getZoomRatio()), (int)((140 + i * 50)*getZoomRatio()));
+                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)((140 + i * 50)*getZoomRatio()));
                     }
                 } else {
                     for (int i = 0; i < otherPlayersList.size(); i++) {
-                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(80*getZoomRatio()), (int)((90 + i * 50)*getZoomRatio()));
+                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)((140 + i * 50)*getZoomRatio()));
                     }
-                    g2d.drawString(player.getName(), (getWidth()-panelWidth)/2 + (int)(80*getZoomRatio()), (int)(90+(otherPlayersList.size())*50*getZoomRatio()));
+                    g2d.drawString(player.getName(), (getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)(140+(otherPlayersList.size())*50*getZoomRatio()));
                 }
                 break;
 
