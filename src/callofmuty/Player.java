@@ -13,17 +13,17 @@ public class Player {
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
     private static double rollSpeedMultiplier = 3;
-    private static long timeBetweenHurtSounds = 300, rollTime = 150, timeBetweenTaunts = 1000; // in milliseconds
+    private static long timeBetweenHurtSounds = 300, timeBewteenKick= 1000, rangeKick = 75, rollTime = 150, timeBetweenTaunts = 1000; // in milliseconds
     private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
-    private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId;
+    private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId, lifeCounter;
     private Image hpBar;
-    private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY;
+    private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY, lastKickTimeStamp; 
     private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health, timeSinceLastHurtSound;
-    private boolean isDead, muteSounds, justTeleported, isRolling, isTaunting;  
+    private boolean isDead, muteSounds, justTeleported, isRolling, isTaunting, isKicking;  
     private int skinId, numberOfSkins;
     private String name;
     public ArrayList<Image> animationImages = new ArrayList<>();
@@ -55,6 +55,7 @@ public class Player {
         isTaunting = false;
         currentRollTime = 0;
         destroyedBullets = new ArrayList<>();
+        lifeCounter = 5;
         
         this.playerAnimation = new Animation(115,8,20,8,1,0); // en ms
         
@@ -63,11 +64,12 @@ public class Player {
                 animationImages.add(Tools.selectPlayerTile(Tools.PlayerTilesetAnimated, i+1, j+1));
             }
         }
+        lastKickTimeStamp = System.currentTimeMillis();
         imageHeight = animationImages.get(0).getHeight(null)/2;
         imageWidth = animationImages.get(0).getWidth(null)/2;
         numberOfSkins = 3;
         playerAnimation.setRow((skinId - 1) * 4 + numberOfSkins);
-        
+        isKicking=false;
         maxSpeed = 0.3; //in pixel per ms
         speed = new double[2];
         speed[0] = 0.0; //x speed
@@ -156,10 +158,10 @@ public class Player {
     }
     
 
-    public void addPlayer(SQLManager sql){
+    public void addPlayer(SQLManager sql, int numberOfBounces){
         bulletList = new ArrayList<>();
         for (int i = 1; i<=initialBulletNumber; i++){ //bulletId starts at 1, 0 is SQL's "null"
-            bulletList.add(new Bullet(playerId, i));
+            bulletList.add(new Bullet(playerId, i,numberOfBounces));
         }
         sql.addPlayer(this);
         sql.addBulletList(bulletList);
@@ -511,7 +513,7 @@ public class Player {
         this.teamId=i;
     }
     
-    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage, int bulletType){
+    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage, int bulletType, int numberOfBounces){
         if (!isDead) {
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;
@@ -520,7 +522,7 @@ public class Player {
                 bulletIndex++;
             }
             if(!inactiveBulletFound){
-                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1, damage, bulletType));
+                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1, damage, bulletType, numberOfBounces));
                 bulletList.get(bulletIndex).setActive(true);
                 sql.addBullet(bulletList.get(bulletIndex));
             } else {
@@ -531,6 +533,7 @@ public class Player {
                 bullet.setPosX(initPosX);
                 bullet.setPosY(initPosY);
                 bullet.setDamage(damage);
+                bullet.setNumberOfBounces(numberOfBounces);
             }
         }
     }
@@ -546,14 +549,20 @@ public class Player {
             bullet = bulletList.get(i);
             if (bullet.isActive()) {
                 bullet.update(dT);
-                if (bullet.checkCollisionWithMap(map)) {
+                if (bullet.destroyedByMap(map)) {
                     bullet.setActive(false);
                     destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
+                    bullet.setDistanceTravelled(0);
+                } else if(isKicking && bullet.getDistanceTravelled()>rangeKick && bullet.getBulletType() == 3){
+                    bullet.setActive(false);
+                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
+                    isKicking=false;
                     bullet.setDistanceTravelled(0);
                 } else if(bullet.getDistanceTravelled()>gun.getDistanceMaxShoot()){
                     bullet.setActive(false);
                     destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
                     bullet.setDistanceTravelled(0);
+                
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
                         if (Tools.isPlayerHit(otherPlayer, bullet) && !this.isFriend(otherPlayer)) {
@@ -619,13 +628,20 @@ public class Player {
         if(generateWeapon && this.gun.getId()==0){
             Random gunRandom = new Random();
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-
-            gun.setId(gunRandom.nextInt(8), numberOfCartridges);
-
+            gun.setId(gunRandom.nextInt(9)+1, numberOfCartridges);
         }
     }
     
-    public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets){
+    public void kick(double[] directionOfFire, SQLManager sql) {
+        boolean test = System.currentTimeMillis()-timeBewteenKick>=lastKickTimeStamp;
+        if (test){
+            lastKickTimeStamp = System.currentTimeMillis();
+            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 1.0 , sql, 5 , 3, 0);
+            isKicking=true;
+        }
+    }
+    
+    public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets, int numberOfBounces){
         if (gun.shoot(unlimitedBullets, muteSounds)){
             if (gun.getId()==Gun.SHOTGUN){ //spread shotgun in progress
                 int spreadDir;
@@ -641,11 +657,7 @@ public class Player {
                 double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
                 double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
                 double[] angleShotgun= new double[]{0,0.0872665,0.0872665*2,-0.0872665,-0.0872665*2};    
-                double[] currentDirectionOfFire = new double[2];
-                currentDirectionOfFire[0]=directionOfFire[0];
-                currentDirectionOfFire[1]=directionOfFire[1];
-                    
-                /*if (gun.getNumeroBalleShotgun() == 0){ 
+                if (gun.getNumeroBalleShotgun() == 0){ 
                     angle = 0;
                     directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
                     directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
@@ -672,33 +684,17 @@ public class Player {
                     directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
                     directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
                     gun.setNumeroBalleShotgun(0);
-                    this.gun.setRateOfFire(650);*/
-                for (int i=0; i<5; i++){
-                    currentDirectionOfFire[0]=directionOfFire[0];
-                    currentDirectionOfFire[1]=directionOfFire[1];
-                    angle = angleShotgun[i];
-                    currentDirectionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
-                    currentDirectionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
-                    System.out.println("ouille");
-                    addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, currentDirectionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType());
-                    if (i==0){
-                        gunDirection=currentDirectionOfFire[0];
-                    } else if (i==4){
-                        this.gun.setRateOfFire(650);
-                    }
+                    this.gun.setRateOfFire(650);
                 }
                 if (gun.getAmmunition() == 25){
                     this.gun.setRateOfFire(1650);
                 }
-
-                //addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
-
+                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(),gun.getBulletType(), numberOfBounces);
                     if(gunDirection<0){
                         gun.changeGunDirection(1);
                     } else {
                         gun.changeGunDirection(0);
-                    }               
-                
+                    }                             
             } else { //Fonction spreadBullet
                 int spreadDir;
                 double signe = Math.abs(directionOfFire[0])/directionOfFire[0];
@@ -712,15 +708,13 @@ public class Player {
                 directionOfFire[0]=Math.cos(angleTirRandom+Gamma)*signe;
                 directionOfFire[1]=Math.sin(angleTirRandom+Gamma)*signe;
 
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType());
+                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType(), numberOfBounces);
                 if(directionOfFire[0]<0){
                     gun.changeGunDirection(1);
                 } else {
                     gun.changeGunDirection(0);
                 }
             }
-            
-            
         }
     }
     
@@ -778,6 +772,15 @@ public class Player {
     public double[] getSpeed(){
         return speed;
     }
+    
+    public void setLifeCounter(int life){
+        this.lifeCounter = life;
+    }
+    
+    public int getLifeCounter(){
+        return this.lifeCounter;
+    }
+    
     public void setSpeed(double[] speed1){
         speed[0]=speed1[0];
         speed[1] =speed1[1];       

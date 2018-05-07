@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/Z:/Mes%20documents/CallOfMuty/src/callofmuty/SQLManager.java</file>
             <file>file:/Z:/Mes%20documents/CallOfMuty/src/callofmuty/Gun.java</file>
             <file>file:/Z:/Mes%20documents/CallOfMuty/src/callofmuty/Player.java</file>
@@ -14,6 +15,14 @@
             <file>file:/Z:/Mes%20documents/CallOfMuty/src/callofmuty/GameMode.java</file>
             <file>file:/Z:/Mes%20documents/CallOfMuty/src/callofmuty/CallOfMuty.java</file>
             <file>file:/Z:/Mes%20documents/CallOfMuty/src/callofmuty/Animation.java</file>
+=======
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Tools.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Map.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/TileSelector.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/GamePanel.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/Player.java</file>
+            <file>file:/C:/Users/tlaur/Documents/CallofMuty/src/callofmuty/CallOfMuty.java</file>
+>>>>>>> 58c70a59450608e5d6c042174b5018010d61aded
         </group>
     </open-files>
 </project-private>

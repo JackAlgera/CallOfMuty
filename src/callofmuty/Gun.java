@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 public class Gun {
     
-    public static final int NO_GUN = 0, PISTOL = 1, UZI = 2, SNIPER = 3, SHOTGUN = 4, AK = 5, MAGNUM = 6, MITRAILLEUSE = 7, LEGENDARY_WEAPON = 8;
+    public static final int NO_GUN = 0, PISTOL = 1, UZI = 2, SNIPER = 3, SHOTGUN = 4, AK = 5, MAGNUM = 6, MITRAILLEUSE = 7, LEGENDARY_WEAPON = 8, FLAMETHROWER = 9;
     private static final BufferedImage pistolImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 1, 1),
             uziImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 3, 1),
             sniperImage = Tools.selectWeaponTile(Tools.WeaponTileset, 3, 1, 2),
@@ -14,8 +14,9 @@ public class Gun {
             akImage = Tools.selectWeaponTile(Tools.WeaponTileset, 1, 3, 2),
             magnumImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 1, 1),
             mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2),
-            legendaryWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1);
-    
+            legendaryWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1),
+            flamethrowerWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1);
+            
     private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, numeroBalle, bulletType;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
@@ -153,6 +154,20 @@ public class Gun {
                 bulletSpeed = 1.8;
                 distanceMaxShoot = 700;
                 bulletSpread = 0.034;
+                xImage = 2;
+                yImage = 9;
+                tailleGun = 1;
+                break;
+                
+            case FLAMETHROWER:
+                ammunition = 50;
+                image = flamethrowerWeaponImage;
+                rateOfFire = 40;
+                damage = 2;
+                reloadTime = 1000;
+                bulletSpeed = 1.8;
+                distanceMaxShoot = 200;
+                bulletSpread = 0.200;
                 xImage = 2;
                 yImage = 9;
                 tailleGun = 1;
