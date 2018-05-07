@@ -7,22 +7,22 @@ import java.util.ArrayList;
 
 public class Bullet {
     
-    public static final int NORMAL = 0, FIRE = 1, EGG = 2;
+    public static final int NORMAL = 0, FIRE = 1, EGG = 2, MELEE = 3;
     
     public double posX, posY, speed, damage, distanceTravelled;
-    public int ballWidth, ballHeight, playerId, bulletId, bulletType;
+    private int numberOfBounces, ballWidth, ballHeight, playerId, bulletId, bulletType;
     public double[] direction;
     public ArrayList<Image> animationImages = new ArrayList<Image>();
     public Animation bulletAnimation;
     private Image image;
     private boolean isActive;
     
-    public Bullet(int playerId, int bulletId) { //usefull constructor for SQL updates
-        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, 0);
+    public Bullet(int playerId, int bulletId, int numberOfBounces) { //usefull constructor for SQL updates
+        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, 0,numberOfBounces);
     }
     
     public Bullet(double posX, double posY, int playerId, int bulletId, int bulletType){
-        this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, bulletType);
+        this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, bulletType,0);
     }
     
     public Bullet(double posX, double posY, int bulletType) { //usefull constructor bullet animations
@@ -44,11 +44,12 @@ public class Bullet {
         }
     }
     
-    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId, double damage, int bulletType){
+    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId, double damage, int bulletType, int numberOfBounces){
         this.damage = damage;
         this.posX = posX;
         this.posY = posY;
         this.bulletType = bulletType;
+        this.numberOfBounces = numberOfBounces;
         ballWidth = 10;
         ballHeight = 10;
         this.speed = speed;
@@ -103,8 +104,32 @@ public class Bullet {
         }
     }
     
-    public boolean checkCollisionWithMap(Map map){
-        return !Tools.bulletCanCross(posX, posY, ballWidth, ballHeight, map);
+    public boolean destroyedByMap(Map map){
+        int collisionDirection = collisionDirection(map);
+        boolean destroyBullet = false;
+        if (collisionDirection != -1){
+            numberOfBounces--;
+            if(numberOfBounces>-1){
+                direction[collisionDirection] *=-1;
+            } else {
+                destroyBullet = true;
+            }
+            System.out.println("collision detected, number of bounces left = "+numberOfBounces);
+        }
+        return destroyBullet;
+    }
+    
+    public int collisionDirection(Map map){
+        int bounceDirection = -1; // -1 means no bounce, 0 means horizontally, 1 means vertically
+        
+        if(map.getTile(posX+ballWidth/2, posY+ballHeight/2*(1+direction[1])).blocksBullets()){ // check block above / below
+            bounceDirection = 1;
+        } else if(map.getTile(posX+ballWidth/2*(1+direction[0]), posY+ballHeight/2).blocksBullets()){
+            bounceDirection =0;
+        } else if(map.getTile(posX, posY).blocksBullets() || map.getTile(posX+ballWidth, posY).blocksBullets() || map.getTile(posX, posY+ballHeight).blocksBullets() || map.getTile(posX+ballWidth, posY+ballHeight).blocksBullets()){
+            bounceDirection = 1;
+        }
+        return bounceDirection;
     }
 
     public double getPosX() {
@@ -202,5 +227,9 @@ public class Bullet {
         }
 
         return test;
+    }
+
+    void setNumberOfBounces(int numberOfBounces) {
+        this.numberOfBounces = numberOfBounces;
     }
 }
