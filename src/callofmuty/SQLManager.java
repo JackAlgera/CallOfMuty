@@ -195,10 +195,10 @@ public class SQLManager {
             Bullet bullet;
             for (int i = 0; i<bulletList.size()-1; i++) {
                 bullet = bulletList.get(i);
-                values += "("+bullet.getBulletId()+","+bullet.getPlayerId()+","+bullet.getPosX()+","+bullet.getPosY()+",0), ";
+                values += "("+bullet.getBulletId()+","+bullet.getPlayerId()+","+bullet.getPosX()+","+bullet.getPosY()+",0,0), ";
             }
             bullet = bulletList.get(bulletList.size()-1);
-            values += "("+bullet.getBulletId()+","+bullet.getPlayerId()+","+bullet.getPosX()+","+bullet.getPosY()+",0)";
+            values += "("+bullet.getBulletId()+","+bullet.getPlayerId()+","+bullet.getPosX()+","+bullet.getPosY()+",0,0)";
             try {
                 requete = connexion.prepareStatement("INSERT INTO bullet VALUES "+values);
                 requete.executeUpdate();
@@ -362,7 +362,7 @@ public class SQLManager {
         PreparedStatement requete;
         
         try {
-            requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?,?)");
+            requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?,?,0)");
             requete.setInt(1, bullet.getBulletId());
             requete.setInt(2, bullet.getPlayerId());
             requete.setDouble(3, bullet.getPosX());

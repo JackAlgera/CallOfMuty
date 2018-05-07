@@ -619,7 +619,7 @@ public class Player {
             Random gunRandom = new Random();
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
 
-            gun.setId(gunRandom.nextInt(8), numberOfCartridges);
+            gun.setId(4, numberOfCartridges);
 
         }
     }
@@ -637,9 +637,14 @@ public class Player {
                     } else {
                         spreadDir = -1;
                     }
-                    double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
-                    double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
-                if (gun.getNumeroBalleShotgun() == 0){ 
+                double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
+                double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
+                double[] angleShotgun= new double[]{0,0.0872665,0.0872665*2,-0.0872665,-0.0872665*2};    
+                double[] currentDirectionOfFire = new double[2];
+                currentDirectionOfFire[0]=directionOfFire[0];
+                currentDirectionOfFire[1]=directionOfFire[1];
+                    
+                /*if (gun.getNumeroBalleShotgun() == 0){ 
                     angle = 0;
                     directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
                     directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
@@ -666,12 +671,25 @@ public class Player {
                     directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
                     directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
                     gun.setNumeroBalleShotgun(0);
-                    this.gun.setRateOfFire(650);
+                    this.gun.setRateOfFire(650);*/
+                for (int i=0; i<5; i++){
+                    currentDirectionOfFire[0]=directionOfFire[0];
+                    currentDirectionOfFire[1]=directionOfFire[1];
+                    angle = angleShotgun[i];
+                    currentDirectionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
+                    currentDirectionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
+                    System.out.println("ouille");
+                    addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, currentDirectionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                    if (i==0){
+                        gunDirection=currentDirectionOfFire[0];
+                    } else if (i==4){
+                        this.gun.setRateOfFire(650);
+                    }
                 }
                 if (gun.getAmmunition() == 25){
                     this.gun.setRateOfFire(1650);
                 }
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                //addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
                     if(gunDirection<0){
                         gun.changeGunDirection(1);
                     } else {
