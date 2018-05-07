@@ -6,8 +6,11 @@ import java.awt.Image;
 import java.util.ArrayList;
 
 public class Bullet {
+    
+    public static final int NORMAL = 0, FIRE = 1, EGG = 2;
+    
     public double posX, posY, speed, damage, distanceTravelled;
-    public int ballWidth, ballHeight, playerId, bulletId;
+    public int ballWidth, ballHeight, playerId, bulletId, bulletType;
     public double[] direction;
     public ArrayList<Image> animationImages = new ArrayList<Image>();
     public Animation bulletAnimation;
@@ -15,16 +18,17 @@ public class Bullet {
     private boolean isActive;
     
     public Bullet(int playerId, int bulletId) { //usefull constructor for SQL updates
-        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0);
+        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, 0);
     }
     
-    public Bullet(double posX, double posY, int playerId, int bulletId){
-        this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0);
+    public Bullet(double posX, double posY, int playerId, int bulletId, int bulletType){
+        this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, bulletType);
     }
     
-    public Bullet(double posX, double posY) { //usefull constructor bullet animations
+    public Bullet(double posX, double posY, int bulletType) { //usefull constructor bullet animations
         this.posX = posX;
         this.posY = posY;
+        this.bulletType = bulletType;
         speed = 0;
         isActive = true;
         
@@ -40,10 +44,11 @@ public class Bullet {
         }
     }
     
-    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId, double damage){
+    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId, double damage, int bulletType){
         this.damage = damage;
         this.posX = posX;
         this.posY = posY;
+        this.bulletType = bulletType;
         ballWidth = 10;
         ballHeight = 10;
         this.speed = speed;
@@ -74,6 +79,14 @@ public class Bullet {
         return damage;
     }
     
+    public int getBulletType(){
+        return bulletType;
+    }
+    
+    public void setBulletType(int bulletType){
+        this.bulletType = bulletType;
+    }
+    
     public void update(double dT) {
         if (isActive) {
             posX += direction[0] * dT * speed;
@@ -83,10 +96,10 @@ public class Bullet {
         }
     }
     
-    public void draw(Graphics2D g2d, int texturesize){
+    public void draw(Graphics2D g2d, int texturesize, GamePanel game){
         if (isActive) {
-            g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),(int) posX,(int) posY, texturesize/2, texturesize/2, null);
-            //g2d.drawImage(image, (int) posX, (int) posY, texturesize / 2, texturesize / 2, null);
+            double zoomRatio = game.getZoomRatio();
+            g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),game.getGameX()+(int)(posX*zoomRatio),(int)(posY*zoomRatio),(int)(texturesize/2*zoomRatio),(int)(texturesize/2*zoomRatio), null);
         }
     }
     

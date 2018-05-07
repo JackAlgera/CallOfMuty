@@ -16,13 +16,14 @@ public class Gun {
             mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2),
             legendaryWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1);
     
-    private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, numeroBalle;
+    private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, numeroBalle, bulletType;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
     private SoundPlayer gunSound, uziSound, sniperSound,shotgunSound, legendaryWeaponSound;
     
     public Gun(){
         ammunition = 0;
+        bulletType = 0;
         id = NO_GUN;
         lastShotTimeStamp = System.currentTimeMillis();
         gunSound = new SoundPlayer("shootingSound.mp3", false);
@@ -34,6 +35,10 @@ public class Gun {
     
     public double getDamage(){
         return damage;
+    }
+    
+    public int getBulletType(){
+        return bulletType;
     }
     
     public void setId(int id, int numberOfCartridges){
@@ -197,12 +202,13 @@ public class Gun {
         return this.reloadTime;
     }
     
-    public void draw(Graphics2D g2d, Player player){
+    public void draw(Graphics2D g2d, Player player, GamePanel game){
         switch(id){
             case NO_GUN: //draw nothing
                 break;
             default:
-                g2d.drawImage(image, (int) getGunPositionY(player), (int) player.getPosY() + 18, image.getWidth(null), image.getHeight(null), null);
+                double zoomRatio = game.getZoomRatio();
+                g2d.drawImage(image, game.getGameX()+(int)(getGunPositionY(player)*zoomRatio), (int)((player.getPosY()+18)*zoomRatio), (int)(image.getWidth(null)*zoomRatio), (int)(image.getHeight(null)*zoomRatio), null);
         }
         
     }

@@ -31,10 +31,7 @@ public class SQLManager {
     public void uploadPlayerAndBullets(Player player) { //updates player's position & bullets + hurt players' health
         if (!player.isDead()) {
             PreparedStatement requete;
-            String xStatement = "";
-            String yStatement = "";
-            String isActiveStatement = "";
-            String healthStatement = "";
+            String xStatement = "", yStatement = "", isActiveStatement = "", healthStatement = "", bulletTypeStatement = "";
             int taunt;
             if (player.isTaunting()){
                 taunt = 1;
@@ -46,6 +43,7 @@ public class SQLManager {
                 if (bullet.isActive()) {
                     xStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosX() + " \n";
                     yStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosY() + " \n";
+                    bulletTypeStatement+="WHEN " + bullet.getBulletId() + " THEN " + bullet.getBulletType() + " \n";
                     isActiveStatement += "WHEN " + bullet.getBulletId() + " THEN 1 \n";
                 }
             }
@@ -62,9 +60,9 @@ public class SQLManager {
                     }
                 } else { //there are bullets to update
                     if (healthStatement.isEmpty()) { //there are no players to hurt
-                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", players.gunId = " + player.getGunId() + ", players.isTaunting = " + taunt + ", bullet.posX = CASE bullet.idBullet " + xStatement + " ELSE 0 END, bullet.posY = CASE bullet.idBullet " + yStatement + " ELSE 0 END, bullet.isActive = CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END WHERE players.id = " + player.getPlayerId());
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer SET players.posX = " + player.getPosX() + ", players.posY = " + player.getPosY() + ", players.gunId = " + player.getGunId() + ", players.isTaunting = " + taunt + ", bullet.posX = CASE bullet.idBullet " + xStatement + " ELSE 0 END, bullet.bulletType = CASE bullet.idBullet " + bulletTypeStatement + " ELSE 0 END, bullet.posY = CASE bullet.idBullet " + yStatement + " ELSE 0 END, bullet.isActive = CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END WHERE players.id = " + player.getPlayerId());
                     } else { //there are players to hurt
-                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET bullet.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + xStatement + " ELSE 0 END ELSE bullet.posX END, bullet.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + yStatement + " ELSE 0 END ELSE bullet.posY END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END ELSE bullet.isActive END, players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.isTaunting = CASE players.id WHEN " + player.getPlayerId() + " THEN " + taunt + " ELSE players.isTaunting END, players.gunId = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getGunId() + " ELSE players.gunId END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
+                        requete = connexion.prepareStatement("UPDATE players LEFT JOIN bullet ON players.id=bullet.idPlayer AND players.id = " + player.getPlayerId() + " SET bullet.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + xStatement + " ELSE 0 END ELSE bullet.posX END, bullet.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + yStatement + " ELSE 0 END ELSE bullet.posY END, bullet.bulletType = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + bulletTypeStatement + " ELSE 0 END ELSE bullet.bulletType END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN CASE bullet.idBullet " + isActiveStatement + " ELSE 0 END ELSE bullet.isActive END, players.posX = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosX() + " ELSE players.posX END, players.posY = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getPosY() + " ELSE players.posY END, players.isTaunting = CASE players.id WHEN " + player.getPlayerId() + " THEN " + taunt + " ELSE players.isTaunting END, players.gunId = CASE players.id WHEN " + player.getPlayerId() + " THEN " + player.getGunId() + " ELSE players.gunId END, players.playerHp = CASE players.id " + healthStatement + " ELSE players.playerHp END, bullet.isActive = CASE players.id WHEN " + player.getPlayerId() + " THEN 0 ELSE bullet.isActive END");
                     }
                 }
                 requete.executeUpdate();
@@ -84,7 +82,7 @@ public class SQLManager {
         ArrayList<Bullet> updatedBullets = new ArrayList<>(); //saves which bullets were updated, others will be erased
         ArrayList<Player> updatedPlayers = new ArrayList<>(); //same
         try {
-            requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, players.gunId, players.isTaunting, bullet.idBullet, bullet.posX, bullet.posY FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer AND bullet.isActive=1 AND NOT players.id="+ player.getPlayerId() +" WHERE players.playerState = "+ Player.PLAYING +" ORDER BY players.id");
+            requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, players.gunId, players.isTaunting, bullet.idBullet, bullet.posX, bullet.posY, bullet.bulletType FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer AND bullet.isActive=1 AND NOT players.id="+ player.getPlayerId() +" WHERE players.playerState = "+ Player.PLAYING +" ORDER BY players.id");
             ResultSet resultat = requete.executeQuery();
             if (resultat!=null) {
                 while (resultat.next()) {
@@ -115,7 +113,7 @@ public class SQLManager {
                                 bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
                                 updatedBullets.add(new Bullet(playerId, bulletId));
                                 if (bulletIndex == -1) { // bullet was not already in the list
-                                    otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
+                                    otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId, resultat.getInt("bulletType")));
                                     otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
                                     otherPlayersList.get(playerIndex).playShootSound();
                                 } else { // bullet was already in the list
@@ -129,7 +127,7 @@ public class SQLManager {
                                 bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
                                 updatedBullets.add(new Bullet(playerId, bulletId));
                                 if (bulletIndex == -1) {
-                                    otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId));
+                                    otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId, resultat.getInt("bulletType")));
                                     otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
                                 } else {
                                     otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
@@ -362,7 +360,7 @@ public class SQLManager {
         PreparedStatement requete;
         
         try {
-            requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?,?,0)");
+            requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?,?,?)");
             requete.setInt(1, bullet.getBulletId());
             requete.setInt(2, bullet.getPlayerId());
             requete.setDouble(3, bullet.getPosX());
@@ -374,6 +372,7 @@ public class SQLManager {
                 isActive = 0;
             }
             requete.setInt(5, isActive);
+            requete.setInt(6, bullet.getBulletType());
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {

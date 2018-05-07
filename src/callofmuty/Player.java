@@ -233,22 +233,23 @@ public class Player {
         posY += speed[1]*dT;
     }
     
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g, GamePanel game) {
         if (!isDead) {
-            g.drawImage(animationImages.get(playerAnimation.getCurrentImage()), (int) posX + playerWidth / 2 - imageWidth, (int) posY + playerHeight / 2 - imageHeight, imageWidth * 2, imageHeight * 2, null);
-            g.drawImage(hpBar, (int) posX + playerWidth / 2 - imageWidth, (int) posY + playerHeight / 2 - imageHeight - 12, imageWidth * 2, imageHeight * 2, null);
-            gun.draw(g, this);
+            double zoomRatio = game.getZoomRatio();
+            g.drawImage(animationImages.get(playerAnimation.getCurrentImage()), game.getGameX()+(int)((posX + playerWidth/2 - imageWidth)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight)*zoomRatio), (int)(imageWidth * 2*zoomRatio), (int)(imageHeight * 2*zoomRatio), null);
+            g.drawImage(hpBar, game.getGameX()+(int)((posX + playerWidth/2 - imageWidth)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 12)*zoomRatio), (int)(imageWidth * 2*zoomRatio), (int)(imageHeight * 2*zoomRatio), null);
+            gun.draw(g, this, game);
             g.setColor(Color.RED);
-            g.fillRect((int) posX + playerWidth / 2 - imageWidth + 12, (int) posY + playerHeight / 2 - imageHeight - 6, (int) ((int) (imageWidth * 2 - 24) * health / maxHealth), 2);
+            g.fillRect(game.getGameX()+(int)((posX + playerWidth / 2 - imageWidth + 12)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 6)*zoomRatio), (int) ((imageWidth * 2 - 24) * health / maxHealth*zoomRatio), (int)(2*zoomRatio));
         }
     }
     
-    public void drawBullets(Graphics2D g,int texturesize) {
+    public void drawBullets(Graphics2D g,int texturesize, GamePanel game) {
         for (Bullet bullet : bulletList) {
-            bullet.draw(g, texturesize);
+            bullet.draw(g, texturesize, game);
         }
         for (Bullet bullet : destroyedBullets){
-            bullet.draw(g, texturesize);
+            bullet.draw(g, texturesize, game);
         }
     }
     
@@ -510,7 +511,7 @@ public class Player {
         this.teamId=i;
     }
     
-    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage){
+    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage, int bulletType){
         if (!isDead) {
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;
@@ -519,7 +520,7 @@ public class Player {
                 bulletIndex++;
             }
             if(!inactiveBulletFound){
-                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1, damage));
+                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1, damage, bulletType));
                 bulletList.get(bulletIndex).setActive(true);
                 sql.addBullet(bulletList.get(bulletIndex));
             } else {
@@ -547,11 +548,11 @@ public class Player {
                 bullet.update(dT);
                 if (bullet.checkCollisionWithMap(map)) {
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY()));
+                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
                     bullet.setDistanceTravelled(0);
                 } else if(bullet.getDistanceTravelled()>gun.getDistanceMaxShoot()){
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY()));
+                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
                     bullet.setDistanceTravelled(0);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
@@ -626,7 +627,7 @@ public class Player {
     
     public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets){
         if (gun.shoot(unlimitedBullets, muteSounds)){
-            if (gun.getId()==4){ //spread shotgun in progress
+            if (gun.getId()==Gun.SHOTGUN){ //spread shotgun in progress
                 int spreadDir;
                 this.gun.setRateOfFire(1);
                 double angle;
@@ -679,7 +680,7 @@ public class Player {
                     currentDirectionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
                     currentDirectionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
                     System.out.println("ouille");
-                    addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, currentDirectionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                    addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, currentDirectionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType());
                     if (i==0){
                         gunDirection=currentDirectionOfFire[0];
                     } else if (i==4){
@@ -689,7 +690,9 @@ public class Player {
                 if (gun.getAmmunition() == 25){
                     this.gun.setRateOfFire(1650);
                 }
+
                 //addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+
                     if(gunDirection<0){
                         gun.changeGunDirection(1);
                     } else {
@@ -709,7 +712,7 @@ public class Player {
                 directionOfFire[0]=Math.cos(angleTirRandom+Gamma)*signe;
                 directionOfFire[1]=Math.sin(angleTirRandom+Gamma)*signe;
 
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType());
                 if(directionOfFire[0]<0){
                     gun.changeGunDirection(1);
                 } else {
