@@ -3,25 +3,29 @@ package callofmuty;
 public class GameTimer {
     
     private long LastUpdate, totalTime;
-    private float multiplier;
+    private double multiplier;
     private boolean isPaused;
     
     public GameTimer(){
         totalTime = 0;
         isPaused = false;
-        multiplier = 1;
+        multiplier = 1.0;
         LastUpdate = System.currentTimeMillis();
     }
     
     public long update(){
-        long dT = System.currentTimeMillis()-LastUpdate;
+        long dT =(long) System.currentTimeMillis()-LastUpdate;
         LastUpdate += dT;
-        totalTime += dT;
-        return dT;
+        totalTime += dT*multiplier;
+        return (long)(dT*multiplier);
     }
     
-    public long getDT(){
-        return System.currentTimeMillis()-LastUpdate;
+    public long getDT(boolean useMultiplier){
+        long dT = System.currentTimeMillis()-LastUpdate;
+        if(useMultiplier){
+            dT *=multiplier;
+        }
+        return dT;
     }
     
     public void pause(){
@@ -31,5 +35,9 @@ public class GameTimer {
     public void unpause(){
         isPaused=false;
         LastUpdate=System.currentTimeMillis();
+    }
+    
+    public void setMultiplier(double multiplier){
+        this.multiplier = multiplier;
     }
 }

@@ -161,7 +161,7 @@ public class Player {
     public void addPlayer(SQLManager sql, int numberOfBounces){
         bulletList = new ArrayList<>();
         for (int i = 1; i<=initialBulletNumber; i++){ //bulletId starts at 1, 0 is SQL's "null"
-            bulletList.add(new Bullet(playerId, i,numberOfBounces));
+            bulletList.add(new Bullet(playerId, i));
         }
         sql.addPlayer(this);
         sql.addBulletList(bulletList);

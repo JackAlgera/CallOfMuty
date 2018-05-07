@@ -86,9 +86,10 @@ public class CallOfMuty {
 
                 case GamePanel.IN_GAME:
                     game.updateGame(dT);
-                    if (dT < minUpdateTime) {
+                    long timeSinceUpdate = timer.getDT(false);
+                    if (timeSinceUpdate < minUpdateTime) {
                         try {
-                            Thread.sleep(minUpdateTime - dT);
+                            Thread.sleep(minUpdateTime - timeSinceUpdate);
                         } catch (InterruptedException ex) {
                             Logger.getLogger(CallOfMuty.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -101,13 +102,12 @@ public class CallOfMuty {
                     game.repaint();
                     break;
                     
-                default: {
+                default:
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(CallOfMuty.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }
                 break;
             }
         }

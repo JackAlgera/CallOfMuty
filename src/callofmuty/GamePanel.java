@@ -127,7 +127,7 @@ public class GamePanel extends JPanel{
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         map = new Map(mapWidth, mapHeight, textureSize, this);
         tileSelector = new TileSelector(textureSize, originalWidth, originalHeight);
-        player = new Player(200,200);
+        player = new Player(0,0);
         pressedButtons = new ArrayList<>();
         releasedButtons = new ArrayList<>();
         otherPlayersBullets = new ArrayList<>();
@@ -1059,9 +1059,11 @@ public class GamePanel extends JPanel{
                 Rectangle bounds = fastModeButton.getBounds();
                 if(gameMode.getOption(3)){
                     gameMode.setOption(3, false);
+                    timer.setMultiplier(1.0);
                     fastModeButton.setIcon(new ImageIcon(uncheckedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                 } else {
                     gameMode.setOption(3, true);
+                    timer.setMultiplier(GameMode.FAST_MODE_MULTIPLIER);
                     fastModeButton.setIcon(new ImageIcon(checkedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                 }
             }
@@ -1475,7 +1477,7 @@ public class GamePanel extends JPanel{
         int[] sqlGame = sql.getGame();
         int numberOfBounces;
         if(gameMode.getOption(1)){
-            numberOfBounces = 1;
+            numberOfBounces = GameMode.NUMBER_OF_BOUNCES;
         } else {
             numberOfBounces = 0;
         }
@@ -1484,7 +1486,7 @@ public class GamePanel extends JPanel{
             ArrayList<Player> playerList = sql.getPlayerList();
             if (playerList.size()<2) { // No game is currently on
                 sql.clearTable(); //Clear previous game on SQL server
-                sql.createGame(map, gameMode.getId());
+                sql.createGame(map, gameMode);
                 player.reset(map, muteSounds);
                 player.setPlayerId(1);
                 player.setTeamId(1);
@@ -1535,6 +1537,9 @@ public class GamePanel extends JPanel{
                 map = sql.getMap(textureSize);
                 player.reset(map, muteSounds);
                 gameMode.setId(sqlGame[1]);
+                gameMode.setOption(1, sqlGame[2]==1);
+                gameMode.setOption(2, sqlGame[3]==1);
+                gameMode.setOption(3, sqlGame[4]==1);
                 player.setPlayerId(1); // 0 means "null", ids start at 1            
                 while (otherPlayersList.contains(player)) {
                     player.incrementId();
@@ -1616,7 +1621,7 @@ public class GamePanel extends JPanel{
 
         int bulletBounce;
         if(gameMode.getOption(1)){
-            bulletBounce = 1;
+            bulletBounce = GameMode.NUMBER_OF_BOUNCES;
         } else {
             bulletBounce = 0;
         }

@@ -15,10 +15,10 @@ public class SQLManager {
     private Connection connexion;
 
 /* SQL table structure
-    bullet : idBullet (int) ; idPlayer (int) ; posX (int); posY (int); active (tinyint)
+    bullet : idBullet (int) ; idPlayer (int) ; posX (int); posY (int); active (tinyint); bulletType(int)
     grid : x (int) ; y (int) ; tileType (int) ; startingTile (tinyint)
     players : id (int) ; name (String(50)) ; playerHp (double) ; posX (int) ; posY (int) : skinId (int) ; playerState (int), isTaunting (tinyint);
-    game : id (int)(useless, primaryKey), gameState (int)
+    game : id (int)(useless, primaryKey);  gameState (int); rubberBalls (tinyint); activeItems(tinyint); fastMode(tinyint)
 */
     public SQLManager(){         
         try {
@@ -110,8 +110,8 @@ public class SQLManager {
                             // update bullet
                             bulletId = resultat.getInt("bullet.idBullet");
                             if (bulletId > 0) { // 0 means null
-                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId, 0));
-                                updatedBullets.add(new Bullet(playerId, bulletId, 0));
+                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
+                                updatedBullets.add(new Bullet(playerId, bulletId));
                                 if (bulletIndex == -1) { // bullet was not already in the list
                                     otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId, resultat.getInt("bulletType")));
                                     otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
@@ -124,8 +124,8 @@ public class SQLManager {
                         } else { // this player's position was already updated, update only the bullet
                             bulletId = resultat.getInt("bullet.idBullet");
                             if (bulletId > 0) { // 0 means null
-                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId, 0));
-                                updatedBullets.add(new Bullet(playerId, bulletId, 0));
+                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
+                                updatedBullets.add(new Bullet(playerId, bulletId));
                                 if (bulletIndex == -1) {
                                     otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId, resultat.getInt("bulletType")));
                                     otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
@@ -296,10 +296,26 @@ public class SQLManager {
         return map;
     }
     
-    public void createGame(Map map, int gameModeId){
+    public void createGame(Map map, GameMode gameMode){
         PreparedStatement requete;
         try {
-            requete = connexion.prepareStatement("INSERT INTO game VALUES (1,"+ GamePanel.PRE_GAME +","+ gameModeId +")");
+            int rubberBalls, activeItems, fastMode;
+            if(gameMode.getOption(1)){
+                rubberBalls = 1;
+            } else {
+                rubberBalls = 0;
+            }
+            if(gameMode.getOption(2)){
+                activeItems = 1;
+            } else {
+                activeItems = 0;
+            }
+            if(gameMode.getOption(3)){
+                fastMode = 1;
+            } else {
+                fastMode = 0;
+            }
+            requete = connexion.prepareStatement("INSERT INTO game VALUES (1,"+ GamePanel.PRE_GAME +","+ gameMode.getId() + ","+ rubberBalls + ","+ activeItems+ ","+ fastMode +")");
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {
@@ -330,22 +346,24 @@ public class SQLManager {
         }
     }
     
-    public int[] getGame(){               
+    public int[] getGame(){ // alters gameMode and returns gameState
         PreparedStatement requete;
-        int gameState = -1;
-        int gameMode = -1;
+        int gameState = -1, gameMode = -1, rubberBalls = -1, activeItems = -1, fastMode = -1;
         try {
-            requete = connexion.prepareStatement("SELECT gameState, gameMode FROM game");
+            requete = connexion.prepareStatement("SELECT gameState, gameMode, rubberBalls, activeItems, fastMode FROM game");
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) { 
                 gameState = resultat.getInt("gameState");
                 gameMode = resultat.getInt("gameMode");
+                rubberBalls = resultat.getInt("rubberBalls");
+                activeItems = resultat.getInt("activeItems");
+                fastMode = resultat.getInt("fastMode");
             }
             requete.close();
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return new int[]{gameState,gameMode};
+        return new int[]{gameState, gameMode, rubberBalls, activeItems, fastMode};
     }
      
     public void disconnect(){

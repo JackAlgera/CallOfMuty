@@ -17,15 +17,15 @@ public class Bullet {
     private Image image;
     private boolean isActive;
     
-    public Bullet(int playerId, int bulletId, int numberOfBounces) { //usefull constructor for SQL updates
-        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, 0,numberOfBounces);
+    public Bullet(int playerId, int bulletId) { //used in SQL updates and to initialize player's bullet List
+        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, 0,0);
     }
     
-    public Bullet(double posX, double posY, int playerId, int bulletId, int bulletType){
+    public Bullet(double posX, double posY, int playerId, int bulletId, int bulletType){ // used in otherPlayersBulletsList
         this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, bulletType,0);
     }
     
-    public Bullet(double posX, double posY, int bulletType) { //usefull constructor bullet animations
+    public Bullet(double posX, double posY, int bulletType) { // used for destroyed bullets animations
         this.posX = posX;
         this.posY = posY;
         this.bulletType = bulletType;
@@ -63,10 +63,8 @@ public class Bullet {
         this.bulletAnimation = new Animation(130,6,2,5,2,2);// in ms
         bulletAnimation.setRow(2);
         
-        for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
-        {
-            for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++)
-            {
+        for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++){
+            for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++){
                 animationImages.add(Tools.selectTile(Tools.bulletTilesetAnimated, i+1, j+1));
             }
         }
@@ -114,7 +112,6 @@ public class Bullet {
             } else {
                 destroyBullet = true;
             }
-            System.out.println("collision detected, number of bounces left = "+numberOfBounces);
         }
         return destroyBullet;
     }
