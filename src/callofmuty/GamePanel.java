@@ -498,7 +498,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------------- Map editor button ------------------------------------------  
         
         JButton mapEditorButton = new JButton();
-        bounds = new Rectangle((int)(0.5244*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1709*panelWidth), (int)(0.0729*panelHeight));
+        bounds = new Rectangle((int)(0.5244*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1709*panelWidth), (int)(0.0729*panelHeight)-10);
         mapEditorButton.setBounds(bounds);
         mapEditorButton.setIcon(new ImageIcon(mapEditorIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //mapEditorButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
