@@ -1463,6 +1463,12 @@ public class GamePanel extends JPanel{
         this.isHost = isHost;
         sql = new SQLManager();
         int[] sqlGame = sql.getGame();
+        int numberOfBounces;
+        if(gameMode.getOption(1)){
+            numberOfBounces = 1;
+        } else {
+            numberOfBounces = 0;
+        }
         if (isHost) {
             // Try to create a game
             ArrayList<Player> playerList = sql.getPlayerList();
@@ -1472,7 +1478,7 @@ public class GamePanel extends JPanel{
                 player.reset(map, muteSounds);
                 player.setPlayerId(1);
                 player.setTeamId(1);
-                player.addPlayer(sql);
+                player.addPlayer(sql, numberOfBounces);
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -1538,7 +1544,7 @@ public class GamePanel extends JPanel{
                         }
                         break;
                 }
-                player.addPlayer(sql);
+                player.addPlayer(sql, numberOfBounces);
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -1598,7 +1604,13 @@ public class GamePanel extends JPanel{
         directionOfFire[0] = directionOfFire[0] / norme;
         directionOfFire[1] = directionOfFire[1] / norme;
 
-        player.shoot(directionOfFire, sql, false);
+        int bulletBounce;
+        if(gameMode.getOption(1)){
+            bulletBounce = 1;
+        } else {
+            bulletBounce = 0;
+        }
+        player.shoot(directionOfFire, sql, false, bulletBounce);
     }
     
     public void meleeAttack(){
