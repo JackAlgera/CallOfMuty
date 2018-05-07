@@ -110,8 +110,8 @@ public class SQLManager {
                             // update bullet
                             bulletId = resultat.getInt("bullet.idBullet");
                             if (bulletId > 0) { // 0 means null
-                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
-                                updatedBullets.add(new Bullet(playerId, bulletId));
+                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId, 0));
+                                updatedBullets.add(new Bullet(playerId, bulletId, 0));
                                 if (bulletIndex == -1) { // bullet was not already in the list
                                     otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId, resultat.getInt("bulletType")));
                                     otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
@@ -124,8 +124,8 @@ public class SQLManager {
                         } else { // this player's position was already updated, update only the bullet
                             bulletId = resultat.getInt("bullet.idBullet");
                             if (bulletId > 0) { // 0 means null
-                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
-                                updatedBullets.add(new Bullet(playerId, bulletId));
+                                bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId, 0));
+                                updatedBullets.add(new Bullet(playerId, bulletId, 0));
                                 if (bulletIndex == -1) {
                                     otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId, resultat.getInt("bulletType")));
                                     otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);

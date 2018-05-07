@@ -131,14 +131,6 @@ public class Tools {
         return playerCanCross;
     }
     
-    public static boolean bulletCanCross(double x, double y, int objectWidth, int objectHeight, Map map) {
-        boolean bulletCanCross = !map.getTile(x,y).blocksBullets() 
-                                    && !map.getTile(x + objectWidth, y).blocksBullets() 
-                                    && !map.getTile(x, y + objectHeight).blocksBullets() 
-                                    && !map.getTile(x + objectWidth, y + objectHeight).blocksBullets();
-        return bulletCanCross;
-    }
-    
     public static boolean isPlayerHit(Player player, Bullet bullet){
         boolean test = bullet.posX < player.getPosX() + player.getPlayerWidth()
                         && bullet.posX + bullet.getBallWidth() > player.getPosX()
