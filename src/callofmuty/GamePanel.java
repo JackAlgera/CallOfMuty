@@ -190,7 +190,8 @@ public class GamePanel extends JPanel{
                             if (leftMousePressed) {
                                 playershoot();
                             } else if(rightMousePressed){
-                                meleeAttack();
+                       
+                            meleeAttack();
                             }
                             break;
                         case MAP_EDITOR:
@@ -1602,7 +1603,15 @@ public class GamePanel extends JPanel{
     }
     
     public void meleeAttack(){
+        double[] directionOfFire = new double[2];
+        directionOfFire[0] = mousePosition[0] - player.getPosX() - textureSize / 2;
+        directionOfFire[1] = mousePosition[1] - player.getPosY() - textureSize / 2;
+
+        double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
+        directionOfFire[0] = directionOfFire[0] / norme;
+        directionOfFire[1] = directionOfFire[1] / norme;
         
+        player.kick(directionOfFire, sql);
     }
     
     @Override
