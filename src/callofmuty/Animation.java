@@ -12,7 +12,7 @@ public class Animation {
     public Animation(double switchTime, int numberOfImagesX, int numberOfImagesY, int animationImageLength, int firstImage, int type)
     {
         skinId = 1;
-        numberOfSkins = 3;
+        numberOfSkins = 4;
         this.type = type;
         row = 1;
         this.totalTime = 0;

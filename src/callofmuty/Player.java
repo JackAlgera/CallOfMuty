@@ -56,7 +56,7 @@ public class Player {
         currentRollTime = 0;
         destroyedBullets = new ArrayList<>();
         
-        this.playerAnimation = new Animation(115,8,12,8,1,0); // en ms
+        this.playerAnimation = new Animation(115,8,20,8,1,0); // en ms
         
         for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
             for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++){
@@ -620,7 +620,7 @@ public class Player {
             Random gunRandom = new Random();
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
 
-            gun.setId(4, numberOfCartridges);
+            gun.setId(gunRandom.nextInt(8), numberOfCartridges);
 
         }
     }

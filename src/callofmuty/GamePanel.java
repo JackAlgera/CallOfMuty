@@ -97,7 +97,7 @@ public class GamePanel extends JPanel{
     private ArrayList<Bullet> otherPlayersBullets;
     private GameTimer timer;
     private int[] mousePosition;
-    private int numberOfSkins = 3;
+    private int numberOfSkins = 5;
     private double wantedWidthByHeightRatio;
     private JFrame frame;
     
