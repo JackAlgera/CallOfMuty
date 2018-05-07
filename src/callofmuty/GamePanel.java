@@ -34,7 +34,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javazoom.jl.decoder.JavaLayerException;
 
@@ -117,7 +116,7 @@ public class GamePanel extends JPanel{
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-        originalWidth = textureSize*(mapWidth+1);
+        originalWidth = textureSize*(mapWidth+2);
         originalHeight = textureSize*(mapHeight+1);
         panelWidth = originalWidth;
         panelHeight = originalHeight;
@@ -1671,6 +1670,8 @@ public class GamePanel extends JPanel{
             case IN_GAME:
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setColor(Color.RED.darker());
+                g2d.fillRect(getGameX(), 0, panelWidth, panelHeight);
                 map.draw(g2d, false, this);
                 player.draw(g2d, this);
                 player.drawBullets(g2d, map.getTextureSize(), this);

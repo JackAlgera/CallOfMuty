@@ -57,7 +57,7 @@ public class Player {
         destroyedBullets = new ArrayList<>();
         lifeCounter = 5;
         
-        this.playerAnimation = new Animation(115,8,20,8,1,0); // en ms
+        this.playerAnimation = new Animation(115,8,20,8,1,Animation.PLAYER); // en ms
         
         for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
             for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++){
@@ -528,6 +528,7 @@ public class Player {
             } else {
                 Bullet bullet = bulletList.get(bulletIndex-1);
                 bullet.setActive(true);
+                bullet.setBulletType(bulletType);
                 bullet.setSpeed(speed);
                 bullet.setDirection(direction);
                 bullet.setPosX(initPosX);
@@ -626,9 +627,29 @@ public class Player {
                 generateWeapon = true;
         }
         if(generateWeapon && this.gun.getId()==0){
-            Random gunRandom = new Random();
+            double gunRandom = Math.random();
+            int gunId;
+            if(gunRandom<0.15){
+               gunId = Gun.PISTOL; // 15%
+            } else if(gunRandom<0.3){
+                gunId = Gun.UZI; // 15%
+            } else if(gunRandom<0.50){
+                gunId = Gun.AK; // 20%
+            } else if(gunRandom<0.65){
+                gunId = Gun.MITRAILLEUSE; // 15%
+            } else if(gunRandom<0.75){
+                gunId = Gun.SHOTGUN; // 10%
+            } else if(gunRandom<0.85){
+                gunId = Gun.MAGNUM; // 10%
+            } else if(gunRandom<0.92){
+                gunId = Gun.SNIPER; // 7%
+            } else if(gunRandom<0.6){
+                gunId = Gun.FLAMETHROWER; // 4%
+            } else {
+                gunId = Gun.LEGENDARY_WEAPON; // 4%
+            }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-            gun.setId(gunRandom.nextInt(9)+1, numberOfCartridges);
+            gun.setId(Gun.LEGENDARY_WEAPON, numberOfCartridges);
         }
     }
     
@@ -636,7 +657,7 @@ public class Player {
         boolean test = System.currentTimeMillis()-timeBewteenKick>=lastKickTimeStamp;
         if (test){
             lastKickTimeStamp = System.currentTimeMillis();
-            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 1.0 , sql, 5 , 3, 0);
+            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 1.0 , sql, 5 , 3, Bullet.MELEE);
             isKicking=true;
         }
     }

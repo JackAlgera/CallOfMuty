@@ -58,6 +58,7 @@ public class Gun {
                 xImage = 1;
                 yImage = 1;
                 tailleGun = 1;
+                bulletType = Bullet.NORMAL;
                 break;
                 
             case UZI:
@@ -72,6 +73,7 @@ public class Gun {
                 xImage = 2;
                 yImage = 3;
                 tailleGun = 1;
+                bulletType = Bullet.NORMAL;
                 break;
                 
             case SNIPER:
@@ -86,6 +88,7 @@ public class Gun {
                 xImage = 3;
                 yImage = 1;
                 tailleGun = 2;
+                bulletType = Bullet.NORMAL;
                 break;
                 
             case SHOTGUN:
@@ -101,6 +104,7 @@ public class Gun {
                 yImage = 7;
                 tailleGun = 2;
                 numeroBalle = 0;
+                bulletType = Bullet.NORMAL;
                 break;
                 
             case AK:
@@ -115,6 +119,7 @@ public class Gun {
                 xImage = 1;
                 yImage = 3;
                 tailleGun = 2;
+                bulletType = Bullet.NORMAL;
                 break;
                 
             case MAGNUM:
@@ -129,6 +134,7 @@ public class Gun {
                 xImage = 2;
                 yImage = 1;
                 tailleGun = 1;
+                bulletType = Bullet.NORMAL;
                 break;
                 
             case MITRAILLEUSE:
@@ -143,6 +149,7 @@ public class Gun {
                 xImage = 2;
                 yImage = 5;
                 tailleGun = 2;
+                bulletType = Bullet.NORMAL;
                 break;
             
             case LEGENDARY_WEAPON:
@@ -157,6 +164,7 @@ public class Gun {
                 xImage = 2;
                 yImage = 9;
                 tailleGun = 1;
+                bulletType = Bullet.EGG;
                 break;
                 
             case FLAMETHROWER:

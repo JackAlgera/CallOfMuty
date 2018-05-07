@@ -114,7 +114,7 @@ public class Map{
     }
     
     public void setDrawingParameters(int gameState){
-        double gameWidth = (double)(mapWidth+1)*textureSize;
+        double gameWidth = (double)(mapWidth+2)*textureSize;
         double gameHeight = (double)(mapHeight+1)*textureSize;
         switch (gameState){
             case GamePanel.MAIN_MENU:

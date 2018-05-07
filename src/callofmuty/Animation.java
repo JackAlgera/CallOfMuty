@@ -9,8 +9,7 @@ public class Animation {
     
     public static final int PLAYER = 0, GUN = 1, STILL_IMAGE = 2;
     
-    public Animation(double switchTime, int numberOfImagesX, int numberOfImagesY, int animationImageLength, int firstImage, int type)
-    {
+    public Animation(double switchTime, int numberOfImagesX, int numberOfImagesY, int animationImageLength, int firstImage, int type){
         skinId = 1;
         numberOfSkins = 4;
         this.type = type;
@@ -67,9 +66,6 @@ public class Animation {
         switch(type)
         {
             case PLAYER:
-                image = ((row-1)*numberOfImagesAnimation[0] + currentImage - 1);
-                break;
-                
             case GUN:
                 image = ((row-1)*numberOfImagesAnimation[0] + currentImage - 1);
                 break;

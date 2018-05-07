@@ -32,9 +32,9 @@ public class Bullet {
         speed = 0;
         isActive = true;
         
-        this.bulletAnimation = new Animation(75,6,2,5,2,1);// in ms
+        this.bulletAnimation = new Animation(75,6,2,5,2,Animation.GUN);// in ms
+        //setAnimationRow();
         bulletAnimation.setRow(2);
-        
         for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
         {
             for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++)
@@ -60,7 +60,8 @@ public class Bullet {
         image = Tools.selectTile(Tools.bulletTileset, 1, 2);
         distanceTravelled = 0;
         
-        this.bulletAnimation = new Animation(130,6,2,5,2,2);// in ms
+        this.bulletAnimation = new Animation(130,6,2,5,2,Animation.STILL_IMAGE);// in ms
+        //setAnimationRow();
         bulletAnimation.setRow(2);
         
         for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++){
@@ -228,5 +229,17 @@ public class Bullet {
 
     void setNumberOfBounces(int numberOfBounces) {
         this.numberOfBounces = numberOfBounces;
+    }
+
+    private void setAnimationRow() {
+        switch(bulletType){
+            case Bullet.EGG:
+                bulletAnimation.setRow(3);
+                break;
+            case Bullet.MELEE:
+                bulletAnimation.setRow(4);
+            default:
+                bulletAnimation.setRow(2);
+        }
     }
 }
