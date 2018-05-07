@@ -16,13 +16,14 @@ public class Gun {
             mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2),
             legendaryWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1);
     
-    private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, numeroBalle;
+    private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, numeroBalle, bulletType;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
     private SoundPlayer gunSound, uziSound, sniperSound,shotgunSound, legendaryWeaponSound;
     
     public Gun(){
         ammunition = 0;
+        bulletType = 0;
         id = NO_GUN;
         lastShotTimeStamp = System.currentTimeMillis();
         gunSound = new SoundPlayer("shootingSound.mp3", false);
@@ -34,6 +35,10 @@ public class Gun {
     
     public double getDamage(){
         return damage;
+    }
+    
+    public int getBulletType(){
+        return bulletType;
     }
     
     public void setId(int id, int numberOfCartridges){

@@ -511,7 +511,7 @@ public class Player {
         this.teamId=i;
     }
     
-    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage){
+    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage, int bulletType){
         if (!isDead) {
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;
@@ -520,7 +520,7 @@ public class Player {
                 bulletIndex++;
             }
             if(!inactiveBulletFound){
-                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1, damage));
+                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1, damage, bulletType));
                 bulletList.get(bulletIndex).setActive(true);
                 sql.addBullet(bulletList.get(bulletIndex));
             } else {
@@ -548,11 +548,11 @@ public class Player {
                 bullet.update(dT);
                 if (bullet.checkCollisionWithMap(map)) {
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY()));
+                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
                     bullet.setDistanceTravelled(0);
                 } else if(bullet.getDistanceTravelled()>gun.getDistanceMaxShoot()){
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY()));
+                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
                     bullet.setDistanceTravelled(0);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
@@ -672,7 +672,7 @@ public class Player {
                 if (gun.getAmmunition() == 25){
                     this.gun.setRateOfFire(1650);
                 }
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType());
                     if(gunDirection<0){
                         gun.changeGunDirection(1);
                     } else {
@@ -692,7 +692,7 @@ public class Player {
                 directionOfFire[0]=Math.cos(angleTirRandom+Gamma)*signe;
                 directionOfFire[1]=Math.sin(angleTirRandom+Gamma)*signe;
 
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage());
+                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType());
                 if(directionOfFire[0]<0){
                     gun.changeGunDirection(1);
                 } else {

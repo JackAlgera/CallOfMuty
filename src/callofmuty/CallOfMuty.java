@@ -25,8 +25,8 @@ public class CallOfMuty {
 
         // Map dimensions
         textureSize = 64;
-        mapWidth = 16;//20;
-        mapHeight = 9;//11;
+        mapWidth = 24;
+        mapHeight = 13;
 
         // Game initialisation
         GameTimer timer = new GameTimer();
