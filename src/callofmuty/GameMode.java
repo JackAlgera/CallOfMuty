@@ -11,9 +11,9 @@ public class GameMode {
     public static final int DEFAULT=0,ROYAL=1,TEAM=2, ALONE=3,
                 RANDOM =0, ALWAYSON = 1,
                 ALLVSALL = 0, ALLVSONE = 1, TEAMVSTEAM = 2,
-                NUMBER_OF_BOUNCES = 1,
                 NUMBER_OF_OPTIONS = 4;
-    public static final double FAST_MODE_MULTIPLIER = 1.7;
+    private static final double FAST_MODE_MULTIPLIER = 1.7;
+    private static final int NUMBER_OF_BOUNCES = 1;
     
     private static String DEFAULT_DESCRIPTION = "Bla bla default gamemode description",
             ROYAL_DESCRIPTION = "PAN PAN EVERYWHERE",
@@ -55,6 +55,16 @@ public class GameMode {
         return this.id;
     }
     
+    public int getNumberOfBounces(){
+        int numberOfBounces;
+        if(Options[1]){
+            numberOfBounces = NUMBER_OF_BOUNCES;
+        } else {
+            numberOfBounces = 0;
+        }
+        return numberOfBounces;
+    }
+    
     public String getDescription(){
         return description;
     }
@@ -73,5 +83,15 @@ public class GameMode {
     
     public int getTeam(){
         return this.Team;
+    }
+
+    double getTimerMultiplier() {
+        double multiplier;
+        if(Options[3]){
+            multiplier = FAST_MODE_MULTIPLIER;
+        } else {
+            multiplier = 1;
+        }
+        return multiplier;
     }
 }

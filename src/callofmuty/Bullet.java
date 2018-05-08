@@ -9,7 +9,7 @@ public class Bullet {
     
     public static final int NORMAL = 0, FIRE = 1, EGG = 2, MELEE = 3;
     
-    public double posX, posY, speed, damage, distanceTravelled;
+    public double posX, posY, speed, damage, travelledDistance, maxRange;
     private int numberOfBounces, ballWidth, ballHeight, playerId, bulletId, bulletType;
     public double[] direction;
     public ArrayList<Image> animationImages = new ArrayList<Image>();
@@ -18,11 +18,11 @@ public class Bullet {
     private boolean isActive;
     
     public Bullet(int playerId, int bulletId) { //used in SQL updates and to initialize player's bullet List
-        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, 0,0);
+        this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, 0,0, 0.0);
     }
     
     public Bullet(double posX, double posY, int playerId, int bulletId, int bulletType){ // used in otherPlayersBulletsList
-        this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, bulletType,0);
+        this(posX, posY,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, bulletType,0, 0.0);
     }
     
     public Bullet(double posX, double posY, int bulletType) { // used for destroyed bullets animations
@@ -44,7 +44,7 @@ public class Bullet {
         }
     }
     
-    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId, double damage, int bulletType, int numberOfBounces){
+    public Bullet(double posX, double posY, double[] direction, double speed, int playerId, int bulletId, double damage, int bulletType, int numberOfBounces, double maxRange){
         this.damage = damage;
         this.posX = posX;
         this.posY = posY;
@@ -58,8 +58,8 @@ public class Bullet {
         this.bulletId = bulletId;
         isActive = false;
         image = Tools.selectTile(Tools.bulletTileset, 1, 2);
-        distanceTravelled = 0;
-        
+        travelledDistance = 0;
+        this.maxRange = maxRange;
         this.bulletAnimation = new Animation(130,6,2,5,2,Animation.STILL_IMAGE);// in ms
         //setAnimationRow();
         bulletAnimation.setRow(2);
@@ -92,7 +92,7 @@ public class Bullet {
             posX += direction[0] * dT * speed;
             posY += direction[1] * dT * speed;
             bulletAnimation.update(dT);
-            distanceTravelled+= Math.sqrt(Math.pow(direction[0] * dT * speed, 2)+Math.pow(direction[1] * dT * speed, 2));
+            travelledDistance+= Math.sqrt(Math.pow(direction[0] * dT * speed, 2)+Math.pow(direction[1] * dT * speed, 2));
         }
     }
     
@@ -141,6 +141,18 @@ public class Bullet {
     public void setDirection(double[] direction) {
         this.direction = direction;
     }
+    
+    public double getMaxRange(){
+        return maxRange;
+    }
+    
+    public void setMaxRange(double maxRange){
+        this.maxRange = maxRange;
+    }
+    
+    public void resetTravelledDistance(){
+        travelledDistance = 0;
+    }
 
     public double getPosY() {
         return posY;
@@ -166,12 +178,12 @@ public class Bullet {
         return playerId;
     }
     
-    public double getDistanceTravelled(){
-        return distanceTravelled;
+    public double getTravelledDistance(){
+        return travelledDistance;
     }
     
-    public void setDistanceTravelled(double distance){
-        this.distanceTravelled = distance;
+    public void setTravelledDistance(double distance){
+        this.travelledDistance = distance;
     }
 
     public void setPlayerId(int playerId) {

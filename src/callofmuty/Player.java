@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Player {
@@ -513,7 +512,7 @@ public class Player {
         this.teamId=i;
     }
     
-    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage, int bulletType, int numberOfBounces){
+    public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage, int bulletType, int numberOfBounces, double maxRange){
         if (!isDead) {
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;
@@ -522,7 +521,7 @@ public class Player {
                 bulletIndex++;
             }
             if(!inactiveBulletFound){
-                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1, damage, bulletType, numberOfBounces));
+                bulletList.add(new Bullet(initPosX, initPosY, direction, speed, playerId, bulletIndex+1, damage, bulletType, numberOfBounces, maxRange));
                 bulletList.get(bulletIndex).setActive(true);
                 sql.addBullet(bulletList.get(bulletIndex));
             } else {
@@ -535,6 +534,8 @@ public class Player {
                 bullet.setPosY(initPosY);
                 bullet.setDamage(damage);
                 bullet.setNumberOfBounces(numberOfBounces);
+                bullet.setMaxRange(maxRange);
+                bullet.resetTravelledDistance();
             }
         }
     }
@@ -553,17 +554,13 @@ public class Player {
                 if (bullet.destroyedByMap(map)) {
                     bullet.setActive(false);
                     destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
-                    bullet.setDistanceTravelled(0);
-                } else if(isKicking && bullet.getDistanceTravelled()>rangeKick && bullet.getBulletType() == 3){
+                } else if(isKicking && bullet.getTravelledDistance()>rangeKick && bullet.getBulletType() == 3){
                     bullet.setActive(false);
                     destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
                     isKicking=false;
-                    bullet.setDistanceTravelled(0);
-                } else if(bullet.getDistanceTravelled()>gun.getDistanceMaxShoot()){
+                } else if(bullet.getTravelledDistance()>bullet.getMaxRange()){
                     bullet.setActive(false);
                     destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
-                    bullet.setDistanceTravelled(0);
-                
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
                         if (Tools.isPlayerHit(otherPlayer, bullet) && !this.isFriend(otherPlayer)) {
@@ -571,7 +568,7 @@ public class Player {
                             hurtPlayer = new Player(otherPlayer.getPlayerId());
                             hurtPlayer.setHealth(bullet.getDamage());
                             hurtPlayers.add(hurtPlayer);
-                            bullet.setDistanceTravelled(0);
+                            bullet.setTravelledDistance(0);
                         }
                     }
                     
@@ -649,7 +646,7 @@ public class Player {
                 gunId = Gun.LEGENDARY_WEAPON; // 4%
             }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-            gun.setId(Gun.LEGENDARY_WEAPON, numberOfCartridges);
+            gun.setId(Gun.SHOTGUN, numberOfCartridges);
         }
     }
     
@@ -657,84 +654,31 @@ public class Player {
         boolean test = System.currentTimeMillis()-timeBewteenKick>=lastKickTimeStamp;
         if (test){
             lastKickTimeStamp = System.currentTimeMillis();
-            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 1.0 , sql, 5 , 3, Bullet.MELEE);
+            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 1.0 , sql, 5 , 3, Bullet.MELEE, rangeKick);
             isKicking=true;
         }
     }
     
-    public void shoot(double[] directionOfFire, SQLManager sql, boolean unlimitedBullets, int numberOfBounces){
-        if (gun.shoot(unlimitedBullets, muteSounds)){
-            if (gun.getId()==Gun.SHOTGUN){ //spread shotgun in progress
-                int spreadDir;
-                this.gun.setRateOfFire(1);
-                double angle;
-                double gunDirection=0;
-                double signe = Math.abs(directionOfFire[0])/directionOfFire[0];
-                    if (Math.random()<0.5){
-                        spreadDir = 1;
-                    } else {
-                        spreadDir = -1;
-                    }
-                double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
-                double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
-                double[] angleShotgun= new double[]{0,0.0872665,0.0872665*2,-0.0872665,-0.0872665*2};    
-                if (gun.getNumeroBalleShotgun() == 0){ 
-                    angle = 0;
-                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
-                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
-                    gun.setNumeroBalleShotgun(1);
-                    gunDirection = directionOfFire[0];
-                   
-                } else if (gun.getNumeroBalleShotgun() == 1){
-                    angle = 0.0872665;
-                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
-                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
-                    gun.setNumeroBalleShotgun(2);
-                } else if (gun.getNumeroBalleShotgun() == 2){
-                    angle = 0.0872665*2;
-                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
-                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
-                    gun.setNumeroBalleShotgun(3);
-                } else if (gun.getNumeroBalleShotgun() == 3) {
-                    angle = -0.0872665;
-                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
-                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
-                    gun.setNumeroBalleShotgun(4);
-                } else if (gun.getNumeroBalleShotgun() == 4){
-                    angle = -0.0872665*2;
-                    directionOfFire[0]=Math.cos(angleTirRandom+Gamma+angle)*signe;
-                    directionOfFire[1]=Math.sin(angleTirRandom+Gamma+angle)*signe;
-                    gun.setNumeroBalleShotgun(0);
-                    this.gun.setRateOfFire(650);
+    public void shoot(double[] wantedDirection, SQLManager sql, int numberOfBounces){
+        if (gun.shoot(muteSounds)){
+            double sign = Math.signum(wantedDirection[0]);
+            double randomAngle = Math.random() * Math.signum(Math.random() - 0.5) * gun.getBulletSpread();
+            double Gamma = Math.atan(wantedDirection[1] / wantedDirection[0]);
+            double[] realDirection = new double[]{};
+            if (gun.getId() == Gun.SHOTGUN) {
+                double[] angle = new double[]{0.0872665, 0.0872665 * 2, -0.0872665, -0.0872665 * 2, 0};
+                for (int i = 0; i<angle.length; i++){
+                    realDirection = new double[]{Math.cos(randomAngle + Gamma + angle[i]) * sign, Math.sin(randomAngle + Gamma + angle[i]) * sign};
+                    addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, realDirection, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType(), numberOfBounces, gun.getMaxRange());
                 }
-                if (gun.getAmmunition() == 25){
-                    this.gun.setRateOfFire(1650);
-                }
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(),gun.getBulletType(), numberOfBounces);
-                    if(gunDirection<0){
-                        gun.changeGunDirection(1);
-                    } else {
-                        gun.changeGunDirection(0);
-                    }                             
-            } else { //Fonction spreadBullet
-                int spreadDir;
-                double signe = Math.abs(directionOfFire[0])/directionOfFire[0];
-                if (Math.random()<0.5){
-                    spreadDir = 1;
-                } else {
-                    spreadDir = -1;
-                }
-                double angleTirRandom = Math.random()*spreadDir*gun.getBulletSpread();
-                double Gamma = Math.atan(directionOfFire[1]/directionOfFire[0]);
-                directionOfFire[0]=Math.cos(angleTirRandom+Gamma)*signe;
-                directionOfFire[1]=Math.sin(angleTirRandom+Gamma)*signe;
-
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType(), numberOfBounces);
-                if(directionOfFire[0]<0){
-                    gun.changeGunDirection(1);
-                } else {
-                    gun.changeGunDirection(0);
-                }
+            } else {
+                realDirection = new double[]{Math.cos(randomAngle + Gamma) * sign, Math.sin(randomAngle + Gamma) * sign};
+                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, realDirection, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType(), numberOfBounces, gun.getMaxRange());
+            }
+            if (realDirection [0] < 0) {
+                gun.changeGunDirection(1);
+            } else {
+                gun.changeGunDirection(0);
             }
         }
     }

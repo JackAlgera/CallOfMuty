@@ -191,7 +191,6 @@ public class GamePanel extends JPanel{
                             if (leftMousePressed) {
                                 playershoot();
                             } else if(rightMousePressed){
-                       
                             meleeAttack();
                             }
                             break;
@@ -1058,13 +1057,12 @@ public class GamePanel extends JPanel{
                 Rectangle bounds = fastModeButton.getBounds();
                 if(gameMode.getOption(3)){
                     gameMode.setOption(3, false);
-                    timer.setMultiplier(1.0);
                     fastModeButton.setIcon(new ImageIcon(uncheckedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                 } else {
                     gameMode.setOption(3, true);
-                    timer.setMultiplier(GameMode.FAST_MODE_MULTIPLIER);
                     fastModeButton.setIcon(new ImageIcon(checkedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                 }
+                timer.setMultiplier(gameMode.getTimerMultiplier());
             }
         });
 
@@ -1474,12 +1472,6 @@ public class GamePanel extends JPanel{
         this.isHost = isHost;
         sql = new SQLManager();
         int[] sqlGame = sql.getGame();
-        int numberOfBounces;
-        if(gameMode.getOption(1)){
-            numberOfBounces = GameMode.NUMBER_OF_BOUNCES;
-        } else {
-            numberOfBounces = 0;
-        }
         if (isHost) {
             // Try to create a game
             ArrayList<Player> playerList = sql.getPlayerList();
@@ -1489,7 +1481,7 @@ public class GamePanel extends JPanel{
                 player.reset(map, muteSounds);
                 player.setPlayerId(1);
                 player.setTeamId(1);
-                player.addPlayer(sql, numberOfBounces);
+                player.addPlayer(sql, gameMode.getNumberOfBounces());
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -1539,6 +1531,7 @@ public class GamePanel extends JPanel{
                 gameMode.setOption(1, sqlGame[2]==1);
                 gameMode.setOption(2, sqlGame[3]==1);
                 gameMode.setOption(3, sqlGame[4]==1);
+                timer.setMultiplier(gameMode.getTimerMultiplier());
                 player.setPlayerId(1); // 0 means "null", ids start at 1            
                 while (otherPlayersList.contains(player)) {
                     player.incrementId();
@@ -1558,7 +1551,7 @@ public class GamePanel extends JPanel{
                         }
                         break;
                 }
-                player.addPlayer(sql, numberOfBounces);
+                player.addPlayer(sql, gameMode.getNumberOfBounces());
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -1610,21 +1603,14 @@ public class GamePanel extends JPanel{
     //-------------------------------------------------------------------------------------------------------------------------
     
     public void playershoot(){
-        double[] directionOfFire = new double[2];
-        directionOfFire[0] = mousePosition[0] - player.getPosX() - textureSize / 2;
-        directionOfFire[1] = mousePosition[1] - player.getPosY() - textureSize / 2;
+        double[] wantedDirection = new double[2];
+        wantedDirection[0] = mousePosition[0] - player.getPosX() - textureSize / 2;
+        wantedDirection[1] = mousePosition[1] - player.getPosY() - textureSize / 2;
 
-        double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
-        directionOfFire[0] = directionOfFire[0] / norme;
-        directionOfFire[1] = directionOfFire[1] / norme;
-
-        int bulletBounce;
-        if(gameMode.getOption(1)){
-            bulletBounce = GameMode.NUMBER_OF_BOUNCES;
-        } else {
-            bulletBounce = 0;
-        }
-        player.shoot(directionOfFire, sql, false, bulletBounce);
+        double norme = Math.sqrt(wantedDirection[0] * wantedDirection[0] + wantedDirection[1] * wantedDirection[1]);
+        wantedDirection[0] = wantedDirection[0] / norme;
+        wantedDirection[1] = wantedDirection[1] / norme;
+        player.shoot(wantedDirection, sql, gameMode.getNumberOfBounces());
     }
     
     public void meleeAttack(){
