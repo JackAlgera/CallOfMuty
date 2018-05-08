@@ -1646,7 +1646,7 @@ public class GamePanel extends JPanel{
         directionOfFire[0] = directionOfFire[0] / norme;
         directionOfFire[1] = directionOfFire[1] / norme;
         
-        player.kick(directionOfFire, sql);
+        player.meleeAttack(directionOfFire, sql);
     }
     
     @Override

@@ -11,18 +11,18 @@ public class Player {
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
-    private static double rollSpeedMultiplier = 3;
-    private static long timeBetweenHurtSounds = 300, timeBewteenKick= 1000, rangeKick = 75, rollTime = 150, timeBetweenTaunts = 1000; // in milliseconds
+    private static double rollSpeedMultiplier = 3, meleeDamage = 10;
+    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 75, rollTime = 150, timeBetweenTaunts = 1000; // in milliseconds
     private static int initialBulletNumber = 10;
     public static int PLAYING = 1,DEAD = 2;
     
     private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId, lifeCounter;
     private Image hpBar;
-    private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY, lastKickTimeStamp; 
+    private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY, lastMeleeAttackTimeStamp; 
     private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health, timeSinceLastHurtSound;
-    private boolean isDead, muteSounds, justTeleported, isRolling, isTaunting, isKicking;  
+    private boolean isDead, muteSounds, justTeleported, isRolling, isTaunting;  
     private int skinId, numberOfSkins;
     private String name;
     public ArrayList<Image> animationImages = new ArrayList<>();
@@ -63,12 +63,11 @@ public class Player {
                 animationImages.add(Tools.selectPlayerTile(Tools.PlayerTilesetAnimated, i+1, j+1));
             }
         }
-        lastKickTimeStamp = System.currentTimeMillis();
+        lastMeleeAttackTimeStamp = System.currentTimeMillis();
         imageHeight = animationImages.get(0).getHeight(null)/2;
         imageWidth = animationImages.get(0).getWidth(null)/2;
         numberOfSkins = 3;
         playerAnimation.setRow((skinId - 1) * 4 + numberOfSkins);
-        isKicking=false;
         maxSpeed = 0.3; //in pixel per ms
         speed = new double[2];
         speed[0] = 0.0; //x speed
@@ -551,13 +550,22 @@ public class Player {
             bullet = bulletList.get(i);
             if (bullet.isActive()) {
                 bullet.update(dT);
-                if (bullet.destroyedByMap(map)) {
+                if(bullet.getBulletType()==Bullet.MELEE){
+                    if(System.currentTimeMillis()-lastMeleeAttackTimeStamp > meleeAttacksDuration){
+                        bullet.setActive(false);
+                    } else {
+                        for (Player otherPlayer : otherPlayersList) {
+                            if (Tools.isPlayerHit(otherPlayer, bullet) && !this.isFriend(otherPlayer)) {
+                                bullet.setActive(false);
+                                hurtPlayer = new Player(otherPlayer.getPlayerId());
+                                hurtPlayer.setHealth(bullet.getDamage());
+                                hurtPlayers.add(hurtPlayer);
+                            }
+                        }
+                    }
+                } else if (bullet.destroyedByMap(map)) {
                     bullet.setActive(false);
                     destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
-                } else if(isKicking && bullet.getTravelledDistance()>rangeKick && bullet.getBulletType() == 3){
-                    bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
-                    isKicking=false;
                 } else if(bullet.getTravelledDistance()>bullet.getMaxRange()){
                     bullet.setActive(false);
                     destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
@@ -568,7 +576,6 @@ public class Player {
                             hurtPlayer = new Player(otherPlayer.getPlayerId());
                             hurtPlayer.setHealth(bullet.getDamage());
                             hurtPlayers.add(hurtPlayer);
-                            bullet.setTravelledDistance(0);
                         }
                     }
                     
@@ -650,12 +657,10 @@ public class Player {
         }
     }
     
-    public void kick(double[] directionOfFire, SQLManager sql) {
-        boolean test = System.currentTimeMillis()-timeBewteenKick>=lastKickTimeStamp;
-        if (test){
-            lastKickTimeStamp = System.currentTimeMillis();
-            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 1.0 , sql, 5 , 3, Bullet.MELEE, rangeKick);
-            isKicking=true;
+    public void meleeAttack(double[] directionOfFire, SQLManager sql) {
+        if (System.currentTimeMillis()-timeBetweenMeleeAttacks>=lastMeleeAttackTimeStamp){
+            lastMeleeAttackTimeStamp = System.currentTimeMillis();
+            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 0 , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
         }
     }
     
