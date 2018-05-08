@@ -75,7 +75,7 @@ public class GamePanel extends JPanel{
     
     public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
             MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5;
-    
+    private static final int FONTSIZE = 18; // Font size for textFields (gets scaled with zoomFactor)
     private static long gunGenerationTime = 100; //in milliseconds
     
     private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer, victorySoundPlayer, defeatSoundPlayer;
@@ -125,7 +125,6 @@ public class GamePanel extends JPanel{
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         map = new Map(mapWidth, mapHeight, textureSize, this);
-        tileSelector = new TileSelector(textureSize, originalWidth, originalHeight);
         player = new Player(0,0);
         pressedButtons = new ArrayList<>();
         releasedButtons = new ArrayList<>();
@@ -224,8 +223,23 @@ public class GamePanel extends JPanel{
     public void setFrame(JFrame frame){
         this.frame = frame;
     }
+
+    public int getOriginalWidth() {
+        return originalWidth;
+    }
+
+    public int getOriginalHeight() {
+        return originalHeight;
+    }
+
+    public void setOriginalValues(double ratio){
+        originalWidth /= ratio;
+        originalHeight /= ratio;
+        setPreferredSize(new Dimension(originalWidth, originalHeight));
+    }
     
     public void buildInterface(){
+        tileSelector = new TileSelector(textureSize, originalWidth, originalHeight); // needs to be done here, since original dimensions might change after GamePanel creation
         setLayout(null);
         MMbuttons = new ArrayList<>(); //MM : Main menu
         MEbuttons = new ArrayList<>(); //ME : Map Editor
@@ -256,7 +270,7 @@ public class GamePanel extends JPanel{
         Rectangle bounds;
         JButton connectButton = new JButton();
         connectButton.setVisible(true);
-        bounds = new Rectangle((getWidth()-panelWidth)/2 + (int)(0.28027*panelWidth),(int)(0.5208*panelHeight), (int)(0.1953125*originalWidth), (int)(0.1181*panelHeight));
+        bounds = new Rectangle((getWidth()-panelWidth)/2 + (int)(0.28027*panelWidth),(int)(0.5208*panelHeight), (int)(0.1953125*panelWidth), (int)(0.1181*panelHeight));
         connectButton.setBounds(bounds);
         connectButton.setIcon(new ImageIcon(joinGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //connectButton.setPressedIcon(pressedJoinGameIcon);
@@ -725,8 +739,9 @@ public class GamePanel extends JPanel{
         MMicons.add(null);
         MMpressedIcons.add(null);
         usernameField.setEditable(true);
+        usernameField.setName("textField");
         usernameField.setHorizontalAlignment(JTextField.CENTER);
-        usernameField.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        usernameField.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         usernameField.setBackground(new Color(230,226,211));//(new Color(221,214,192));
         usernameField.setForeground(Color.DARK_GRAY);
         usernameField.setBorder(null);
@@ -892,7 +907,8 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         descriptionText.setText(gameMode.getDescription());
         descriptionText.setEditable(false);
-        descriptionText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        descriptionText.setName("textField");
+        descriptionText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         descriptionText.setBackground(new Color(230,226,211));
         descriptionText.setForeground(Color.DARK_GRAY);
         descriptionText.setBorder(null);
@@ -908,8 +924,9 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         suggestedMapText.setEditable(false);
         suggestedMapText.setHorizontalAlignment(JTextField.CENTER);
-        suggestedMapText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        suggestedMapText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         suggestedMapText.setBackground(new Color(230,226,211));
+        suggestedMapText.setName("textField");
         suggestedMapText.setForeground(Color.DARK_GRAY);
         suggestedMapText.setBorder(null);
         suggestedMapText.setVisible(false);
@@ -949,8 +966,9 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         rubberBallsText.setEditable(false);
         rubberBallsText.setHorizontalAlignment(JTextField.CENTER);
-        rubberBallsText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        rubberBallsText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         rubberBallsText.setBackground(new Color(230,226,211));
+        rubberBallsText.setName("textField");
         rubberBallsText.setForeground(Color.DARK_GRAY);
         rubberBallsText.setBorder(null);
         rubberBallsText.setVisible(false);
@@ -990,8 +1008,9 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         bonusItemsText.setEditable(false);
         bonusItemsText.setHorizontalAlignment(JTextField.CENTER);
-        bonusItemsText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        bonusItemsText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         bonusItemsText.setBackground(new Color(230,226,211));
+        bonusItemsText.setName("textField");
         bonusItemsText.setForeground(Color.DARK_GRAY);
         bonusItemsText.setBorder(null);
         bonusItemsText.setVisible(false);
@@ -1031,8 +1050,9 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         fastModeText.setEditable(false);
         fastModeText.setHorizontalAlignment(JTextField.CENTER);
-        fastModeText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        fastModeText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         fastModeText.setBackground(new Color(230,226,211));
+        fastModeText.setName("textField");
         fastModeText.setForeground(Color.DARK_GRAY);
         fastModeText.setBorder(null);
         fastModeText.setVisible(false);
@@ -1085,7 +1105,7 @@ public class GamePanel extends JPanel{
                 setState(MAIN_MENU);
             }
         });
-        map.setDrawingParameters(MAIN_MENU);
+        map.setDrawingParameters(MAIN_MENU, this);
         interfaceBuilt = true;
     }
     
@@ -1106,7 +1126,7 @@ public class GamePanel extends JPanel{
             Rectangle bounds;
             JComponent component;
             double zoomRatio = getZoomRatio();
-            map.setDrawingParameters(gameState);
+            map.setDrawingParameters(gameState, this);
             for (int i = 0; i < MMbuttons.size(); i++) {
                 bounds = MMoriginalBounds.get(i);
                 bounds = new Rectangle((getWidth() - panelWidth) / 2 + (int) (bounds.x * zoomRatio), (int) (bounds.y * zoomRatio), (int) (bounds.width * zoomRatio), (int) (bounds.height * zoomRatio));
@@ -1126,6 +1146,8 @@ public class GamePanel extends JPanel{
                     } else {
                         muteSoundsButton.setIcon(new ImageIcon(SoundsIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                     }
+                } else if ("textField".equals(component.getName())){
+                    component.setFont(component.getFont().deriveFont((float)(FONTSIZE*zoomRatio)));
                 } else if (MMicons.get(i) != null) {
                     JButton button = (JButton) component;
                     button.setIcon(new ImageIcon(MMicons.get(i).getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1160,6 +1182,8 @@ public class GamePanel extends JPanel{
                         } else {
                             button.setIcon(new ImageIcon(uncheckedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                         }
+                    } else if ("textField".equals(component.getName())){
+                        component.setFont(component.getFont().deriveFont((float)(FONTSIZE*zoomRatio)));
                     }
                 }
                 if (GMicons.get(i) != null) {
@@ -1632,7 +1656,7 @@ public class GamePanel extends JPanel{
         switch(gameState) {
             case PRE_GAME:
                 g2d.drawImage(PreGameBackground, (getWidth()-panelWidth)/2, 0, panelWidth, panelHeight, this);
-                g2d.setFont(new Font("Stencil", Font.BOLD, (int)(20*getZoomRatio())));
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
                 map.draw(g2d, false, this);
                 if (isHost) {
                     g2d.drawString(player.getName(),(getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)(140*getZoomRatio()));
@@ -1779,7 +1803,7 @@ public class GamePanel extends JPanel{
     public void setState(int newGameState){
         int formerGameState = gameState;
         gameState = newGameState;
-        map.setDrawingParameters(gameState);
+        map.setDrawingParameters(gameState, this);
         switch(gameState){
             case MAIN_MENU:
                 for (JComponent component : MMbuttons){
