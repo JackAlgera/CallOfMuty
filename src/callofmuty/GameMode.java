@@ -22,7 +22,7 @@ public class GameMode {
     
     public GameMode(){
         Options= new boolean[] {false,false,false,false};
-        setId(ROYAL);
+        setId(DEFAULT);
     }
 
     public void setId(int id) {

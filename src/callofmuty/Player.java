@@ -646,7 +646,7 @@ public class Player {
                 gunId = Gun.LEGENDARY_WEAPON; // 4%
             }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-            gun.setId(Gun.SHOTGUN, numberOfCartridges);
+            gun.setId(gunId, numberOfCartridges);
         }
     }
     
