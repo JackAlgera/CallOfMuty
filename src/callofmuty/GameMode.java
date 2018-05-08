@@ -3,7 +3,7 @@ package callofmuty;
 public class GameMode {
     
     private int id;
-    private boolean[] Options; //Op 0 Suggested map, Op 1 Rubberballs, Op 2 Active Items, Op 3 Modefast
+    private boolean[] Options; // 0 : Suggested map, 1 : Bouncing balls, 2 : Bonus Items, 3 : Fast mode
     private int gunGestion;
     private int Team;
     private String description;
@@ -55,6 +55,25 @@ public class GameMode {
         return this.id;
     }
     
+    public String getName(){
+        String name = "";
+        switch(id){
+            case DEFAULT:
+                name = "Default mode";
+                break;
+            case ROYAL:
+                name = "Royal battle";
+                break;
+            case TEAM:
+                name = "Team battle";
+                break;
+            case ALONE:
+                name = "Alone";
+                break;
+        }
+        return name;
+    }
+    
     public int getNumberOfBounces(){
         int numberOfBounces;
         if(Options[1]){
@@ -93,5 +112,24 @@ public class GameMode {
             multiplier = 1;
         }
         return multiplier;
+    }
+
+    String getOptionName(int i) {
+        String name = "";
+        switch(i){
+            case 0:
+                name = "Default map";
+                break;
+            case 1:
+                name = "Bouncing balls";
+                break;
+            case 2:
+                name = "Bonus items";
+                break;
+            case 3:
+                name = "Fast mode !";
+                break;
+        }
+        return name;
     }
 }

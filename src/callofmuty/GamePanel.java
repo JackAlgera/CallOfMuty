@@ -74,7 +74,8 @@ public class GamePanel extends JPanel{
             uncheckedIcon = Tools.loadIcon("Uncheck.png");    
     
     public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
-            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5;
+            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5,
+            IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1;
     private static final int FONTSIZE = 18; // Font size for textFields (gets scaled with zoomFactor)
     private static long gunGenerationTime = 100; //in milliseconds
     
@@ -116,8 +117,8 @@ public class GamePanel extends JPanel{
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-        originalWidth = textureSize*(mapWidth+2);
-        originalHeight = textureSize*(mapHeight+1);
+        originalWidth = textureSize*(mapWidth+IN_GAME_RIGHT_MARGIN);
+        originalHeight = textureSize*(mapHeight+IN_GAME_BOT_MARGIN);
         panelWidth = originalWidth;
         panelHeight = originalHeight;
         wantedWidthByHeightRatio = (double)panelWidth/panelHeight;
@@ -959,7 +960,7 @@ public class GamePanel extends JPanel{
             }
         });
         
-        JTextField rubberBallsText = new JTextField("Rubber balls");
+        JTextField rubberBallsText = new JTextField("Bouncing bullets");
         bounds = new Rectangle((int)(0.5664*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
         rubberBallsText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
@@ -1659,21 +1660,33 @@ public class GamePanel extends JPanel{
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
                 map.draw(g2d, false, this);
                 if (isHost) {
-                    g2d.drawString(player.getName(),(getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)(140*getZoomRatio()));
+                    g2d.drawString(player.getName(),(getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)(0.155*panelHeight));
                     for (int i = 0; i < otherPlayersList.size(); i++) {
-                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)((140 + i * 50)*getZoomRatio()));
+                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)((0.155+(i+1)*0.05)*panelHeight));
                     }
                 } else {
                     for (int i = 0; i < otherPlayersList.size(); i++) {
-                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)((140 + i * 50)*getZoomRatio()));
+                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)((0.155+i*0.05)*panelHeight));
                     }
-                    g2d.drawString(player.getName(), (getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)(140+(otherPlayersList.size())*50*getZoomRatio()));
+                    g2d.drawString(player.getName(), (getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)((0.155+otherPlayersList.size()*0.05)*panelHeight));
                 }
-                break;
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int)(1.5*FONTSIZE*getZoomRatio())));
+                g2d.drawString(gameMode.getName(), (getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)(0.7*panelHeight));
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
+                double writingHeight = 0.77;
+                for (int i = 1; i<GameMode.NUMBER_OF_OPTIONS; i++){
+                    if(gameMode.getOption(i)){
+                        g2d.drawString(gameMode.getOptionName(i),(getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)(writingHeight*panelHeight));
+                        writingHeight += 0.05;
+                    }
+                }
+            break;
 
             case MAIN_MENU:
                 g2d.drawImage(MenuBackground, (getWidth()-panelWidth)/2, 0, panelWidth, panelHeight, this);
-                g2d.drawImage(player.getImage(), (getWidth()-panelWidth)/2 +(int)((180-player.getPlayerWidth())/2*getZoomRatio()), (panelHeight-player.getPlayerHeight())/2, (int)(160*getZoomRatio()), (int)(160*getZoomRatio()), this);
+                Image playerImage = player.getImage();
+                double playerZoomFactor = 3.5;
+                g2d.drawImage(playerImage, (getWidth()-panelWidth)/2+(int)(0.14*panelWidth)-(int)(playerImage.getWidth(null)*playerZoomFactor*getZoomRatio()/2), panelHeight/2-(int)(playerImage.getHeight(null)*getZoomRatio()), (int)(playerImage.getWidth(null)*playerZoomFactor*getZoomRatio()), (int)(playerImage.getHeight(null)*playerZoomFactor*getZoomRatio()), this);
                 map.draw(g2d, false, this);
                 break;
 
