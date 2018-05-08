@@ -6,7 +6,7 @@ public class GameMode {
     private boolean[] Options; //Op 0 Suggested map, Op 1 Rubberballs, Op 2 Active Items, Op 3 Modefast
     private int gunGestion;
     private int Team;
-    private String description;
+    private String description, name;
     
     public static final int DEFAULT=0,ROYAL=1,TEAM=2, ALONE=3,
                 RANDOM =0, ALWAYSON = 1,
@@ -32,46 +32,55 @@ public class GameMode {
                 gunGestion = RANDOM;
                 Team = ALLVSALL;
                 description = DEFAULT_DESCRIPTION;
-            break;
+                name = "DEFAULT";
+                break;
             case ROYAL:
                 gunGestion = ALWAYSON;
                 Team = ALLVSALL;
                 description = ROYAL_DESCRIPTION;
-            break;
+                name = "BATTLE ROYAL";
+                break;
             case TEAM:
                 gunGestion = ALWAYSON;
                 Team = TEAMVSTEAM;
                 description = TEAM_DESCRIPTION;
+                name = "TEAM FIGHT";
 
-            break;
+                break;
             case ALONE:
                 gunGestion = ALWAYSON;
                 Team = ALLVSONE;
                 description = ALONE_DESCRIPTION;
+                name = "1 VS ALL";
+                break;
         }
     }
-    
+
     public int getId() {
         return this.id;
     }
-    
-    public String getDescription(){
+
+    public String getDescription() {
         return description;
     }
-    
+
     public int getGunGestion() {
         return this.gunGestion;
-    }  
-    
+    }
+
     public boolean getOption(int i) {
         return this.Options[i];
     }
-    
-    public void setOption(int i, boolean option){
+
+    public void setOption(int i, boolean option) {
         Options[i] = option;
     }
-    
-    public int getTeam(){
+
+    public int getTeam() {
         return this.Team;
+    }
+    
+    public String getName(){
+        return this.name;
     }
 }
