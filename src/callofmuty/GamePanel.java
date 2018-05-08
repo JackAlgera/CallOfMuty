@@ -73,22 +73,22 @@ public class GamePanel extends JPanel{
             checkedIcon = Tools.loadIcon("check.png"),
             uncheckedIcon = Tools.loadIcon("Uncheck.png");    
     
-    public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
-            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5,
-            IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1;
+    public static final int MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5,
+            IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1,
+            NUMBER_OF_MAPS = 6;
     private static final int FONTSIZE = 18; // Font size for textFields (gets scaled with zoomFactor)
-    private static long gunGenerationTime = 100; //in milliseconds
+    private static long GUN_GENERATION_TIME = 100; //in milliseconds
     
     private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer, victorySoundPlayer, defeatSoundPlayer;
     
-    private Map map;
+    private Map map, customMap;
     private TileSelector tileSelector;
     private Player player;
     private ArrayList <Player> otherPlayersList;
-    private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState, originalWidth, originalHeight;
+    private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState, originalWidth, originalHeight, mapIndex;
     private GameMode gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
-    private boolean isHost, interfaceBuilt = false, setStartingTile, isConnected, muteMusic, muteSounds, leftMousePressed, rightMousePressed, endShowed;
+    private boolean isHost, interfaceBuilt = false,hasCustomMap = false, setStartingTile, isConnected, muteMusic, muteSounds, leftMousePressed, rightMousePressed, endShowed;
     private long lastGunGeneration;
     private SQLManager sql;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons, GMbuttons;
@@ -100,6 +100,7 @@ public class GamePanel extends JPanel{
     private int numberOfSkins = 5;
     private double wantedWidthByHeightRatio;
     private JFrame frame;
+    private String fileChooserPath;
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer){
         super();
@@ -125,7 +126,7 @@ public class GamePanel extends JPanel{
         isConnected = false;
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(panelWidth, panelHeight));
-        map = new Map(mapWidth, mapHeight, textureSize, this);
+        map = Tools.loadResourceMap(0, textureSize);
         player = new Player(0,0);
         pressedButtons = new ArrayList<>();
         releasedButtons = new ArrayList<>();
@@ -137,7 +138,7 @@ public class GamePanel extends JPanel{
         rightMousePressed = false;
         mousePosition = new int[]{0,0};
         endShowed = false;
-        
+        fileChooserPath = "src/resources/maps";
         setFocusable(true);
         
         // handling mouse inputs
@@ -240,6 +241,7 @@ public class GamePanel extends JPanel{
     }
     
     public void buildInterface(){
+        map.setDrawingParameters(MAIN_MENU, originalWidth, originalHeight);
         tileSelector = new TileSelector(textureSize, originalWidth, originalHeight); // needs to be done here, since original dimensions might change after GamePanel creation
         setLayout(null);
         MMbuttons = new ArrayList<>(); //MM : Main menu
@@ -485,7 +487,16 @@ public class GamePanel extends JPanel{
         
         rightMapArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // to do
+                mapIndex++;
+                if(mapIndex > NUMBER_OF_MAPS || (mapIndex == NUMBER_OF_MAPS && !hasCustomMap)){
+                    mapIndex = 0;
+                }
+                if(mapIndex == NUMBER_OF_MAPS && hasCustomMap){
+                    map = customMap;
+                } else {
+                    map = Tools.loadResourceMap(mapIndex, textureSize);
+                    map.setDrawingParameters(gameState, originalWidth, originalHeight);
+                }
             }
         });
         
@@ -507,7 +518,20 @@ public class GamePanel extends JPanel{
         
         leftMapArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // toudou
+                mapIndex--;
+                if(mapIndex<0){
+                    if(hasCustomMap){
+                        mapIndex = NUMBER_OF_MAPS;
+                    } else {
+                        mapIndex = NUMBER_OF_MAPS-1;
+                    }
+                }
+                if(mapIndex == NUMBER_OF_MAPS){
+                    map = customMap;
+                } else {
+                    map = Tools.loadResourceMap(mapIndex, textureSize);
+                    map.setDrawingParameters(gameState, originalWidth, originalHeight);
+                }
             }
         });
         
@@ -552,10 +576,10 @@ public class GamePanel extends JPanel{
         saveMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                JFileChooser fileChooser = new JFileChooser("");
-	
+                JFileChooser fileChooser = new JFileChooser(fileChooserPath);
                 if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
                     String address = fileChooser.getSelectedFile().getPath();
+                    fileChooserPath = address;
                     if (!address.endsWith(".txt")){
                         address+=".txt";
                     }
@@ -592,11 +616,12 @@ public class GamePanel extends JPanel{
         loadMapButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                JFileChooser fileChooser = new JFileChooser(new File("src/resources/maps"));
+                JFileChooser fileChooser = new JFileChooser(new File(fileChooserPath));
                 if (fileChooser.showOpenDialog(null)== 
                     JFileChooser.APPROVE_OPTION) {
-                    String adresse = fileChooser.getSelectedFile().getPath();
-                    map = Tools.textFileToMap(adresse, textureSize);
+                    String address = fileChooser.getSelectedFile().getPath();
+                    fileChooserPath = address;
+                    map = Tools.textFileToMap(address, textureSize);
                     setState(MAP_EDITOR);
                 }
                 repaint();
@@ -622,6 +647,10 @@ public class GamePanel extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
                 setState(MAIN_MENU);
+                hasCustomMap = true;
+                mapIndex = NUMBER_OF_MAPS;
+                customMap = map;
+                customMap.setDrawingParameters(gameState, originalWidth, originalHeight);
             }
         });
         
@@ -1106,7 +1135,6 @@ public class GamePanel extends JPanel{
                 setState(MAIN_MENU);
             }
         });
-        map.setDrawingParameters(MAIN_MENU, this);
         interfaceBuilt = true;
     }
     
@@ -1127,7 +1155,7 @@ public class GamePanel extends JPanel{
             Rectangle bounds;
             JComponent component;
             double zoomRatio = getZoomRatio();
-            map.setDrawingParameters(gameState, this);
+            map.setDrawingParameters(gameState, originalWidth, originalHeight);
             for (int i = 0; i < MMbuttons.size(); i++) {
                 bounds = MMoriginalBounds.get(i);
                 bounds = new Rectangle((getWidth() - panelWidth) / 2 + (int) (bounds.x * zoomRatio), (int) (bounds.y * zoomRatio), (int) (bounds.width * zoomRatio), (int) (bounds.height * zoomRatio));
@@ -1255,9 +1283,9 @@ public class GamePanel extends JPanel{
                 time = System.currentTimeMillis();
             }
             // gun generation
-            if (System.currentTimeMillis() - gunGenerationTime > lastGunGeneration) {
+            if (System.currentTimeMillis() - GUN_GENERATION_TIME > lastGunGeneration) {
                 lastGunGeneration = System.currentTimeMillis();
-                player.generateGun(otherPlayersList.size() + 1, gunGenerationTime, gameMode); // has a probability to give local player a gun that decreases with number of players
+                player.generateGun(otherPlayersList.size() + 1, GUN_GENERATION_TIME, gameMode); // has a probability to give local player a gun that decreases with number of players
             }
 
             // sql uploads
@@ -1551,6 +1579,8 @@ public class GamePanel extends JPanel{
             if (sqlGame[0] == PRE_GAME) {
                 otherPlayersList = sql.getPlayerList();
                 map = sql.getMap(textureSize);
+                customMap = map;
+                hasCustomMap = true;
                 player.reset(map, muteSounds);
                 gameMode.setId(sqlGame[1]);
                 gameMode.setOption(1, sqlGame[2]==1);
@@ -1816,7 +1846,7 @@ public class GamePanel extends JPanel{
     public void setState(int newGameState){
         int formerGameState = gameState;
         gameState = newGameState;
-        map.setDrawingParameters(gameState, this);
+        map.setDrawingParameters(gameState, originalWidth, originalHeight);
         switch(gameState){
             case MAIN_MENU:
                 for (JComponent component : MMbuttons){

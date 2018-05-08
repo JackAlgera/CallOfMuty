@@ -113,66 +113,24 @@ public class Map{
         this.drawWidth = drawWidth;
     }
     
-    public void setDrawingParameters(int gameState, GamePanel game){
-        double gameWidth = game.getOriginalWidth();
-        double gameHeight = game.getOriginalHeight();
+    public void setDrawingParameters(int gameState, double gameOriginalWidth, double gameOriginalHeight){
         switch (gameState){
             case GamePanel.MAIN_MENU:
-                setDrawingParameters(0.517578*gameWidth-5, 0.3212*gameHeight-8, 0.4512*gameWidth, 0.4514*gameHeight);
+                setDrawingParameters(0.517578*gameOriginalWidth-5, 0.3212*gameOriginalHeight-8, 0.4512*gameOriginalWidth, 0.4514*gameOriginalHeight);
                 break;
             case GamePanel.MAP_EDITOR:
-                setDrawingParameters(0.0977*gameWidth,0.1736*gameHeight,0.82*gameWidth, 0.82*gameHeight);
+                setDrawingParameters(0.0977*gameOriginalWidth,0.1736*gameOriginalHeight,0.82*gameOriginalWidth, 0.82*gameOriginalHeight);
                 break;
             case GamePanel.IN_GAME:
-                setDrawingParameters(0, 0, (int)((double)gameWidth*mapWidth/(mapWidth+GamePanel.IN_GAME_RIGHT_MARGIN)), (int)((double)gameHeight*mapHeight/(mapHeight+GamePanel.IN_GAME_BOT_MARGIN)));
+                setDrawingParameters(0, 0, (int)((double)gameOriginalWidth*mapWidth/(mapWidth+GamePanel.IN_GAME_RIGHT_MARGIN)), (int)((double)gameOriginalHeight*mapHeight/(mapHeight+GamePanel.IN_GAME_BOT_MARGIN)));
                 break;
             case GamePanel.PRE_GAME:
-                setDrawingParameters(0.5713*gameWidth, 0.5729*gameHeight, 0.4150*gameWidth, 0.3993*gameHeight);
-
+                setDrawingParameters(0.5713*gameOriginalWidth, 0.5729*gameOriginalHeight, 0.4150*gameOriginalWidth, 0.3993*gameOriginalHeight);
         }
     }
 
     public void setStartTile(ArrayList<int[]> startTile) {
         this.startTile = startTile;
-    }
-    
-    public Map(int mapWidth, int mapHeight, int tileSize, GamePanel game){
-        this.mapHeight = mapHeight;
-        this.mapWidth = mapWidth;
-        this.textureSize = tileSize;
-        xPos=0;
-        yPos=0;
-        drawWidth = mapWidth*textureSize;
-        drawHeight = mapHeight*textureSize;
-        map = new int[mapWidth][mapHeight];
-        for (int i = 1 ; i<mapWidth-1 ; i++){
-            for (int j = 1; j<mapHeight-1; j++){
-                map[i][j] = 0;
-            }
-        }
-        for (int i = 1 ; i<mapWidth-1 ; i++){
-            map[i][0] = 1;
-        }
-        for (int i = 1 ; i<mapWidth-1 ; i++){
-            map[i][mapHeight-1] = 2;
-        }
-        for (int j = 1 ; j<mapHeight-1 ; j++){
-            map[0][j] = 3;
-        }
-        for (int j = 1 ; j<mapHeight-1 ; j++){
-             map[mapWidth-1][j] = 4;
-        }
-        map[0][0] = 5;
-        map[0][mapHeight-1] = 6;
-        map[mapWidth-1][0] = 7;
-        map[mapWidth-1][mapHeight-1] = 8;
-        map[4][1] = 13 ;map[4][2] = 11;map[1][4] = 10;map[2][4] = 12;map[4][6] = 9;map[4][7] = 13;
-        startTile = new ArrayList<>();
-        startTile.add(new int[]{1,1});
-        teleporters = new ArrayList<>();
-        teleporters.add(new int[]{4,1});
-        teleporters.add(new int[]{4,7});
-        setDrawingParameters(GamePanel.MAIN_MENU, game);
     }
     
     public TileType getTile(int i, int j){
