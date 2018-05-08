@@ -44,7 +44,8 @@ public class GamePanel extends JPanel{
             PreGameBackground = Tools.loadImage("PreGameBackground.png"),
             victoryScreen = Tools.loadImage("Victory.png"),
             defeatScreen = Tools.loadImage("Defeat.png"),
-            GameModeBackground = Tools.loadImage("GamemodeBackground.png");
+            GameModeBackground = Tools.loadImage("GamemodeBackground.png"),
+            InGameBackground = Tools.loadImage("InGameBackground.png");
 
     public static ImageIcon joinGameIcon = Tools.loadIcon("JoinGame.png"),
             createGameIcon = Tools.loadIcon("CreateGame.png"),
@@ -798,7 +799,7 @@ public class GamePanel extends JPanel{
 
 //--------------------------------------------- Ending buttons : Return to menu ------------------------------------------  
         JButton mainMenuButton = new JButton();
-        bounds = new Rectangle((int)(getWidth()-0.1563*panelWidth)/2,(int)(0.8681*panelHeight), (int)(0.1563*panelWidth), (int)(0.0729*panelHeight));
+        bounds = new Rectangle((int)(getWidth()-0.1563*panelWidth)/2,(int)(0.8681*panelHeight)-10, (int)(0.1563*panelWidth), (int)(0.0729*panelHeight));
         mainMenuButton.setBounds(bounds);
         mainMenuButton.setIcon(new ImageIcon(mainMenuIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //mainMenuButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1723,8 +1724,7 @@ public class GamePanel extends JPanel{
             case IN_GAME:
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-                g2d.setColor(Color.RED.darker());
-                g2d.fillRect(getGameX(), 0, panelWidth, panelHeight);
+                g2d.drawImage(InGameBackground, (getWidth()-panelWidth)/2, 0, panelWidth, panelHeight, this);
                 map.draw(g2d, false, this);
                 player.draw(g2d, this);
                 player.drawBullets(g2d, map.getTextureSize(), this);
@@ -1734,6 +1734,29 @@ public class GamePanel extends JPanel{
                 }
                 for (int i=0; i<otherPlayersBullets.size(); i++){
                     otherPlayersBullets.get(i).draw(g2d, textureSize, this);
+                }
+                g2d.setColor(Color.BLACK);
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (30 * getZoomRatio())));
+                g2d.drawString(gameMode.getName(), (int) ((getGameWidth()- 192 * getZoomRatio()) / 2), (int) ((getGameHeight() - 32) * getZoomRatio()));
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (15 * getZoomRatio())));
+                if (isHost) {
+                    g2d.drawString(player.getName(), (int) (getWidth() - 128 * getZoomRatio()), (int) (150 * getZoomRatio()));
+                    g2d.drawString("HP: " + String.valueOf((int) (player.getPlayerHealth())) + "/100", (int) (getGameWidth() - 128 * getZoomRatio()), (int) (180 * getZoomRatio()));
+                    g2d.drawString("Team: " + player.getTeamId(), (int) (getGameWidth() - 128 * getZoomRatio()), (int) (210 * getZoomRatio()));
+                   for (int i = 0; i < otherPlayersList.size(); i++) {
+                        g2d.drawString(otherPlayersList.get(i).getName(), (int) (getGameWidth() - 128 * getZoomRatio()), (int) ((278 + i * 128) * getZoomRatio()));
+                        g2d.drawString("HP: " + String.valueOf((int) (otherPlayersList.get(i).getPlayerHealth())) + "/100", (int) (getGameWidth() - 128 * getZoomRatio()), (int) ((308 + i * 128) * getZoomRatio()));
+                        g2d.drawString("Team: " + otherPlayersList.get(i).getTeamId(), (int) (getGameWidth() - 128 * getZoomRatio()), (int) ((338 + i * 128) * getZoomRatio()));
+                    }
+                } else {
+                    for (int i = 0; i < otherPlayersList.size(); i++) {
+                        g2d.drawString(otherPlayersList.get(i).getName(), (int) (getGameWidth() - 128 * getZoomRatio()), (int) ((150 + i * 128) * getZoomRatio()));
+                        g2d.drawString("HP: " + String.valueOf((int) (otherPlayersList.get(i).getPlayerHealth())) + "/100", (int) (getGameWidth() - 128 * getZoomRatio()), (int) ((180 + i * 128) * getZoomRatio()));
+                        g2d.drawString("Team: " + otherPlayersList.get(i).getTeamId(), (int) (getGameWidth() - 128 * getZoomRatio()), (int) ((210 + i * 128) * getZoomRatio()));
+                    }
+                    g2d.drawString(player.getName(), (int) (getWidth() - 128 * getZoomRatio()), (int) (150 + (otherPlayersList.size()) * 128 * getZoomRatio()));
+                    g2d.drawString("HP: " + String.valueOf((int) (player.getPlayerHealth())) + "/100", (int) (getGameWidth() - 128 * getZoomRatio()), (int) (180 + (otherPlayersList.size()) * 128 * getZoomRatio()));
+                    g2d.drawString("Team: " + player.getTeamId(), (int) (getGameWidth() - 128 * getZoomRatio()), (int) (210 + (otherPlayersList.size()) * 128 * getZoomRatio()));
                 }
                 break;
 
@@ -1757,9 +1780,15 @@ public class GamePanel extends JPanel{
             case ENDING:
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.drawImage(InGameBackground, (getWidth()-panelWidth)/2, 0, panelWidth, panelHeight, this);
                 map.draw(g2d, false, this);
                 player.draw(g2d, this);
                 player.drawBullets(g2d, map.getTextureSize(), this);
+
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (30 * getZoomRatio())));
+                g2d.setColor(Color.BLACK);
+                g2d.drawString(gameMode.getName(), (int) ((getGameWidth() - 192 * getZoomRatio()) / 2), (int) ((getGameHeight() - 32) * getZoomRatio()));
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (15 * getZoomRatio())));
 
                 for (Player otherPlayer : otherPlayersList) {
                     otherPlayer.draw(g2d, this);
@@ -1768,9 +1797,9 @@ public class GamePanel extends JPanel{
                     otherPlayersBullets.get(i).draw(g2d, textureSize, this);
                 }
                 if (player.isTeamkilled(otherPlayersList, true)) {
-                    g2d.drawImage(victoryScreen, getGameX()+(int)((panelWidth-victoryScreen.getWidth())/2*getZoomRatio()), 0, (int)(victoryScreen.getWidth()*getZoomRatio()), (int)(victoryScreen.getHeight()*getZoomRatio()), null);
+                    g2d.drawImage(victoryScreen, getGameX()+(int)((panelWidth-victoryScreen.getWidth())/4*getZoomRatio()), 0, (int)(victoryScreen.getWidth()*getZoomRatio()*1.5), (int)(victoryScreen.getHeight()*getZoomRatio()*1.5), null);
                 } else {
-                    g2d.drawImage(defeatScreen, getGameX()+(int)((panelWidth - defeatScreen.getWidth())/2*getZoomRatio()), 0, (int)(defeatScreen.getWidth()*getZoomRatio()), (int)(defeatScreen.getHeight()*getZoomRatio()), null);
+                    g2d.drawImage(defeatScreen, getGameX()+(int)((panelWidth - defeatScreen.getWidth())/4*getZoomRatio()), 0, (int)(defeatScreen.getWidth()*getZoomRatio()*1.5), (int)(defeatScreen.getHeight()*getZoomRatio()*1.5), null);
                 }
                 break;
 

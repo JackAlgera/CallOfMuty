@@ -6,7 +6,7 @@ public class GameMode {
     private boolean[] Options; // 0 : Suggested map, 1 : Bouncing balls, 2 : Bonus Items, 3 : Fast mode
     private int gunGestion;
     private int Team;
-    private String description;
+    private String description, name;
     
     public static final int DEFAULT=0,ROYAL=1,TEAM=2, ALONE=3,
                 RANDOM =0, ALWAYSON = 1,
@@ -32,28 +32,30 @@ public class GameMode {
                 gunGestion = RANDOM;
                 Team = ALLVSALL;
                 description = DEFAULT_DESCRIPTION;
-            break;
+                break;
             case ROYAL:
                 gunGestion = ALWAYSON;
                 Team = ALLVSALL;
                 description = ROYAL_DESCRIPTION;
-            break;
+                break;
             case TEAM:
                 gunGestion = ALWAYSON;
                 Team = TEAMVSTEAM;
                 description = TEAM_DESCRIPTION;
 
-            break;
+                break;
             case ALONE:
                 gunGestion = ALWAYSON;
                 Team = ALLVSONE;
                 description = ALONE_DESCRIPTION;
+                break;
         }
     }
-    
+
     public int getId() {
         return this.id;
     }
+
     
     public String getName(){
         String name = "";
@@ -87,24 +89,25 @@ public class GameMode {
     public String getDescription(){
         return description;
     }
-    
+
     public int getGunGestion() {
         return this.gunGestion;
-    }  
-    
+    }
+
     public boolean getOption(int i) {
         return this.Options[i];
     }
-    
-    public void setOption(int i, boolean option){
+
+    public void setOption(int i, boolean option) {
         Options[i] = option;
     }
-    
-    public int getTeam(){
+
+    public int getTeam() {
         return this.Team;
     }
 
-    double getTimerMultiplier() {
+
+    public double getTimerMultiplier() {
         double multiplier;
         if(Options[3]){
             multiplier = FAST_MODE_MULTIPLIER;
@@ -114,7 +117,7 @@ public class GameMode {
         return multiplier;
     }
 
-    String getOptionName(int i) {
+    public String getOptionName(int i) {
         String name = "";
         switch(i){
             case 0:
