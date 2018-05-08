@@ -32,26 +32,22 @@ public class GameMode {
                 gunGestion = RANDOM;
                 Team = ALLVSALL;
                 description = DEFAULT_DESCRIPTION;
-                name = "DEFAULT";
                 break;
             case ROYAL:
                 gunGestion = ALWAYSON;
                 Team = ALLVSALL;
                 description = ROYAL_DESCRIPTION;
-                name = "BATTLE ROYAL";
                 break;
             case TEAM:
                 gunGestion = ALWAYSON;
                 Team = TEAMVSTEAM;
                 description = TEAM_DESCRIPTION;
-                name = "TEAM FIGHT";
 
                 break;
             case ALONE:
                 gunGestion = ALWAYSON;
                 Team = ALLVSONE;
                 description = ALONE_DESCRIPTION;
-                name = "1 VS ALL";
                 break;
         }
     }
