@@ -17,9 +17,9 @@ public class Gun {
             legendaryWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1),
             flamethrowerWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1);
             
-    private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, numeroBalle, bulletType;
+    private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, bulletType;
     private Image image;
-    private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, distanceMaxShoot, bulletSpread;
+    private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, maxRange, bulletSpread;
     private SoundPlayer gunSound, uziSound, sniperSound,shotgunSound, legendaryWeaponSound;
     
     public Gun(){
@@ -53,7 +53,7 @@ public class Gun {
                 damage = 15;
                 reloadTime = 1000;
                 bulletSpeed = 1.0;
-                distanceMaxShoot = 550;
+                maxRange = 550;
                 bulletSpread = 0.139;
                 xImage = 1;
                 yImage = 1;
@@ -68,7 +68,7 @@ public class Gun {
                 damage = 5;
                 reloadTime = 1000;
                 bulletSpeed = 0.8;
-                distanceMaxShoot = 450;
+                maxRange = 450;
                 bulletSpread = 0.174;
                 xImage = 2;
                 yImage = 3;
@@ -83,7 +83,7 @@ public class Gun {
                 damage = 35;
                 reloadTime = 1000;
                 bulletSpeed = 1.8;
-                distanceMaxShoot = 800;
+                maxRange = 800;
                 bulletSpread = 0.0017;
                 xImage = 3;
                 yImage = 1;
@@ -92,18 +92,17 @@ public class Gun {
                 break;
                 
             case SHOTGUN:
-                ammunition = 5*5;
+                ammunition = 5;
                 image = shotgunImage;
                 rateOfFire = 650;
                 damage = 12;
                 reloadTime = 1000;
                 bulletSpeed = 1.2;
-                distanceMaxShoot = 400;
+                maxRange = 400;
                 bulletSpread = 0.017;
                 xImage = 1;
                 yImage = 7;
                 tailleGun = 2;
-                numeroBalle = 0;
                 bulletType = Bullet.NORMAL;
                 break;
                 
@@ -114,7 +113,7 @@ public class Gun {
                 damage = 10;
                 reloadTime = 1000;
                 bulletSpeed = 1.0;
-                distanceMaxShoot = 500;
+                maxRange = 500;
                 bulletSpread = 0.037;
                 xImage = 1;
                 yImage = 3;
@@ -129,7 +128,7 @@ public class Gun {
                 damage = 25;
                 reloadTime = 1000;
                 bulletSpeed = 1.8;
-                distanceMaxShoot = 700;
+                maxRange = 700;
                 bulletSpread = 0.034;
                 xImage = 2;
                 yImage = 1;
@@ -144,7 +143,7 @@ public class Gun {
                 damage = 7;
                 reloadTime = 1250;
                 bulletSpeed = 1.0;
-                distanceMaxShoot = 550;
+                maxRange = 550;
                 bulletSpread = 0.139;
                 xImage = 2;
                 yImage = 5;
@@ -159,7 +158,7 @@ public class Gun {
                 damage = 35;
                 reloadTime = 1000;
                 bulletSpeed = 1.8;
-                distanceMaxShoot = 700;
+                maxRange = 700;
                 bulletSpread = 0.034;
                 xImage = 2;
                 yImage = 9;
@@ -174,7 +173,7 @@ public class Gun {
                 damage = 2;
                 reloadTime = 1000;
                 bulletSpeed = 1.8;
-                distanceMaxShoot = 200;
+                maxRange = 200;
                 bulletSpread = 0.200;
                 xImage = 2;
                 yImage = 9;
@@ -197,24 +196,12 @@ public class Gun {
         return bulletSpeed;
     }
     
-    public double getDistanceMaxShoot() {
-        return distanceMaxShoot;
+    public double getMaxRange() {
+        return maxRange;
     }
     
     public double getBulletSpread(){
         return bulletSpread;
-    }
-    
-    public void setRateOfFire(double rateOfFire){
-        this.rateOfFire = rateOfFire;
-    }
-    
-    public int getNumeroBalleShotgun(){
-        return this.numeroBalle;
-    }
-    
-    public void setNumeroBalleShotgun(int numero){
-        this.numeroBalle=numero;
     }
     
     public int getAmmunition(){
@@ -236,13 +223,11 @@ public class Gun {
         
     }
     
-    public boolean shoot(boolean unlimitedBullets, boolean muteShootingSound){ // if gun can shoot, shoots and returns true, else returns false
-        boolean test = (unlimitedBullets || ammunition>0) && System.currentTimeMillis()-rateOfFire>=lastShotTimeStamp;
+    public boolean shoot(boolean muteShootingSound){ // if gun can shoot, shoots and returns true, else returns false
+        boolean test = (ammunition>0) && System.currentTimeMillis()-rateOfFire>=lastShotTimeStamp;
         if (test){
-            if(!unlimitedBullets){
-                ammunition--;
-                rateOfFire=initialRateOfFire;
-            }
+            ammunition--;
+            rateOfFire=initialRateOfFire;
             lastShotTimeStamp = System.currentTimeMillis();
             if(ammunition==0){
                 if(stockAmmo !=0 ){
@@ -250,12 +235,8 @@ public class Gun {
                     ammunition=startingAmmo;
                     rateOfFire+=reloadTime;
                 } else {
-                    if (id == 4){
-                        numeroBalle=0;
-                    }
                     setId(NO_GUN, 0);
                 }
-                
             }
             if (!muteShootingSound){
                 playShootingSound();

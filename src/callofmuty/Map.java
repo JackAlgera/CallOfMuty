@@ -106,16 +106,16 @@ public class Map{
         return textureSize;
     }
     
-    public void setDrawingParameters(double xPos, double yPos, double drawWidth, double drawHeight){
+    public void setDrawingParameters(double xPos, double yPos, double drawWidth, double drawHeight){ // does not take zoomRatio into account
         this.xPos = xPos;
         this.yPos = yPos;
         this.drawHeight = drawHeight;
         this.drawWidth = drawWidth;
     }
     
-    public void setDrawingParameters(int gameState){
-        double gameWidth = (double)(mapWidth+2)*textureSize;
-        double gameHeight = (double)(mapHeight+1)*textureSize;
+    public void setDrawingParameters(int gameState, GamePanel game){
+        double gameWidth = game.getOriginalWidth();
+        double gameHeight = game.getOriginalHeight();
         switch (gameState){
             case GamePanel.MAIN_MENU:
                 setDrawingParameters(0.517578*gameWidth-5, 0.3212*gameHeight-8, 0.4512*gameWidth, 0.4514*gameHeight);
@@ -124,7 +124,7 @@ public class Map{
                 setDrawingParameters(0.0977*gameWidth,0.1736*gameHeight,0.82*gameWidth, 0.82*gameHeight);
                 break;
             case GamePanel.IN_GAME:
-                setDrawingParameters(0, 0, mapWidth*textureSize, mapHeight*textureSize);
+                setDrawingParameters(0, 0, (int)((double)gameWidth*mapWidth/(mapWidth+GamePanel.IN_GAME_RIGHT_MARGIN)), (int)((double)gameHeight*mapHeight/(mapHeight+GamePanel.IN_GAME_BOT_MARGIN)));
                 break;
             case GamePanel.PRE_GAME:
                 setDrawingParameters(0.5713*gameWidth, 0.5729*gameHeight, 0.4150*gameWidth, 0.3993*gameHeight);
@@ -172,7 +172,7 @@ public class Map{
         teleporters = new ArrayList<>();
         teleporters.add(new int[]{4,1});
         teleporters.add(new int[]{4,7});
-        setDrawingParameters(GamePanel.MAIN_MENU);
+        setDrawingParameters(GamePanel.MAIN_MENU, game);
     }
     
     public TileType getTile(int i, int j){

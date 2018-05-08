@@ -75,8 +75,9 @@ public class GamePanel extends JPanel{
             uncheckedIcon = Tools.loadIcon("Uncheck.png");    
     
     public static final int IFW = JPanel.WHEN_IN_FOCUSED_WINDOW,
-            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5;
-    
+            MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5,
+            IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1;
+    private static final int FONTSIZE = 18; // Font size for textFields (gets scaled with zoomFactor)
     private static long gunGenerationTime = 100; //in milliseconds
     
     private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer, victorySoundPlayer, defeatSoundPlayer;
@@ -117,8 +118,8 @@ public class GamePanel extends JPanel{
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-        originalWidth = textureSize*(mapWidth+2);
-        originalHeight = textureSize*(mapHeight+1);
+        originalWidth = textureSize*(mapWidth+IN_GAME_RIGHT_MARGIN);
+        originalHeight = textureSize*(mapHeight+IN_GAME_BOT_MARGIN);
         panelWidth = originalWidth;
         panelHeight = originalHeight;
         wantedWidthByHeightRatio = (double)panelWidth/panelHeight;
@@ -126,7 +127,6 @@ public class GamePanel extends JPanel{
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         map = new Map(mapWidth, mapHeight, textureSize, this);
-        tileSelector = new TileSelector(textureSize, originalWidth, originalHeight);
         player = new Player(0,0);
         pressedButtons = new ArrayList<>();
         releasedButtons = new ArrayList<>();
@@ -192,7 +192,6 @@ public class GamePanel extends JPanel{
                             if (leftMousePressed) {
                                 playershoot();
                             } else if(rightMousePressed){
-                       
                             meleeAttack();
                             }
                             break;
@@ -226,8 +225,23 @@ public class GamePanel extends JPanel{
     public void setFrame(JFrame frame){
         this.frame = frame;
     }
+
+    public int getOriginalWidth() {
+        return originalWidth;
+    }
+
+    public int getOriginalHeight() {
+        return originalHeight;
+    }
+
+    public void setOriginalValues(double ratio){
+        originalWidth /= ratio;
+        originalHeight /= ratio;
+        setPreferredSize(new Dimension(originalWidth, originalHeight));
+    }
     
     public void buildInterface(){
+        tileSelector = new TileSelector(textureSize, originalWidth, originalHeight); // needs to be done here, since original dimensions might change after GamePanel creation
         setLayout(null);
         MMbuttons = new ArrayList<>(); //MM : Main menu
         MEbuttons = new ArrayList<>(); //ME : Map Editor
@@ -258,7 +272,7 @@ public class GamePanel extends JPanel{
         Rectangle bounds;
         JButton connectButton = new JButton();
         connectButton.setVisible(true);
-        bounds = new Rectangle((getWidth()-panelWidth)/2 + (int)(0.28027*panelWidth),(int)(0.5208*panelHeight), (int)(0.1953125*originalWidth), (int)(0.1181*panelHeight));
+        bounds = new Rectangle((getWidth()-panelWidth)/2 + (int)(0.28027*panelWidth),(int)(0.5208*panelHeight), (int)(0.1953125*panelWidth), (int)(0.1181*panelHeight));
         connectButton.setBounds(bounds);
         connectButton.setIcon(new ImageIcon(joinGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //connectButton.setPressedIcon(pressedJoinGameIcon);
@@ -727,8 +741,9 @@ public class GamePanel extends JPanel{
         MMicons.add(null);
         MMpressedIcons.add(null);
         usernameField.setEditable(true);
+        usernameField.setName("textField");
         usernameField.setHorizontalAlignment(JTextField.CENTER);
-        usernameField.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        usernameField.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         usernameField.setBackground(new Color(230,226,211));//(new Color(221,214,192));
         usernameField.setForeground(Color.DARK_GRAY);
         usernameField.setBorder(null);
@@ -894,7 +909,8 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         descriptionText.setText(gameMode.getDescription());
         descriptionText.setEditable(false);
-        descriptionText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        descriptionText.setName("textField");
+        descriptionText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         descriptionText.setBackground(new Color(230,226,211));
         descriptionText.setForeground(Color.DARK_GRAY);
         descriptionText.setBorder(null);
@@ -910,8 +926,9 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         suggestedMapText.setEditable(false);
         suggestedMapText.setHorizontalAlignment(JTextField.CENTER);
-        suggestedMapText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        suggestedMapText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         suggestedMapText.setBackground(new Color(230,226,211));
+        suggestedMapText.setName("textField");
         suggestedMapText.setForeground(Color.DARK_GRAY);
         suggestedMapText.setBorder(null);
         suggestedMapText.setVisible(false);
@@ -944,15 +961,16 @@ public class GamePanel extends JPanel{
             }
         });
         
-        JTextField rubberBallsText = new JTextField("Rubber balls");
+        JTextField rubberBallsText = new JTextField("Bouncing bullets");
         bounds = new Rectangle((int)(0.5664*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
         rubberBallsText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
         GMicons.add(null);
         rubberBallsText.setEditable(false);
         rubberBallsText.setHorizontalAlignment(JTextField.CENTER);
-        rubberBallsText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        rubberBallsText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         rubberBallsText.setBackground(new Color(230,226,211));
+        rubberBallsText.setName("textField");
         rubberBallsText.setForeground(Color.DARK_GRAY);
         rubberBallsText.setBorder(null);
         rubberBallsText.setVisible(false);
@@ -992,8 +1010,9 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         bonusItemsText.setEditable(false);
         bonusItemsText.setHorizontalAlignment(JTextField.CENTER);
-        bonusItemsText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        bonusItemsText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         bonusItemsText.setBackground(new Color(230,226,211));
+        bonusItemsText.setName("textField");
         bonusItemsText.setForeground(Color.DARK_GRAY);
         bonusItemsText.setBorder(null);
         bonusItemsText.setVisible(false);
@@ -1033,8 +1052,9 @@ public class GamePanel extends JPanel{
         GMicons.add(null);
         fastModeText.setEditable(false);
         fastModeText.setHorizontalAlignment(JTextField.CENTER);
-        fastModeText.setFont(new Font("Stencil", Font.BOLD, (int)(18*getZoomRatio())));
+        fastModeText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
         fastModeText.setBackground(new Color(230,226,211));
+        fastModeText.setName("textField");
         fastModeText.setForeground(Color.DARK_GRAY);
         fastModeText.setBorder(null);
         fastModeText.setVisible(false);
@@ -1059,13 +1079,12 @@ public class GamePanel extends JPanel{
                 Rectangle bounds = fastModeButton.getBounds();
                 if(gameMode.getOption(3)){
                     gameMode.setOption(3, false);
-                    timer.setMultiplier(1.0);
                     fastModeButton.setIcon(new ImageIcon(uncheckedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                 } else {
                     gameMode.setOption(3, true);
-                    timer.setMultiplier(GameMode.FAST_MODE_MULTIPLIER);
                     fastModeButton.setIcon(new ImageIcon(checkedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                 }
+                timer.setMultiplier(gameMode.getTimerMultiplier());
             }
         });
 
@@ -1088,7 +1107,7 @@ public class GamePanel extends JPanel{
                 setState(MAIN_MENU);
             }
         });
-        map.setDrawingParameters(MAIN_MENU);
+        map.setDrawingParameters(MAIN_MENU, this);
         interfaceBuilt = true;
     }
     
@@ -1109,7 +1128,7 @@ public class GamePanel extends JPanel{
             Rectangle bounds;
             JComponent component;
             double zoomRatio = getZoomRatio();
-            map.setDrawingParameters(gameState);
+            map.setDrawingParameters(gameState, this);
             for (int i = 0; i < MMbuttons.size(); i++) {
                 bounds = MMoriginalBounds.get(i);
                 bounds = new Rectangle((getWidth() - panelWidth) / 2 + (int) (bounds.x * zoomRatio), (int) (bounds.y * zoomRatio), (int) (bounds.width * zoomRatio), (int) (bounds.height * zoomRatio));
@@ -1129,6 +1148,8 @@ public class GamePanel extends JPanel{
                     } else {
                         muteSoundsButton.setIcon(new ImageIcon(SoundsIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                     }
+                } else if ("textField".equals(component.getName())){
+                    component.setFont(component.getFont().deriveFont((float)(FONTSIZE*zoomRatio)));
                 } else if (MMicons.get(i) != null) {
                     JButton button = (JButton) component;
                     button.setIcon(new ImageIcon(MMicons.get(i).getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1163,6 +1184,8 @@ public class GamePanel extends JPanel{
                         } else {
                             button.setIcon(new ImageIcon(uncheckedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                         }
+                    } else if ("textField".equals(component.getName())){
+                        component.setFont(component.getFont().deriveFont((float)(FONTSIZE*zoomRatio)));
                     }
                 }
                 if (GMicons.get(i) != null) {
@@ -1475,12 +1498,6 @@ public class GamePanel extends JPanel{
         this.isHost = isHost;
         sql = new SQLManager();
         int[] sqlGame = sql.getGame();
-        int numberOfBounces;
-        if(gameMode.getOption(1)){
-            numberOfBounces = GameMode.NUMBER_OF_BOUNCES;
-        } else {
-            numberOfBounces = 0;
-        }
         if (isHost) {
             // Try to create a game
             ArrayList<Player> playerList = sql.getPlayerList();
@@ -1490,7 +1507,7 @@ public class GamePanel extends JPanel{
                 player.reset(map, muteSounds);
                 player.setPlayerId(1);
                 player.setTeamId(1);
-                player.addPlayer(sql, numberOfBounces);
+                player.addPlayer(sql, gameMode.getNumberOfBounces());
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -1540,6 +1557,7 @@ public class GamePanel extends JPanel{
                 gameMode.setOption(1, sqlGame[2]==1);
                 gameMode.setOption(2, sqlGame[3]==1);
                 gameMode.setOption(3, sqlGame[4]==1);
+                timer.setMultiplier(gameMode.getTimerMultiplier());
                 player.setPlayerId(1); // 0 means "null", ids start at 1            
                 while (otherPlayersList.contains(player)) {
                     player.incrementId();
@@ -1559,7 +1577,7 @@ public class GamePanel extends JPanel{
                         }
                         break;
                 }
-                player.addPlayer(sql, numberOfBounces);
+                player.addPlayer(sql, gameMode.getNumberOfBounces());
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -1611,21 +1629,14 @@ public class GamePanel extends JPanel{
     //-------------------------------------------------------------------------------------------------------------------------
     
     public void playershoot(){
-        double[] directionOfFire = new double[2];
-        directionOfFire[0] = mousePosition[0] - player.getPosX() - textureSize / 2;
-        directionOfFire[1] = mousePosition[1] - player.getPosY() - textureSize / 2;
+        double[] wantedDirection = new double[2];
+        wantedDirection[0] = mousePosition[0] - player.getPosX() - textureSize / 2;
+        wantedDirection[1] = mousePosition[1] - player.getPosY() - textureSize / 2;
 
-        double norme = Math.sqrt(directionOfFire[0] * directionOfFire[0] + directionOfFire[1] * directionOfFire[1]);
-        directionOfFire[0] = directionOfFire[0] / norme;
-        directionOfFire[1] = directionOfFire[1] / norme;
-
-        int bulletBounce;
-        if(gameMode.getOption(1)){
-            bulletBounce = GameMode.NUMBER_OF_BOUNCES;
-        } else {
-            bulletBounce = 0;
-        }
-        player.shoot(directionOfFire, sql, false, bulletBounce);
+        double norme = Math.sqrt(wantedDirection[0] * wantedDirection[0] + wantedDirection[1] * wantedDirection[1]);
+        wantedDirection[0] = wantedDirection[0] / norme;
+        wantedDirection[1] = wantedDirection[1] / norme;
+        player.shoot(wantedDirection, sql, gameMode.getNumberOfBounces());
     }
     
     public void meleeAttack(){
@@ -1637,7 +1648,7 @@ public class GamePanel extends JPanel{
         directionOfFire[0] = directionOfFire[0] / norme;
         directionOfFire[1] = directionOfFire[1] / norme;
         
-        player.kick(directionOfFire, sql);
+        player.meleeAttack(directionOfFire, sql);
     }
     
     @Override
@@ -1647,24 +1658,36 @@ public class GamePanel extends JPanel{
         switch(gameState) {
             case PRE_GAME:
                 g2d.drawImage(PreGameBackground, (getWidth()-panelWidth)/2, 0, panelWidth, panelHeight, this);
-                g2d.setFont(new Font("Stencil", Font.BOLD, (int)(20*getZoomRatio())));
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
                 map.draw(g2d, false, this);
                 if (isHost) {
-                    g2d.drawString(player.getName(),(getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)(140*getZoomRatio()));
+                    g2d.drawString(player.getName(),(getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)(0.155*panelHeight));
                     for (int i = 0; i < otherPlayersList.size(); i++) {
-                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)((190 + i * 50)*getZoomRatio()));
+                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)((0.155+(i+1)*0.05)*panelHeight));
                     }
                 } else {
                     for (int i = 0; i < otherPlayersList.size(); i++) {
-                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)((140 + i * 50)*getZoomRatio()));
+                        g2d.drawString(otherPlayersList.get(i).getName(), (getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)((0.155+i*0.05)*panelHeight));
                     }
-                    g2d.drawString(player.getName(), (getWidth()-panelWidth)/2 + (int)(90*getZoomRatio()), (int)(140+(otherPlayersList.size())*50*getZoomRatio()));
+                    g2d.drawString(player.getName(), (getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)((0.155+otherPlayersList.size()*0.05)*panelHeight));
                 }
-                break;
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int)(1.5*FONTSIZE*getZoomRatio())));
+                g2d.drawString(gameMode.getName(), (getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)(0.7*panelHeight));
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
+                double writingHeight = 0.77;
+                for (int i = 1; i<GameMode.NUMBER_OF_OPTIONS; i++){
+                    if(gameMode.getOption(i)){
+                        g2d.drawString(gameMode.getOptionName(i),(getWidth()-panelWidth)/2 + (int)(0.06*panelWidth), (int)(writingHeight*panelHeight));
+                        writingHeight += 0.05;
+                    }
+                }
+            break;
 
             case MAIN_MENU:
                 g2d.drawImage(MenuBackground, (getWidth()-panelWidth)/2, 0, panelWidth, panelHeight, this);
-                g2d.drawImage(player.getImage(), (getWidth()-panelWidth)/2 +(int)((180-player.getPlayerWidth())/2*getZoomRatio()), (panelHeight-player.getPlayerHeight())/2, (int)(320*getZoomRatio()), (int)(320*getZoomRatio()), this);
+                Image playerImage = player.getImage();
+                double playerZoomFactor = 3.5;
+                g2d.drawImage(playerImage, (getWidth()-panelWidth)/2+(int)(0.14*panelWidth)-(int)(playerImage.getWidth(null)*playerZoomFactor*getZoomRatio()/2), panelHeight/2-(int)(playerImage.getHeight(null)*getZoomRatio()), (int)(playerImage.getWidth(null)*playerZoomFactor*getZoomRatio()), (int)(playerImage.getHeight(null)*playerZoomFactor*getZoomRatio()), this);
                 map.draw(g2d, false, this);
                 break;
 
@@ -1822,7 +1845,7 @@ public class GamePanel extends JPanel{
     public void setState(int newGameState){
         int formerGameState = gameState;
         gameState = newGameState;
-        map.setDrawingParameters(gameState);
+        map.setDrawingParameters(gameState, this);
         switch(gameState){
             case MAIN_MENU:
                 for (JComponent component : MMbuttons){

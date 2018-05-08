@@ -3,7 +3,7 @@ package callofmuty;
 public class GameMode {
     
     private int id;
-    private boolean[] Options; //Op 0 Suggested map, Op 1 Rubberballs, Op 2 Active Items, Op 3 Modefast
+    private boolean[] Options; // 0 : Suggested map, 1 : Bouncing balls, 2 : Bonus Items, 3 : Fast mode
     private int gunGestion;
     private int Team;
     private String description, name;
@@ -11,9 +11,9 @@ public class GameMode {
     public static final int DEFAULT=0,ROYAL=1,TEAM=2, ALONE=3,
                 RANDOM =0, ALWAYSON = 1,
                 ALLVSALL = 0, ALLVSONE = 1, TEAMVSTEAM = 2,
-                NUMBER_OF_BOUNCES = 1,
                 NUMBER_OF_OPTIONS = 4;
-    public static final double FAST_MODE_MULTIPLIER = 1.7;
+    private static final double FAST_MODE_MULTIPLIER = 1.7;
+    private static final int NUMBER_OF_BOUNCES = 1;
     
     private static String DEFAULT_DESCRIPTION = "Bla bla default gamemode description",
             ROYAL_DESCRIPTION = "PAN PAN EVERYWHERE",
@@ -22,7 +22,7 @@ public class GameMode {
     
     public GameMode(){
         Options= new boolean[] {false,false,false,false};
-        setId(ROYAL);
+        setId(DEFAULT);
     }
 
     public void setId(int id) {
@@ -60,7 +60,37 @@ public class GameMode {
         return this.id;
     }
 
-    public String getDescription() {
+    
+    public String getName(){
+        String name = "";
+        switch(id){
+            case DEFAULT:
+                name = "Default mode";
+                break;
+            case ROYAL:
+                name = "Royal battle";
+                break;
+            case TEAM:
+                name = "Team battle";
+                break;
+            case ALONE:
+                name = "Alone";
+                break;
+        }
+        return name;
+    }
+    
+    public int getNumberOfBounces(){
+        int numberOfBounces;
+        if(Options[1]){
+            numberOfBounces = NUMBER_OF_BOUNCES;
+        } else {
+            numberOfBounces = 0;
+        }
+        return numberOfBounces;
+    }
+    
+    public String getDescription(){
         return description;
     }
 
@@ -79,8 +109,34 @@ public class GameMode {
     public int getTeam() {
         return this.Team;
     }
-    
-    public String getName(){
-        return this.name;
+
+
+    public double getTimerMultiplier() {
+        double multiplier;
+        if(Options[3]){
+            multiplier = FAST_MODE_MULTIPLIER;
+        } else {
+            multiplier = 1;
+        }
+        return multiplier;
+    }
+
+    public String getOptionName(int i) {
+        String name = "";
+        switch(i){
+            case 0:
+                name = "Default map";
+                break;
+            case 1:
+                name = "Bouncing balls";
+                break;
+            case 2:
+                name = "Bonus items";
+                break;
+            case 3:
+                name = "Fast mode !";
+                break;
+        }
+        return name;
     }
 }

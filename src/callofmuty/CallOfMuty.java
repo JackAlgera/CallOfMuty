@@ -1,7 +1,9 @@
 package callofmuty;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -63,7 +65,16 @@ public class CallOfMuty {
         });
         
         game.requestFocusInWindow();
-        game.revalidate();
+        /// correct frame size if too big for screen
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double widthRatio = (double)game.getOriginalWidth()/0.9/screenSize.width;
+        double heightRatio = (double)game.getOriginalHeight()/0.9/screenSize.height;
+        if(widthRatio>1 || heightRatio>1){
+            double ratio = Math.max(widthRatio, heightRatio);
+            game.setOriginalValues(ratio);
+        }
+        frame.pack();
+        frame.setLocationRelativeTo(null); // appears at the centre of the screen
         game.buildInterface();
         game.repaint();
         minUpdateTime = (long) 1000 / maxFPS;
