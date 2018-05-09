@@ -505,6 +505,7 @@ public class GamePanel extends JPanel{
                     map = Tools.loadResourceMap(mapIndex, textureSize);
                     map.setDrawingParameters(gameState, originalWidth, originalHeight);
                 }
+                repaint();
             }
         });
         
@@ -540,6 +541,7 @@ public class GamePanel extends JPanel{
                     map = Tools.loadResourceMap(mapIndex, textureSize);
                     map.setDrawingParameters(gameState, originalWidth, originalHeight);
                 }
+                repaint();
             }
         });
         
@@ -1697,7 +1699,7 @@ public class GamePanel extends JPanel{
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         double zoomRatio = getZoomRatio();
-        int gameX = getGameX(), rightBorderX = gameX+panelWidth, rightBorderWidth = (int)(panelWidth*(double)IN_GAME_RIGHT_MARGIN/(mapWidth+IN_GAME_RIGHT_MARGIN));
+        int gameX = getGameX(), rightBorderX = gameX+(int)(panelWidth*(double)mapWidth/(mapWidth+IN_GAME_RIGHT_MARGIN)), rightBorderWidth = (int)(panelWidth*(double)IN_GAME_RIGHT_MARGIN/(mapWidth+IN_GAME_RIGHT_MARGIN));
         switch(gameState) {
             case PRE_GAME:
                 g2d.drawImage(PreGameBackground, gameX, 0, panelWidth, panelHeight, this);
@@ -1751,30 +1753,30 @@ public class GamePanel extends JPanel{
                 g2d.setColor(Color.BLACK);
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int) (15 * zoomRatio)));
                 boolean localPlayerPrinted = false;
-                double xLocation = 0.2, yLocation = 0.2;
+                double xLocation = 0.1, yLocation = 0.15, lineIncrement = 0.02, playerIncrement = 0.05;
                 for (Player otherPlayer : otherPlayersList) {
                     if(!localPlayerPrinted && player.compareTo(otherPlayer)==-1){
+                        localPlayerPrinted = true;
                         g2d.drawString(player.getName(), rightBorderX + (int)(xLocation*rightBorderWidth), (int) (yLocation*panelHeight));
-                        yLocation += 0.05;
+                        yLocation += lineIncrement;
                         g2d.drawString("HP : " + (int)player.getPlayerHealth() + "/"+(int)Player.maxHealth,  rightBorderX + (int)(xLocation*rightBorderWidth), (int) (yLocation*panelHeight));
-                        yLocation += 0.05;
+                        yLocation += lineIncrement;
                         g2d.drawString("Team : " + player.getTeamId(),  rightBorderX + (int)(xLocation*rightBorderWidth), (int) (yLocation*panelHeight));
-                        yLocation += 0.08;
+                        yLocation += playerIncrement;
                     }
                     g2d.drawString(otherPlayer.getName(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
-                    yLocation += 0.05;
+                    yLocation += lineIncrement;
                     g2d.drawString("HP : " + (int)otherPlayer.getPlayerHealth() + "/"+(int)Player.maxHealth, rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
-                    yLocation += 0.05;
+                    yLocation += lineIncrement;
                     g2d.drawString("Team : " + otherPlayer.getTeamId(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
-                    yLocation += 0.08;
+                    yLocation += playerIncrement;
                 }
                 if (!localPlayerPrinted) {
                     g2d.drawString(player.getName(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
-                    yLocation += 0.05;
+                    yLocation += lineIncrement;
                     g2d.drawString("HP : " + (int)player.getPlayerHealth() + "/"+(int)Player.maxHealth, rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
-                    yLocation += 0.05;
+                    yLocation += lineIncrement;
                     g2d.drawString("Team : " + player.getTeamId(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
-                    yLocation += 0.08;
                 }
                 break;
 
