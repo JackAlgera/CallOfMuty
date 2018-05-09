@@ -98,7 +98,7 @@ public class Bullet {
     
     public void draw(Graphics2D g2d, int texturesize, GamePanel game){
         if (isActive) {
-            double zoomRatio = game.getZoomRatio();
+            double zoomRatio = game.getZoomRatio()*game.getScreenSizeZoomRatio();
             g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),game.getGameX()+(int)(posX*zoomRatio),(int)(posY*zoomRatio),(int)(texturesize/2*zoomRatio),(int)(texturesize/2*zoomRatio), null);
         }
     }

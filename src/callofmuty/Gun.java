@@ -217,7 +217,7 @@ public class Gun {
             case NO_GUN: //draw nothing
                 break;
             default:
-                double zoomRatio = game.getZoomRatio();
+                double zoomRatio = game.getZoomRatio()*game.getScreenSizeZoomRatio();
                 g2d.drawImage(image, game.getGameX()+(int)(getGunPositionY(player)*zoomRatio), (int)((player.getPosY()+18)*zoomRatio), (int)(image.getWidth(null)*zoomRatio), (int)(image.getHeight(null)*zoomRatio), null);
         }
         

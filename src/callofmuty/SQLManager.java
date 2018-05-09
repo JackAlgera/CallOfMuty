@@ -423,7 +423,7 @@ public class SQLManager {
         return players;
     }
     
-    public void updatePlayerList(Player player, ArrayList<Player> otherPlayersList) throws IOException, JavaLayerException{ //used while PRE_GAME state
+    public void updatePlayerList(Player player, ArrayList<Player> otherPlayersList){ //used while PRE_GAME state
         PreparedStatement requete;
         Player newPlayer;
         int index;
@@ -455,7 +455,7 @@ public class SQLManager {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         int i=0;
-        while (i<otherPlayersList.size()){ //remove players that were not updated (ie died)
+        while (i<otherPlayersList.size()){ //remove players that were not updated (ie disconnected)
             if (!updatedPlayers.contains(otherPlayersList.get(i))){
                 otherPlayersList.remove(i);
             } else {

@@ -6,7 +6,7 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Player {
+public class Player implements Comparable<Player>{
 
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
@@ -235,7 +235,7 @@ public class Player {
     
     public void draw(Graphics2D g, GamePanel game) {
         if (!isDead) {
-            double zoomRatio = game.getZoomRatio();
+            double zoomRatio = game.getZoomRatio()*game.getScreenSizeZoomRatio();
             g.drawImage(animationImages.get(playerAnimation.getCurrentImage()), game.getGameX()+(int)((posX + playerWidth/2 - imageWidth)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight)*zoomRatio), (int)(imageWidth * 2*zoomRatio), (int)(imageHeight * 2*zoomRatio), null);
             g.drawImage(hpBar, game.getGameX()+(int)((posX + playerWidth/2 - imageWidth)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 12)*zoomRatio), (int)(imageWidth * 2*zoomRatio), (int)(imageHeight * 2*zoomRatio), null);
             gun.draw(g, this, game);
@@ -773,8 +773,18 @@ public class Player {
         }
     }
     
-    public void setAnimationSkinId(int skinId)
-    {
+    public void setAnimationSkinId(int skinId){
         this.playerAnimation.setSkinId(skinId);
+    }
+
+    @Override
+    public int compareTo(Player otherPlayer) {
+        int result = 0;
+        if(teamId < otherPlayer.getTeamId() || (teamId==otherPlayer.getTeamId() && playerId < otherPlayer.getPlayerId())){
+            result = -1;
+        } else if(teamId > otherPlayer.getTeamId() || (teamId==otherPlayer.getTeamId() && playerId > otherPlayer.getPlayerId())){
+            result = 1;
+        }
+        return result;
     }
 }

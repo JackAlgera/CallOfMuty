@@ -116,13 +116,13 @@ public class Map{
     public void setDrawingParameters(int gameState, double gameOriginalWidth, double gameOriginalHeight){
         switch (gameState){
             case GamePanel.MAIN_MENU:
-                setDrawingParameters(0.517578*gameOriginalWidth-5, 0.3212*gameOriginalHeight-8, 0.4512*gameOriginalWidth, 0.4514*gameOriginalHeight);
+                setDrawingParameters(0.517578*gameOriginalWidth-5, 0.3212*gameOriginalHeight, 0.4512*gameOriginalWidth, 0.4514*gameOriginalHeight);
                 break;
             case GamePanel.MAP_EDITOR:
                 setDrawingParameters(0.0977*gameOriginalWidth,0.1736*gameOriginalHeight,0.82*gameOriginalWidth, 0.82*gameOriginalHeight);
                 break;
             case GamePanel.IN_GAME:
-                setDrawingParameters(0, 0, (int)((double)gameOriginalWidth*mapWidth/(mapWidth+GamePanel.IN_GAME_RIGHT_MARGIN)), (int)((double)gameOriginalHeight*mapHeight/(mapHeight+GamePanel.IN_GAME_BOT_MARGIN)));
+                setDrawingParameters(0, 0, (double)gameOriginalWidth*mapWidth/(mapWidth+GamePanel.IN_GAME_RIGHT_MARGIN), (double)gameOriginalHeight*mapHeight/(mapHeight+GamePanel.IN_GAME_BOT_MARGIN));
                 break;
             case GamePanel.PRE_GAME:
                 setDrawingParameters(0.5713*gameOriginalWidth, 0.5729*gameOriginalHeight, 0.4150*gameOriginalWidth, 0.3993*gameOriginalHeight);

@@ -35,6 +35,8 @@ public class CallOfMuty {
         GamePanel game = new GamePanel(textureSize, mapWidth, mapHeight, timer);
         JFrame frame = createJFrame(frameTitle, game);
         game.setFrame(frame);
+        
+        // window listeners
         WindowListener exitListener = new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -64,19 +66,24 @@ public class CallOfMuty {
             }
         });
         
-        game.requestFocusInWindow();
-        /// correct frame size if too big for screen
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        // correct frame size if too big for screen
+        // Commented out because buggy and not really needed, just resize the frame manually
+        /*Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         double widthRatio = (double)game.getOriginalWidth()/0.9/screenSize.width;
         double heightRatio = (double)game.getOriginalHeight()/0.9/screenSize.height;
         if(widthRatio>1 || heightRatio>1){
             double ratio = Math.max(widthRatio, heightRatio);
-            game.setOriginalValues(ratio);
+            game.setPreferredDimensions(ratio);
         }
+        */
+        
+        // last steps
+        
+        game.requestFocusInWindow();
         frame.pack();
         frame.setLocationRelativeTo(null); // appears at the centre of the screen
         game.buildInterface();
-        game.repaint();
+        frame.setVisible(true);
         minUpdateTime = (long) 1000 / maxFPS;
 
         while (true) {
@@ -131,7 +138,7 @@ public class CallOfMuty {
         frame.setBackground(Color.black);
         frame.setResizable(true);
         //frame.setUndecorated(true); // takes off the border of the frame
-        frame.setVisible(true);
+        frame.setVisible(false);
         frame.add(game);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
