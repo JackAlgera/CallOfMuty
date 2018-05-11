@@ -8,13 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resources;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
@@ -168,5 +166,32 @@ public class Tools {
     
     public static void playRandomSoundFromList(ArrayList<SoundPlayer> list){
         list.get(ThreadLocalRandom.current().nextInt(0, list.size())).play();
+    }
+    
+    public static int getNumberOfAvailableTeams(Player player, ArrayList<Player> otherPlayersList){ // returns the number of teams + 1, except if player is alone in the team with biggest id, then return number of teams
+        int numberOfAvailableTeams;
+        ArrayList<Integer> teamIds = new ArrayList<>();
+        teamIds.add(player.getTeamId());
+        boolean playerIsAloneInTeam = true;
+        boolean playerTeamIsMax = true;
+        for (Player otherPlayer : otherPlayersList){
+            if(otherPlayer.getTeamId()==player.getTeamId()){
+                playerIsAloneInTeam = false;
+            } else if(otherPlayer.getTeamId()>player.getTeamId()){
+                playerTeamIsMax = false;
+            }
+            if(!teamIds.contains((Integer)otherPlayer.getTeamId())){
+                teamIds.add(otherPlayer.getTeamId());
+            }
+        }
+        if(playerIsAloneInTeam && teamIds.size()==2){
+            numberOfAvailableTeams = -1;
+        } else if(playerIsAloneInTeam && playerTeamIsMax){
+            numberOfAvailableTeams = teamIds.size();
+        } else {
+            numberOfAvailableTeams = teamIds.size()+1;
+        }
+        
+        return numberOfAvailableTeams;
     }
 }

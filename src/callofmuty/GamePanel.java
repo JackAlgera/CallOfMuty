@@ -76,7 +76,7 @@ public class GamePanel extends JPanel{
     public static final int MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5,
             IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1,
             NUMBER_OF_MAPS = 6;
-    private static final int FONTSIZE = 18; // Font size for textFields (gets scaled with zoomFactor)
+    private static final int FONTSIZE = 18, NUMBER_OF_SKINS = 5; // Font size for textFields (gets scaled with zoomFactor)
     private static long GUN_GENERATION_TIME = 100; //in milliseconds
     
     private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer, victorySoundPlayer, defeatSoundPlayer;
@@ -95,9 +95,9 @@ public class GamePanel extends JPanel{
     private ArrayList <Rectangle> MMoriginalBounds, MEoriginalBounds, PGoriginalBounds, EoriginalBounds, GMoriginalBounds;
     private ArrayList <ImageIcon> MMicons, MEicons, PGicons, Eicons, GMicons, MMpressedIcons, MEpressedIcons;
     private ArrayList<Bullet> otherPlayersBullets;
+    private ArrayList<Color> teamColors;
     private GameTimer timer;
     private int[] mousePosition;
-    private int numberOfSkins = 5;
     private double wantedWidthByHeightRatio, screenSizeZoomRatio;
     private JFrame frame;
     private String fileChooserPath;
@@ -140,6 +140,7 @@ public class GamePanel extends JPanel{
         endShowed = false;
         screenSizeZoomRatio = 1;
         fileChooserPath = "src/resources/maps";
+        generateColorList();
         setFocusable(true);
         
         // handling mouse inputs
@@ -220,7 +221,21 @@ public class GamePanel extends JPanel{
                     }
                 }
             }
-        }.start();     
+        }.start(); 
+    }
+    
+    private void generateColorList(){
+        teamColors = new ArrayList<>();
+        teamColors.add(Color.BLUE);
+        teamColors.add(Color.RED);
+        teamColors.add(Color.GREEN);
+        teamColors.add(Color.YELLOW.darker());
+        teamColors.add(Color.CYAN);
+        teamColors.add(Color.ORANGE);
+        teamColors.add(Color.MAGENTA);
+        teamColors.add(Color.PINK);
+        teamColors.add(Color.LIGHT_GRAY);
+        teamColors.add(Color.DARK_GRAY);
     }
     
     public void setFrame(JFrame frame){
@@ -396,7 +411,7 @@ public class GamePanel extends JPanel{
         rightSkinArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                getPlayer().setSkin((player.getSkinIndex() % numberOfSkins) + 1);
+                getPlayer().setSkin((player.getSkinIndex() % NUMBER_OF_SKINS) + 1);
                 repaint();
             }
         });
@@ -423,7 +438,7 @@ public class GamePanel extends JPanel{
                 int skinIndex = player.getSkinIndex();
                 skinIndex--;
                 if (skinIndex < 1){
-                    skinIndex = numberOfSkins;
+                    skinIndex = NUMBER_OF_SKINS;
                 }
                 getPlayer().setSkin(skinIndex);
                 repaint();
@@ -691,6 +706,7 @@ public class GamePanel extends JPanel{
         //------------------------------------- Start game button during lobby ----------------------------- 
         
         JButton startButton = new JButton();
+        startButton.setName("startButton");
         bounds = new Rectangle((int)(0.3516*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.4063*panelHeight), (int)(0.3223*panelWidth), (int)(0.1233*panelHeight));
         startButton.setBounds(bounds);
         startButton.setIcon(new ImageIcon(startGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -709,7 +725,33 @@ public class GamePanel extends JPanel{
                 Collections.sort(otherPlayersList); // sort the list by teamId, then by playerId, to print it nicely in game
                 setState(IN_GAME);
             }
-        });        
+        });
+        
+        JButton teamColorSelector = new JButton("Select your team");
+        teamColorSelector.setName("teamColorSelector");
+        teamColorSelector.setBackground(teamColors.get(0));
+        bounds = new Rectangle((int)(0.16*panelWidth)+getGameX(),(int)(0.2*panelHeight), (int)(0.1*panelWidth), (int)(0.05*panelHeight));
+        teamColorSelector.setBounds(bounds);
+        PGoriginalBounds.add(bounds);
+        PGicons.add(null);
+        teamColorSelector.setVisible(false);
+        add(teamColorSelector);
+        PGbuttons.add(teamColorSelector);
+        
+        teamColorSelector.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                int availableTeams = Tools.getNumberOfAvailableTeams(player, otherPlayersList);
+                if (availableTeams == -1) { // means that if the player changes team, there will be only one team left
+                    JOptionPane.showMessageDialog(null, "There must be at least two teams");
+                } else {
+                    player.setTeamId((player.getTeamId() % availableTeams) + 1);
+                    teamColorSelector.setBackground(teamColors.get(player.getTeamId() - 1));
+                    sql.setPlayerTeamId(player);
+                    repaint();
+                }
+            }
+        });
         
         //-------------------------------------------- Mute sound button ------------------------------------------  
                 
@@ -915,29 +957,7 @@ public class GamePanel extends JPanel{
         teamButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                gameMode.setId(GameMode.TEAM);
-                descriptionText.setText(gameMode.getDescription());
-                repaint();
-            }
-        });
-        
-        JButton aloneButton = new JButton("Alone");
-        //bounds = new Rectangle((int)(0.0547*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1680*panelWidth), (int)(0.1040*panelHeight));
-        bounds = new Rectangle(100, 500, doneIcon.getIconWidth(), doneIcon.getIconHeight());
-        aloneButton.setBounds(bounds);
-        //teamButton.setIcon(new ImageIcon(spectateIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
-        //teamButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
-        GMoriginalBounds.add(bounds);
-        GMicons.add(null);
-        aloneButton.setVisible(false);
-        aloneButton.setBorderPainted(true);
-        add(aloneButton);
-        GMbuttons.add(aloneButton);
-        
-        aloneButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                playClicSound();
-                gameMode.setId(GameMode.ALONE);
+                gameMode.setId(GameMode.TEAM_MODE);
                 descriptionText.setText(gameMode.getDescription());
                 repaint();
             }
@@ -1592,37 +1612,37 @@ public class GamePanel extends JPanel{
         } else { // Try to join a Pre_game
             if (sqlGame[0] == PRE_GAME) {
                 otherPlayersList = sql.getPlayerList();
-                map = sql.getMap(textureSize);
-                customMap = map;
-                hasCustomMap = true;
-                player.reset(map, muteSounds);
-                gameMode.setId(sqlGame[1]);
-                gameMode.setOption(1, sqlGame[2]==1);
-                gameMode.setOption(2, sqlGame[3]==1);
-                gameMode.setOption(3, sqlGame[4]==1);
-                timer.setMultiplier(gameMode.getTimerMultiplier());
-                player.setPlayerId(1); // 0 means "null", ids start at 1            
-                while (otherPlayersList.contains(player)) {
-                    player.incrementId();
-                }
-                switch (gameMode.getTeam()) {
-                    case GameMode.ALLVSALL:
+                if (otherPlayersList.size()>=teamColors.size()) {
+                    JOptionPane.showMessageDialog(null, "This game is already full");
+                    sql.disconnect();
+                } else {
+                    map = sql.getMap(textureSize);
+                    customMap = map;
+                    hasCustomMap = true;
+                    player.reset(map, muteSounds);
+                    gameMode.setId(sqlGame[1]);
+                    gameMode.setOption(1, sqlGame[2] == 1);
+                    gameMode.setOption(2, sqlGame[3] == 1);
+                    gameMode.setOption(3, sqlGame[4] == 1);
+                    timer.setMultiplier(gameMode.getTimerMultiplier());
+                    player.setPlayerId(1); // 0 means "null", ids start at 1            
+                    while (otherPlayersList.contains(player)) {
+                        player.incrementId();
+                    }
+                    if(gameMode.getTeam()==GameMode.NO_TEAMS){
                         player.setTeamId(player.getPlayerId());
-                        break;
-                    case GameMode.ALLVSONE:
-                        player.setTeamId(2);
-                        break;
-                    case GameMode.TEAMVSTEAM:
-                        if (player.getPlayerId() % 2 == 0) {
-                            player.setTeamId(2);
-                        } else {
-                            player.setTeamId(1);
+                    } else {
+                        player.setTeamId(2-(player.getPlayerId()%2));
+                        for (JComponent button : PGbuttons){
+                            if("teamColorSelector".equals(button.getName())){
+                                button.setBackground(teamColors.get(player.getTeamId() - 1));
+                            }
                         }
-                        break;
+                    }
+                    player.addPlayer(sql, gameMode.getNumberOfBounces());
+                    isConnected = true;
+                    setState(PRE_GAME);
                 }
-                player.addPlayer(sql, gameMode.getNumberOfBounces());
-                isConnected = true;
-                setState(PRE_GAME);
             } else {
                 if(sql.getPlayerList().isEmpty()){ // No game created
                     int confirm = JOptionPane.showOptionDialog(
@@ -1698,6 +1718,7 @@ public class GamePanel extends JPanel{
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(Color.BLACK);
         double zoomRatio = getZoomRatio();
         int gameX = getGameX(), rightBorderX = gameX+(int)(panelWidth*(double)mapWidth/(mapWidth+IN_GAME_RIGHT_MARGIN)), rightBorderWidth = (int)(panelWidth*(double)IN_GAME_RIGHT_MARGIN/(mapWidth+IN_GAME_RIGHT_MARGIN));
         switch(gameState) {
@@ -1705,17 +1726,33 @@ public class GamePanel extends JPanel{
                 g2d.drawImage(PreGameBackground, gameX, 0, panelWidth, panelHeight, this);
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*zoomRatio)));
                 map.draw(g2d, false, this);
-                if (isHost) {
-                    g2d.drawString(player.getName(),gameX + (int)(0.06*panelWidth), (int)(0.155*panelHeight));
-                    for (int i = 0; i < otherPlayersList.size(); i++) {
-                        g2d.drawString(otherPlayersList.get(i).getName(), gameX + (int)(0.06*panelWidth), (int)((0.155+(i+1)*0.05)*panelHeight));
+                
+                boolean localPlayerPrinted = false;
+                double xLocation = 0.06, yLocation = 0.155, yIncrement = 0.05;
+                for (Player otherPlayer : otherPlayersList) {
+                    if(!localPlayerPrinted && player.compareTo(otherPlayer)==-1){
+                        if(gameMode.getTeam()==GameMode.TEAMS){
+                            g2d.setColor(teamColors.get(player.getTeamId()-1));
+                        }
+                        g2d.drawString(player.getName(),gameX + (int)(xLocation*panelWidth), (int)(yLocation*panelHeight));
+                        yLocation += yIncrement;
+                        localPlayerPrinted = true;
                     }
-                } else {
-                    for (int i = 0; i < otherPlayersList.size(); i++) {
-                        g2d.drawString(otherPlayersList.get(i).getName(), gameX + (int)(0.06*panelWidth), (int)((0.155+i*0.05)*panelHeight));
+                    if(gameMode.getTeam()==GameMode.TEAMS){
+                        g2d.setColor(teamColors.get(otherPlayer.getTeamId()-1));
                     }
-                    g2d.drawString(player.getName(), gameX + (int)(0.06*panelWidth), (int)((0.155+otherPlayersList.size()*0.05)*panelHeight));
+                    g2d.drawString(otherPlayer.getName(),gameX + (int)(xLocation*panelWidth), (int)(yLocation*panelHeight));
+                    yLocation += yIncrement;
                 }
+                if (!localPlayerPrinted) {
+                    if(gameMode.getTeam()==GameMode.TEAMS){
+                        g2d.setColor(teamColors.get(player.getTeamId()-1));
+                    }
+                    g2d.drawString(player.getName(),gameX + (int)(xLocation*panelWidth), (int)(yLocation*panelHeight));
+                    yLocation += yIncrement;
+                }
+                
+                g2d.setColor(Color.BLACK);
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int)(1.5*FONTSIZE*zoomRatio)));
                 g2d.drawString(gameMode.getName(), gameX + (int)(0.06*panelWidth), (int)(0.7*panelHeight));
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*zoomRatio)));
@@ -1752,17 +1789,24 @@ public class GamePanel extends JPanel{
                 }
                 g2d.setColor(Color.BLACK);
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int) (15 * zoomRatio)));
-                boolean localPlayerPrinted = false;
-                double xLocation = 0.1, yLocation = 0.15, lineIncrement = 0.02, playerIncrement = 0.05;
+                localPlayerPrinted = false;
+                xLocation = 0.1; yLocation = 0.15;
+                double lineIncrement = 0.02, playerIncrement = 0.05;
                 for (Player otherPlayer : otherPlayersList) {
                     if(!localPlayerPrinted && player.compareTo(otherPlayer)==-1){
                         localPlayerPrinted = true;
+                        if(gameMode.getTeam()==GameMode.TEAMS){
+                            g2d.setColor(teamColors.get(player.getTeamId()-1));
+                        }
                         g2d.drawString(player.getName(), rightBorderX + (int)(xLocation*rightBorderWidth), (int) (yLocation*panelHeight));
                         yLocation += lineIncrement;
                         g2d.drawString("HP : " + (int)player.getPlayerHealth() + "/"+(int)Player.maxHealth,  rightBorderX + (int)(xLocation*rightBorderWidth), (int) (yLocation*panelHeight));
                         yLocation += lineIncrement;
                         g2d.drawString("Team : " + player.getTeamId(),  rightBorderX + (int)(xLocation*rightBorderWidth), (int) (yLocation*panelHeight));
                         yLocation += playerIncrement;
+                    }
+                    if(gameMode.getTeam()==GameMode.TEAMS){
+                        g2d.setColor(teamColors.get(otherPlayer.getTeamId()-1));
                     }
                     g2d.drawString(otherPlayer.getName(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
                     yLocation += lineIncrement;
@@ -1772,6 +1816,9 @@ public class GamePanel extends JPanel{
                     yLocation += playerIncrement;
                 }
                 if (!localPlayerPrinted) {
+                    if(gameMode.getTeam()==GameMode.TEAMS){
+                        g2d.setColor(teamColors.get(player.getTeamId()-1));
+                    }
                     g2d.drawString(player.getName(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
                     yLocation += lineIncrement;
                     g2d.drawString("HP : " + (int)player.getPlayerHealth() + "/"+(int)Player.maxHealth, rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
@@ -1840,6 +1887,7 @@ public class GamePanel extends JPanel{
     
     public void preGameUpdate() {
         sql.updatePlayerList(player, otherPlayersList);
+        Collections.sort(otherPlayersList);
         if(!isHost){
             int newGameState = sql.getGame()[0];
             if (newGameState==IN_GAME){
@@ -1942,8 +1990,12 @@ public class GamePanel extends JPanel{
                     component.setVisible(false);
                 }
                 for (JComponent component : PGbuttons){
-                    component.setVisible(true);
-                    component.setEnabled(isHost);
+                    if("startButton".equals(component.getName())){
+                        component.setVisible(true);
+                        component.setEnabled(isHost);
+                    } else if("teamColorSelector".equals(component.getName())){
+                        component.setVisible(gameMode.getTeam()==GameMode.TEAMS);
+                    }
                 }
                 for (JComponent component : Ebuttons) {
                     component.setVisible(false);

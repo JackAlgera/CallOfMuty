@@ -441,6 +441,7 @@ public class SQLManager {
                     newPlayer.setSkin(resultat.getInt("skinId"));
                     newPlayer.setName(resultat.getString("name"));
                     newPlayer.setPlayerState(resultat.getInt("playerState"));
+                    newPlayer.setTeamId(resultat.getInt("teamId"));
                 } else { // Player was not yet in the list
                     newPlayer.setSkin(resultat.getInt("skinId"));
                     newPlayer.setTeamId(resultat.getInt("TeamId"));
@@ -461,6 +462,17 @@ public class SQLManager {
             } else {
                 i++;
             }
+        }
+    }
+
+    void setPlayerTeamId(Player player) {
+        PreparedStatement requete;
+        try {
+            requete = connexion.prepareStatement("UPDATE players SET teamId = "+player.getTeamId()+" WHERE id = "+player.getPlayerId());
+            requete.executeUpdate();
+            requete.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

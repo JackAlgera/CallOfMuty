@@ -94,7 +94,7 @@ public class CallOfMuty {
                     game.repaint();
                      {
                         try {
-                            Thread.sleep(50);
+                            Thread.sleep(5);
                         } catch (InterruptedException ex) {
                             Logger.getLogger(CallOfMuty.class.getName()).log(Level.SEVERE, null, ex);
                         }

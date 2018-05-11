@@ -8,17 +8,16 @@ public class GameMode {
     private int Team;
     private String description, name;
     
-    public static final int DEFAULT=0,ROYAL=1,TEAM=2, ALONE=3,
-                RANDOM =0, ALWAYSON = 1,
-                ALLVSALL = 0, ALLVSONE = 1, TEAMVSTEAM = 2,
+    public static final int DEFAULT=0,ROYAL=1,TEAM_MODE=2, // game mode
+                RANDOM =0, ALWAYSON = 1, // gun generation
+                NO_TEAMS = 0, TEAMS = 1, // teams
                 NUMBER_OF_OPTIONS = 4;
     private static final double FAST_MODE_MULTIPLIER = 1.7;
     private static final int NUMBER_OF_BOUNCES = 1;
     
     private static String DEFAULT_DESCRIPTION = "Bla bla default gamemode description",
             ROYAL_DESCRIPTION = "PAN PAN EVERYWHERE",
-            TEAM_DESCRIPTION = "PAN PAN but not on everyone",
-            ALONE_DESCRIPTION = "You have no friends";
+            TEAM_DESCRIPTION = "PAN PAN but not on everyone";
     
     public GameMode(){
         Options= new boolean[] {false,false,false,false};
@@ -30,24 +29,19 @@ public class GameMode {
         switch (this.id) {
             case DEFAULT:
                 gunGestion = RANDOM;
-                Team = ALLVSALL;
+                Team = NO_TEAMS;
                 description = DEFAULT_DESCRIPTION;
                 break;
             case ROYAL:
                 gunGestion = ALWAYSON;
-                Team = ALLVSALL;
+                Team = NO_TEAMS;
                 description = ROYAL_DESCRIPTION;
                 break;
-            case TEAM:
+            case TEAM_MODE:
                 gunGestion = ALWAYSON;
-                Team = TEAMVSTEAM;
+                Team = TEAMS;
                 description = TEAM_DESCRIPTION;
 
-                break;
-            case ALONE:
-                gunGestion = ALWAYSON;
-                Team = ALLVSONE;
-                description = ALONE_DESCRIPTION;
                 break;
         }
     }
@@ -66,11 +60,8 @@ public class GameMode {
             case ROYAL:
                 name = "Royal battle";
                 break;
-            case TEAM:
+            case TEAM_MODE:
                 name = "Team battle";
-                break;
-            case ALONE:
-                name = "Alone";
                 break;
         }
         return name;
@@ -103,7 +94,7 @@ public class GameMode {
     }
 
     public int getTeam() {
-        return this.Team;
+        return Team;
     }
 
 
