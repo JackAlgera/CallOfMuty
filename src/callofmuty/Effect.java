@@ -9,7 +9,7 @@ public class Effect {
     private double value;
     private long timeLeft, duration; // in ms
     
-    // Value in Health/second (Hurting, healing) or % (Speed)
+    // Values in Health/second (Hurting, healing) or % (Speed)
     
     public Effect(){
         this.id = NO_EFFECT;

@@ -8,14 +8,16 @@ import java.util.ArrayList;
 public class Bullet {
     
     public static final int NORMAL = 0, FIRE = 1, EGG = 2, MELEE = 3;
+    private static final long TIME_BEFORE_REACTIVATING = 1000; // time before this bullet can be reactivated, ensuring other players will detect it as a new bullet and play shooting sound again
     
-    public double posX, posY, speed, damage, travelledDistance, maxRange;
+    private double posX, posY, speed, damage, travelledDistance, maxRange;
     private int numberOfBounces, ballWidth, ballHeight, playerId, bulletId, bulletType;
-    public double[] direction;
-    public ArrayList<Image> animationImages = new ArrayList<Image>();
-    public Animation bulletAnimation;
+    private double[] direction;
+    private ArrayList<Image> animationImages = new ArrayList<Image>();
+    private Animation bulletAnimation;
     private Image image;
     private boolean isActive;
+    private long timeOfDeactivation;
     
     public Bullet(int playerId, int bulletId) { //used in SQL updates and to initialize player's bullet List
         this(0.0,0.0,new double[]{0.0,0.0}, 0.0, playerId, bulletId, 0.0, 0,0, 0.0);
@@ -59,8 +61,9 @@ public class Bullet {
         isActive = false;
         image = Tools.selectTile(Tools.bulletTileset, 1, 2);
         travelledDistance = 0;
+        timeOfDeactivation = System.currentTimeMillis()-TIME_BEFORE_REACTIVATING;
         this.maxRange = maxRange;
-        this.bulletAnimation = new Animation(130,6,2,5,2,Animation.STILL_IMAGE);// in ms
+        bulletAnimation = new Animation(130,6,2,5,2,Animation.STILL_IMAGE);// in ms
         //setAnimationRow();
         bulletAnimation.setRow(2);
         
@@ -135,7 +138,11 @@ public class Bullet {
     }
     
     public void setActive(boolean isActive){
+        boolean formerActive = this.isActive;
         this.isActive = isActive;
+        if(formerActive && !isActive){
+            timeOfDeactivation = System.currentTimeMillis();
+        }
     }
 
     public void setDirection(double[] direction) {
@@ -253,5 +260,9 @@ public class Bullet {
             default:
                 bulletAnimation.setRow(2);
         }
+    }
+
+    public boolean isActivable() {
+        return(!isActive && System.currentTimeMillis()-TIME_BEFORE_REACTIVATING>=timeOfDeactivation);
     }
 }

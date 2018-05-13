@@ -325,5 +325,21 @@ public class Map{
         }
         return destination;
     }
+
+    public int[] randomItemPosition() {
+        int[] position = new int[]{0,0};
+        ArrayList<int[]> acceptablePositions = new ArrayList<>();
+        for (int i=0; i<mapWidth; i++){
+            for (int j=0; j<mapHeight; j++){
+                if(map[i][j]==0 || map[i][j]==11){
+                    acceptablePositions.add(new int[]{i*textureSize,j*textureSize});
+                }
+            }
+        }
+        if(!acceptablePositions.isEmpty()){
+            position = acceptablePositions.get(ThreadLocalRandom.current().nextInt(0,acceptablePositions.size()));
+        }
+        return position;
+    }
         
 }

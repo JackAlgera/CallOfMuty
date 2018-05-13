@@ -13,7 +13,7 @@ public class Player implements Comparable<Player>{
     public static double maxHealth = 100.0;
     private static double rollSpeedMultiplier = 3, meleeDamage = 10;
     private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 75, rollTime = 150, timeBetweenTaunts = 1000; // in milliseconds
-    private static int initialBulletNumber = 10;
+    private static int initialBulletNumber = 10, initialItemNumber = 3;
     public static int PLAYING = 1,DEAD = 2;
     
     private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId, lifeCounter;
@@ -32,6 +32,7 @@ public class Player implements Comparable<Player>{
     public Animation playerAnimation;
     private ArrayList<Player> hurtPlayers;
     private ArrayList<Effect> effects = new ArrayList<>();
+    private ArrayList<BonusItem> itemList = new ArrayList<>();
     private long currentRollTime, lastTauntTimeStamp;
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
@@ -162,8 +163,13 @@ public class Player implements Comparable<Player>{
         for (int i = 1; i<=initialBulletNumber; i++){ //bulletId starts at 1, 0 is SQL's "null"
             bulletList.add(new Bullet(playerId, i));
         }
+        itemList = new ArrayList<>();
+        for (int i = 1; i<=initialItemNumber; i++){
+            itemList.add(new BonusItem(i, playerId));
+        }
         sql.addPlayer(this);
         sql.addBulletList(bulletList);
+        sql.addItemList(itemList);
     }
     
     public void resetHurtPlayers(){
@@ -181,9 +187,9 @@ public class Player implements Comparable<Player>{
     public void setHealth(double health) {
         double formerHealth = this.health;
         this.health = health;
-        
         if (health <= 0) {
             isDead = true;
+            setBulletListInactive();
             if (!muteSounds) {
                 if(fellToDeath){
                     playFallSound();
@@ -249,12 +255,18 @@ public class Player implements Comparable<Player>{
         }
     }
     
-    public void drawBullets(Graphics2D g,int texturesize, GamePanel game) {
+    public void drawBullets(Graphics2D g, int textureSize, GamePanel game) {
         for (Bullet bullet : bulletList) {
-            bullet.draw(g, texturesize, game);
+            bullet.draw(g, textureSize, game);
         }
         for (Bullet bullet : destroyedBullets){
-            bullet.draw(g, texturesize, game);
+            bullet.draw(g, textureSize, game);
+        }
+    }
+    
+    public void drawItems(Graphics2D g, int textureSize, GamePanel game) {
+        for (BonusItem item : itemList){
+            item.draw(g, textureSize, game);
         }
     }
     
@@ -521,7 +533,7 @@ public class Player implements Comparable<Player>{
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;
             while(bulletIndex < bulletList.size() && !inactiveBulletFound){
-                inactiveBulletFound = !bulletList.get(bulletIndex).isActive();
+                inactiveBulletFound = bulletList.get(bulletIndex).isActivable();
                 bulletIndex++;
             }
             if(!inactiveBulletFound){
@@ -556,6 +568,7 @@ public class Player implements Comparable<Player>{
             if (bullet.isActive()) {
                 bullet.update(dT);
                 if(bullet.getBulletType()==Bullet.MELEE){
+                    System.out.println("melee bullet");
                     if(System.currentTimeMillis()-lastMeleeAttackTimeStamp > meleeAttacksDuration){
                         bullet.setActive(false);
                     } else {
@@ -791,5 +804,53 @@ public class Player implements Comparable<Player>{
             result = 1;
         }
         return result;
+    }
+
+    private void setBulletListInactive() {
+        for (Bullet bullet : bulletList){
+            bullet.setActive(false);
+        }
+    }
+
+    void updateItemList(ArrayList<Player> otherPlayersList) {
+        BonusItem item;
+        for (int i = 0; i<itemList.size(); i++) {
+            item = itemList.get(i);
+            if (item.isActive()) {
+                if(Tools.playerPicksItem(this, item)){
+                    addEffect(item.getEffect());
+                    item.setActive(false);
+                } else {
+                    for (Player otherPlayer : otherPlayersList) {
+                        if (Tools.playerPicksItem(otherPlayer, item)) {
+                            item.setActive(false);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void generateItem(int numberOfPlayers, long itemGenerationTime, Map map, SQLManager sql) {
+        if(!isDead && Math.random() < (double) itemGenerationTime / (1000 * numberOfPlayers * 6)){ // In average, one player generates an item every 6 seconds
+            int itemType = ThreadLocalRandom.current().nextInt(0, BonusItem.NUMBER_OF_ITEMS);
+            int[] position = map.randomItemPosition();
+            boolean inactiveItemFound = false;
+            int itemIndex = 0;
+            while(itemIndex < itemList.size() && !inactiveItemFound){
+                inactiveItemFound = itemList.get(itemIndex).isActivable();
+                itemIndex++;
+            }
+            if(!inactiveItemFound){
+                itemList.add(new BonusItem(position[0], position[1], itemType, itemIndex+1, playerId));
+                itemList.get(itemIndex).setActive(true);
+                sql.addItem(itemList.get(itemIndex));
+            } else {
+                BonusItem item = itemList.get(itemIndex-1);
+                item.setActive(true);
+                item.setType(itemType);
+                item.setPosition(position);
+            }
+        }
     }
 }

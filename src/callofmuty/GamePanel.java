@@ -77,7 +77,7 @@ public class GamePanel extends JPanel{
             IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1,
             NUMBER_OF_MAPS = 6;
     private static final int FONTSIZE = 18, NUMBER_OF_SKINS = 5; // Font size for textFields (gets scaled with zoomFactor)
-    private static long GUN_GENERATION_TIME = 100; //in milliseconds
+    private static long GUN_GENERATION_TIME = 500,ITEM_GENERATION_TIME = 500; //in milliseconds
     
     private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer, victorySoundPlayer, defeatSoundPlayer;
     
@@ -89,7 +89,7 @@ public class GamePanel extends JPanel{
     private GameMode gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
     private boolean isHost, interfaceBuilt = false,hasCustomMap = false, setStartingTile, isConnected, muteMusic, muteSounds, leftMousePressed, rightMousePressed, endShowed;
-    private long lastGunGeneration;
+    private long lastGunGeneration,lastItemGeneration;
     private SQLManager sql;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons, GMbuttons;
     private ArrayList <Rectangle> MMoriginalBounds, MEoriginalBounds, PGoriginalBounds, EoriginalBounds, GMoriginalBounds;
@@ -115,6 +115,7 @@ public class GamePanel extends JPanel{
         gameState = MAIN_MENU;
         gameMode = new GameMode();
         lastGunGeneration = System.currentTimeMillis();
+        lastItemGeneration = System.currentTimeMillis();
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
@@ -1285,46 +1286,36 @@ public class GamePanel extends JPanel{
     */
     
     public void updateGame(long dT){
-        boolean printTime = false; // Set to true if you want to print the time taken by each method in updateGame
-        long time = System.currentTimeMillis();
         // Update player movement 
         updatePlayerMovement();
         
         player.update(dT, map);
-        for(Player player : otherPlayersList)
-        {
+        for(Player player : otherPlayersList){
             player.updateAnimation(dT);
         }
         
-        if(printTime){
-            System.out.println("Player movement & update : " + (System.currentTimeMillis()-time));
-            time = System.currentTimeMillis();
-        }
         // sql downloads
         sql.downloadPlayersAndBullets(player, otherPlayersList, otherPlayersBullets, map);
         boolean TeamWasKilled = player.isTeamkilled(otherPlayersList, false); // used to check if team died
-        if(printTime){
-            System.out.println("Downloads : " + (System.currentTimeMillis()-time));
-            time = System.currentTimeMillis();
-        }
         if (!player.isDead()) {
             // Update bullets
             player.updateBulletList(dT, map, otherPlayersList);
-            if (printTime) {
-                System.out.println("Bullet updates : " + (System.currentTimeMillis() - time));
-                time = System.currentTimeMillis();
-            }
             // gun generation
             if (System.currentTimeMillis() - GUN_GENERATION_TIME > lastGunGeneration) {
                 lastGunGeneration = System.currentTimeMillis();
                 player.generateGun(otherPlayersList.size() + 1, GUN_GENERATION_TIME, gameMode); // has a probability to give local player a gun that decreases with number of players
             }
-
+            // update items
+            player.updateItemList(otherPlayersList);
+            
+            // generate items
+            if(gameMode.getOption(2) && (System.currentTimeMillis() - ITEM_GENERATION_TIME > lastItemGeneration)){
+                lastItemGeneration = System.currentTimeMillis();
+                player.generateItem(otherPlayersList.size()+1, ITEM_GENERATION_TIME, map, sql);
+            }
+            
             // sql uploads
             sql.uploadPlayerAndBullets(player);
-            if (printTime) {
-                System.out.println("Uploads : " + (System.currentTimeMillis() - time));
-            }
         } else if(TeamWasKilled && !endShowed){ // team just died : show defeat screen
             setState(ENDING);
             endShowed = true;
@@ -1779,7 +1770,8 @@ public class GamePanel extends JPanel{
                 g2d.drawImage(InGameBackground, gameX, 0, panelWidth, panelHeight, this);
                 map.draw(g2d, false, this);
                 player.draw(g2d, this);
-                player.drawBullets(g2d, map.getTextureSize(), this);
+                player.drawBullets(g2d, textureSize, this);
+                player.drawItems(g2d, textureSize, this);
 
                 for (Player otherPlayer : otherPlayersList) {
                     otherPlayer.draw(g2d, this);

@@ -16,7 +16,8 @@ public class SQLManager {
     bullet : idBullet (int) ; idPlayer (int) ; posX (int); posY (int); active (tinyint); bulletType(int)
     grid : x (int) ; y (int) ; tileType (int) ; startingTile (tinyint)
     players : id (int) ; name (String(50)) ; playerHp (double) ; posX (int) ; posY (int) : skinId (int) ; playerState (int), isTaunting (tinyint);
-    game : id (int)(useless, primaryKey);  gameState (int); rubberBalls (tinyint); activeItems(tinyint); fastMode(tinyint)
+    game : id (int);  gameState (int); rubberBalls (tinyint); activeItems(tinyint); fastMode(tinyint)
+    items : playerId (int); itemId (int); x (int); y (int); itemType (int); isActive (tinyint)
 */
     public SQLManager(){         
         try {
@@ -184,7 +185,7 @@ public class SQLManager {
         }
     }
     
-    public void addBulletList(ArrayList<Bullet> bulletList){ //removes a player and his bullets from database
+    public void addBulletList(ArrayList<Bullet> bulletList){
         if (!bulletList.isEmpty()) {
             PreparedStatement requete;
             String values = "";
@@ -197,6 +198,27 @@ public class SQLManager {
             values += "("+bullet.getBulletId()+","+bullet.getPlayerId()+","+bullet.getPosX()+","+bullet.getPosY()+",0,0)";
             try {
                 requete = connexion.prepareStatement("INSERT INTO bullet VALUES "+values);
+                requete.executeUpdate();
+                requete.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+        
+    public void addItemList(ArrayList<BonusItem> itemList){
+        if (!itemList.isEmpty()) {
+            PreparedStatement requete;
+            String values = "";
+            BonusItem item;
+            for (int i = 0; i<itemList.size()-1; i++) {
+                item = itemList.get(i);
+                values += "("+item.getPlayerId()+","+item.getId()+","+item.getX()+","+item.getY()+",0,0), ";
+            }
+            item = itemList.get(itemList.size()-1);
+            values += "("+item.getPlayerId()+","+item.getId()+","+item.getX()+","+item.getY()+",0,0) ";
+            try {
+                requete = connexion.prepareStatement("INSERT INTO items VALUES "+values);
                 requete.executeUpdate();
                 requete.close();
             } catch (SQLException ex) {
@@ -229,6 +251,9 @@ public class SQLManager {
             requete.executeUpdate();
             requete.close();
             requete = connexion.prepareStatement("DELETE FROM bullet" );
+            requete.executeUpdate();
+            requete.close();
+            requete = connexion.prepareStatement("DELETE FROM items" );
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {
@@ -389,6 +414,30 @@ public class SQLManager {
             }
             requete.setInt(5, isActive);
             requete.setInt(6, bullet.getBulletType());
+            requete.executeUpdate();
+            requete.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void addItem(BonusItem item){        
+        PreparedStatement requete;
+        
+        try {
+            requete = connexion.prepareStatement("INSERT INTO items VALUES (?,?,?,?,?,?)");
+            requete.setInt(1, item.getPlayerId());
+            requete.setInt(2, item.getId());
+            requete.setInt(3, item.getX());
+            requete.setInt(4, item.getY());
+            requete.setInt(5, item.getType());
+            int isActive;
+            if(item.isActive()){
+                isActive = 1;
+            } else {
+                isActive = 0;
+            }
+            requete.setInt(6, isActive);
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {
