@@ -1,6 +1,5 @@
 package callofmuty;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javazoom.jl.decoder.JavaLayerException;
 
 public class SQLManager {
     private Connection connexion;

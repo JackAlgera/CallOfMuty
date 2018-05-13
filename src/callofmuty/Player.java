@@ -22,7 +22,7 @@ public class Player implements Comparable<Player>{
     private double[] speed, acceleration;
     private int[] directionOfTravel;
     private double health, timeSinceLastHurtSound;
-    private boolean isDead, muteSounds, justTeleported, isRolling, isTaunting;  
+    private boolean isDead, muteSounds, justTeleported, isRolling, isTaunting, fellToDeath = false;
     private int skinId, numberOfSkins;
     private String name;
     public ArrayList<Image> animationImages = new ArrayList<>();
@@ -114,6 +114,7 @@ public class Player implements Comparable<Player>{
     public void reset(Map map, boolean muteSounds) {
         setHealth(Player.maxHealth);
         setMuteSounds(muteSounds);
+        fellToDeath = false;
         setGunId(Gun.NO_GUN);
         resetEffects();
         setPosition(map);
@@ -184,7 +185,11 @@ public class Player implements Comparable<Player>{
         if (health <= 0) {
             isDead = true;
             if (!muteSounds) {
-                Tools.playRandomSoundFromList(dyingSoundPlayer);
+                if(fellToDeath){
+                    playFallSound();
+                } else {
+                    Tools.playRandomSoundFromList(dyingSoundPlayer);
+                }
             }
         } else {
             isDead = false;
@@ -759,7 +764,7 @@ public class Player implements Comparable<Player>{
     public void dieByFall() {
         if(!muteSounds){
             fallingSoundPlayer.play();
-            setMuteSounds(true);
+            fellToDeath = true;
         }
         hurtSelf(health+1);
     }
