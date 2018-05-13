@@ -77,7 +77,6 @@ public class GamePanel extends JPanel{
             IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1,
             NUMBER_OF_MAPS = 6;
     private static final int FONTSIZE = 18, NUMBER_OF_SKINS = 5; // Font size for textFields (gets scaled with zoomFactor)
-    private static long GUN_GENERATION_TIME = 500,ITEM_GENERATION_TIME = 500; //in milliseconds
     
     private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer, victorySoundPlayer, defeatSoundPlayer;
     
@@ -89,12 +88,12 @@ public class GamePanel extends JPanel{
     private GameMode gameMode;
     private ArrayList<Integer> pressedButtons, releasedButtons;
     private boolean isHost, interfaceBuilt = false,hasCustomMap = false, setStartingTile, isConnected, muteMusic, muteSounds, leftMousePressed, rightMousePressed, endShowed;
-    private long lastGunGeneration,lastItemGeneration;
     private SQLManager sql;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons, GMbuttons;
     private ArrayList <Rectangle> MMoriginalBounds, MEoriginalBounds, PGoriginalBounds, EoriginalBounds, GMoriginalBounds;
     private ArrayList <ImageIcon> MMicons, MEicons, PGicons, Eicons, GMicons, MMpressedIcons, MEpressedIcons;
     private ArrayList<Bullet> otherPlayersBullets;
+    private ArrayList<BonusItem> otherPlayersItems;
     private ArrayList<Color> teamColors;
     private GameTimer timer;
     private int[] mousePosition;
@@ -114,8 +113,6 @@ public class GamePanel extends JPanel{
         menuMusicPlayer.play();
         gameState = MAIN_MENU;
         gameMode = new GameMode();
-        lastGunGeneration = System.currentTimeMillis();
-        lastItemGeneration = System.currentTimeMillis();
         this.textureSize = textureSize;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
@@ -133,6 +130,7 @@ public class GamePanel extends JPanel{
         releasedButtons = new ArrayList<>();
         otherPlayersBullets = new ArrayList<>();
         otherPlayersList = new ArrayList<>();
+        otherPlayersItems = new ArrayList<>();
         this.timer = timer;
         mapKeys();
         leftMousePressed = false;
@@ -1295,24 +1293,18 @@ public class GamePanel extends JPanel{
         }
         
         // sql downloads
-        sql.downloadPlayersAndBullets(player, otherPlayersList, otherPlayersBullets, map);
+        sql.downloadPlayersAndBullets(player, otherPlayersList, otherPlayersBullets, otherPlayersItems, map);
         boolean TeamWasKilled = player.isTeamkilled(otherPlayersList, false); // used to check if team died
         if (!player.isDead()) {
             // Update bullets
             player.updateBulletList(dT, map, otherPlayersList);
             // gun generation
-            if (System.currentTimeMillis() - GUN_GENERATION_TIME > lastGunGeneration) {
-                lastGunGeneration = System.currentTimeMillis();
-                player.generateGun(otherPlayersList.size() + 1, GUN_GENERATION_TIME, gameMode); // has a probability to give local player a gun that decreases with number of players
-            }
+            player.generateGun(otherPlayersList.size() + 1, dT, gameMode); // has a probability to give local player a gun that decreases with number of players
             // update items
-            player.updateItemList(otherPlayersList);
+            player.updateItemList(otherPlayersList, otherPlayersItems);
             
             // generate items
-            if(gameMode.getOption(2) && (System.currentTimeMillis() - ITEM_GENERATION_TIME > lastItemGeneration)){
-                lastItemGeneration = System.currentTimeMillis();
-                player.generateItem(otherPlayersList.size()+1, ITEM_GENERATION_TIME, map, sql);
-            }
+            player.generateItem(otherPlayersList.size()+1, dT, map, sql);
             
             // sql uploads
             sql.uploadPlayerAndBullets(player);
@@ -1559,7 +1551,7 @@ public class GamePanel extends JPanel{
                 player.reset(map, muteSounds);
                 player.setPlayerId(1);
                 player.setTeamId(1);
-                player.addPlayer(sql, gameMode.getNumberOfBounces());
+                player.addPlayer(sql);
                 isConnected = true;
                 setState(PRE_GAME);
             } else {
@@ -1630,7 +1622,7 @@ public class GamePanel extends JPanel{
                             }
                         }
                     }
-                    player.addPlayer(sql, gameMode.getNumberOfBounces());
+                    player.addPlayer(sql);
                     isConnected = true;
                     setState(PRE_GAME);
                 }
@@ -1770,15 +1762,18 @@ public class GamePanel extends JPanel{
                 g2d.drawImage(InGameBackground, gameX, 0, panelWidth, panelHeight, this);
                 map.draw(g2d, false, this);
                 player.draw(g2d, this);
-                player.drawBullets(g2d, textureSize, this);
-                player.drawItems(g2d, textureSize, this);
-
                 for (Player otherPlayer : otherPlayersList) {
                     otherPlayer.draw(g2d, this);
                 }
+                player.drawBullets(g2d, textureSize, this);
                 for (int i=0; i<otherPlayersBullets.size(); i++){
                     otherPlayersBullets.get(i).draw(g2d, textureSize, this);
                 }
+                player.drawItems(g2d, textureSize, this);
+                for (int i=0; i<otherPlayersItems.size(); i++){
+                    otherPlayersItems.get(i).draw(g2d, textureSize, this);
+                }
+                
                 g2d.setColor(Color.BLACK);
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int) (15 * zoomRatio)));
                 localPlayerPrinted = false;

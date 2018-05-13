@@ -13,7 +13,7 @@ public class Player implements Comparable<Player>{
     public static double maxHealth = 100.0;
     private static double rollSpeedMultiplier = 3, meleeDamage = 10;
     private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 75, rollTime = 150, timeBetweenTaunts = 1000; // in milliseconds
-    private static int initialBulletNumber = 10, initialItemNumber = 3;
+    private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5;
     public static int PLAYING = 1,DEAD = 2;
     
     private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId, lifeCounter;
@@ -32,7 +32,7 @@ public class Player implements Comparable<Player>{
     public Animation playerAnimation;
     private ArrayList<Player> hurtPlayers;
     private ArrayList<Effect> effects = new ArrayList<>();
-    private ArrayList<BonusItem> itemList = new ArrayList<>();
+    private ArrayList<BonusItem> itemList = new ArrayList<>(), pickedItems = new ArrayList<>();
     private long currentRollTime, lastTauntTimeStamp;
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
@@ -118,6 +118,7 @@ public class Player implements Comparable<Player>{
         fellToDeath = false;
         setGunId(Gun.NO_GUN);
         resetEffects();
+        pickedItems = new ArrayList<>();
         setPosition(map);
         resetHurtPlayers();
         speed = new double[]{0.0,0.0};
@@ -158,14 +159,14 @@ public class Player implements Comparable<Player>{
     }
     
 
-    public void addPlayer(SQLManager sql, int numberOfBounces){
+    public void addPlayer(SQLManager sql){
         bulletList = new ArrayList<>();
         for (int i = 1; i<=initialBulletNumber; i++){ //bulletId starts at 1, 0 is SQL's "null"
             bulletList.add(new Bullet(playerId, i));
         }
         itemList = new ArrayList<>();
         for (int i = 1; i<=initialItemNumber; i++){
-            itemList.add(new BonusItem(i, playerId));
+            itemList.add(new BonusItem(-i, playerId));
         }
         sql.addPlayer(this);
         sql.addBulletList(bulletList);
@@ -213,6 +214,10 @@ public class Player implements Comparable<Player>{
     
     public ArrayList<Bullet> getBulletList() {
         return bulletList;
+    }
+    
+    public ArrayList<BonusItem> getItemList(){
+        return itemList;
     }
 
     public void setName(String name) {
@@ -636,11 +641,11 @@ public class Player implements Comparable<Player>{
     }
 
 
-    public void generateGun(int numberOfPlayers, long gunGenerationTime, GameMode gameMode) {
+    public void generateGun(int numberOfPlayers, long dT, GameMode gameMode) {
         boolean generateWeapon;
         switch (gameMode.getGunGestion()) {
             case GameMode.RANDOM:
-                generateWeapon = gun.getId() == 0 && Math.random() < (double) gunGenerationTime / (1000 * numberOfPlayers * 4); // In average, one player gets a gun every 4 seconds
+                generateWeapon = gun.getId() == 0 && Math.random() < (double) dT / (1000 * numberOfPlayers * 4); // In average, one player gets a gun every 4 seconds
                 break;
             case GameMode.ALWAYSON:
                 generateWeapon = true;
@@ -812,27 +817,50 @@ public class Player implements Comparable<Player>{
         }
     }
 
-    void updateItemList(ArrayList<Player> otherPlayersList) {
+    public void updateItemList(ArrayList<Player> otherPlayersList, ArrayList<BonusItem> otherPlayersItems) {
         BonusItem item;
         for (int i = 0; i<itemList.size(); i++) {
             item = itemList.get(i);
             if (item.isActive()) {
                 if(Tools.playerPicksItem(this, item)){
+                    System.out.println("I took my item "+item.getId());
                     addEffect(item.getEffect());
                     item.setActive(false);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
                         if (Tools.playerPicksItem(otherPlayer, item)) {
+                            System.out.println("Player "+otherPlayer.getPlayerId()+" took my item "+item.getId());
                             item.setActive(false);
                         }
                     }
                 }
             }
         }
+        updateOtherItems(otherPlayersItems);
+    }
+    
+    public void updateOtherItems(ArrayList<BonusItem> otherPlayersItems){
+        int index = 0;
+        BonusItem item;
+        while(index < otherPlayersItems.size()){
+            item = otherPlayersItems.get(index);
+            if (Tools.playerPicksItem(this, item)) {
+                System.out.println("picked player "+item.getPlayerId()+"'s item "+item.getId());
+                addEffect(item.getEffect());
+                pickedItems.add(item);
+                otherPlayersItems.remove(index);
+            } else {
+                index++;
+            }
+        }
     }
 
-    void generateItem(int numberOfPlayers, long itemGenerationTime, Map map, SQLManager sql) {
-        if(!isDead && Math.random() < (double) itemGenerationTime / (1000 * numberOfPlayers * 6)){ // In average, one player generates an item every 6 seconds
+    public ArrayList<BonusItem> getPickedItems(){
+        return pickedItems;
+    }
+    
+    void generateItem(int numberOfPlayers, long dT, Map map, SQLManager sql) {
+        if(!isDead && numberOfActiveItems() < MAX_NUMBER_OF_ITEMS && Math.random() < (double) dT / (1000 * numberOfPlayers * 6)){ // In average, one player generates an item every 6 seconds
             int itemType = ThreadLocalRandom.current().nextInt(0, BonusItem.NUMBER_OF_ITEMS);
             int[] position = map.randomItemPosition();
             boolean inactiveItemFound = false;
@@ -842,15 +870,25 @@ public class Player implements Comparable<Player>{
                 itemIndex++;
             }
             if(!inactiveItemFound){
-                itemList.add(new BonusItem(position[0], position[1], itemType, itemIndex+1, playerId));
+                itemList.add(new BonusItem(position[0], position[1], itemType, -(itemIndex+1), playerId));
                 itemList.get(itemIndex).setActive(true);
                 sql.addItem(itemList.get(itemIndex));
             } else {
                 BonusItem item = itemList.get(itemIndex-1);
-                item.setActive(true);
                 item.setType(itemType);
                 item.setPosition(position);
+                item.setActive(true);
             }
         }
+    }
+
+    private int numberOfActiveItems() {
+        int counter = 0;
+        for (BonusItem item : itemList){
+            if(item.isActive()){
+                counter++;
+            }
+        }
+        return counter;
     }
 }

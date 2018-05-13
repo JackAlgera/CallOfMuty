@@ -27,7 +27,8 @@ public class Effect {
         if (timeLeft > 0) {
             switch (id) {
                 case HEALING:
-                    player.hurtSelf(-dT * value / 1000);
+                    double correctedValue = Math.min(Player.maxHealth-player.getPlayerHealth(), dT*value/1000);
+                    player.hurtSelf(-correctedValue); // Player can't heal above max health (would cause issues with health bar)
                     break;
                 case FASTER:
                 case SLOWED:

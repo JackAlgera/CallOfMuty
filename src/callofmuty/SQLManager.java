@@ -17,7 +17,8 @@ public class SQLManager {
     grid : x (int) ; y (int) ; tileType (int) ; startingTile (tinyint)
     players : id (int) ; name (String(50)) ; playerHp (double) ; posX (int) ; posY (int) : skinId (int) ; playerState (int), isTaunting (tinyint);
     game : id (int);  gameState (int); rubberBalls (tinyint); activeItems(tinyint); fastMode(tinyint)
-    items : playerId (int); itemId (int); x (int); y (int); itemType (int); isActive (tinyint)
+    
+    null values return as 0
 */
     public SQLManager(){         
         try {
@@ -37,8 +38,7 @@ public class SQLManager {
             } else {
                 taunt = 0;
             }
-            ArrayList<Bullet> bulletList = player.getBulletList();
-            for (Bullet bullet : bulletList) {
+            for (Bullet bullet : player.getBulletList()) {
                 if (bullet.isActive()) {
                     xStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosX() + " \n";
                     yStatement += "WHEN " + bullet.getBulletId() + " THEN " + (int) bullet.getPosY() + " \n";
@@ -46,8 +46,20 @@ public class SQLManager {
                     isActiveStatement += "WHEN " + bullet.getBulletId() + " THEN 1 \n";
                 }
             }
+            for (BonusItem item : player.getItemList()) {
+                if (item.isActive()) {
+                    xStatement += "WHEN " + item.getId() + " THEN " + (int) item.getX() + " \n";
+                    yStatement += "WHEN " + item.getId() + " THEN " + (int) item.getY() + " \n";
+                    bulletTypeStatement+="WHEN " + item.getId() + " THEN " + item.getType() + " \n";
+                    isActiveStatement += "WHEN " + item.getId() + " THEN 1 \n";
+                }
+            }
             for (Player hurtPlayer : player.getHurtPlayers()) {
-                healthStatement += "WHEN " + hurtPlayer.getPlayerId() + " THEN players.playerHp - " + hurtPlayer.getPlayerHealth() + " \n";
+                if(hurtPlayer.getPlayerHealth()>0){ // hurting the player
+                    healthStatement += "WHEN " + hurtPlayer.getPlayerId() + " THEN players.playerHp - " + hurtPlayer.getPlayerHealth() + " \n";
+                } else { // healing him
+                    healthStatement += "WHEN " + hurtPlayer.getPlayerId() + " THEN players.playerHp + " +(- hurtPlayer.getPlayerHealth()) + " \n";
+                }
             }
             player.resetHurtPlayers();
             try {
@@ -73,13 +85,15 @@ public class SQLManager {
     }
     
     // Downloads other players' positions, health and bullet positions and local player's health
-    public void downloadPlayersAndBullets(Player player, ArrayList<Player> otherPlayersList, ArrayList<Bullet> otherBulletsList, Map map) {
+    public void downloadPlayersAndBullets(Player player, ArrayList<Player> otherPlayersList, ArrayList<Bullet> otherBulletsList,ArrayList<BonusItem> otherPlayersItems, Map map) {
         PreparedStatement requete;
-        int playerId = -1, playerIndex, bulletId, bulletIndex;
+        int playerId = -1, playerIndex, bulletId, bulletIndex, itemId, id;
+        BonusItem item;
         double formerX, formerY;
         double[] position = new double[2];
         ArrayList<Bullet> updatedBullets = new ArrayList<>(); //saves which bullets were updated, others will be erased
-        ArrayList<Player> updatedPlayers = new ArrayList<>(); //same
+        ArrayList<Player> updatedPlayers = new ArrayList<>();
+        ArrayList<BonusItem> updatedItems = new ArrayList<>(), pickedItems = player.getPickedItems();
         try {
             requete = connexion.prepareStatement("SELECT players.id, players.posX, players.posY, players.playerHp, players.gunId, players.isTaunting, bullet.idBullet, bullet.posX, bullet.posY, bullet.bulletType FROM players LEFT JOIN bullet ON players.id=bullet.idPlayer AND bullet.isActive=1 AND NOT players.id="+ player.getPlayerId() +" WHERE players.playerState = "+ Player.PLAYING +" ORDER BY players.id");
             ResultSet resultat = requete.executeQuery();
@@ -107,8 +121,9 @@ public class SQLManager {
                             otherPlayersList.get(playerIndex).setMuteSounds(player.getMuteSounds());
                             updatedPlayers.add(new Player(playerId));
                             // update bullet
-                            bulletId = resultat.getInt("bullet.idBullet");
-                            if (bulletId > 0) { // 0 means null
+                            id = resultat.getInt("bullet.idBullet");
+                            if (id > 0) { // 0 means null
+                                bulletId = id;
                                 bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
                                 updatedBullets.add(new Bullet(playerId, bulletId));
                                 if (bulletIndex == -1) { // bullet was not already in the list
@@ -118,11 +133,21 @@ public class SQLManager {
                                 } else { // bullet was already in the list
                                     otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
                                     otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
+                                    otherBulletsList.get(bulletIndex).setBulletType(resultat.getInt("bullet.bulletType"));
+                                }
+                            } else if(id < 0){ // this is a BonusItem
+                                itemId = id;
+                                item = new BonusItem( resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), resultat.getInt("bullet.bulletType"), itemId, playerId);
+                                updatedItems.add(item);
+                                if(!otherPlayersItems.contains(item) && !pickedItems.contains(item)){
+                                    item.setActive(true);
+                                    otherPlayersItems.add(item);
                                 }
                             }
                         } else { // this player's position was already updated, update only the bullet
-                            bulletId = resultat.getInt("bullet.idBullet");
-                            if (bulletId > 0) { // 0 means null
+                            id = resultat.getInt("bullet.idBullet");
+                            if (id > 0) { // 0 means null
+                                bulletId = id;
                                 bulletIndex = otherBulletsList.indexOf(new Bullet(playerId, bulletId));
                                 updatedBullets.add(new Bullet(playerId, bulletId));
                                 if (bulletIndex == -1) {
@@ -131,6 +156,15 @@ public class SQLManager {
                                 } else {
                                     otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
                                     otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
+                                    otherBulletsList.get(bulletIndex).setBulletType(resultat.getInt("bullet.bulletType"));
+                                }
+                            } else if(id < 0){ // this is a BonusItem
+                                itemId = id;
+                                item = new BonusItem( resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), resultat.getInt("bullet.bulletType"), itemId, playerId);
+                                updatedItems.add(item);
+                                if(!otherPlayersItems.contains(item) && !pickedItems.contains(item)){
+                                    item.setActive(true);
+                                    otherPlayersItems.add(item);
                                 }
                             }
                         }
@@ -154,6 +188,20 @@ public class SQLManager {
         while (index<otherBulletsList.size()){ //remove bullets that were not updated (ie are no longer active)
             if (!updatedBullets.contains(otherBulletsList.get(index))){
                 otherBulletsList.remove(index);
+            } else {
+                index++;
+            }
+        }
+        while (index<otherPlayersItems.size()){ //same with items
+            if (!updatedItems.contains(otherPlayersItems.get(index))){
+                otherPlayersItems.remove(index);
+            } else {
+                index++;
+            }
+        }
+        while (index<pickedItems.size()){ //same with items
+            if (!updatedItems.contains(pickedItems.get(index))){
+                pickedItems.remove(index);
             } else {
                 index++;
             }
@@ -213,12 +261,12 @@ public class SQLManager {
             BonusItem item;
             for (int i = 0; i<itemList.size()-1; i++) {
                 item = itemList.get(i);
-                values += "("+item.getPlayerId()+","+item.getId()+","+item.getX()+","+item.getY()+",0,0), ";
+                values += "("+item.getId()+","+item.getPlayerId()+","+item.getX()+","+item.getY()+",0,0), ";
             }
-            item = itemList.get(itemList.size()-1);
-            values += "("+item.getPlayerId()+","+item.getId()+","+item.getX()+","+item.getY()+",0,0) ";
+            BonusItem lastItem = itemList.get(itemList.size()-1);
+            values += "("+lastItem.getId()+","+lastItem.getPlayerId()+","+lastItem.getX()+","+lastItem.getY()+",0,0) ";
             try {
-                requete = connexion.prepareStatement("INSERT INTO items VALUES "+values);
+                requete = connexion.prepareStatement("INSERT INTO bullet VALUES "+values);
                 requete.executeUpdate();
                 requete.close();
             } catch (SQLException ex) {
@@ -251,9 +299,6 @@ public class SQLManager {
             requete.executeUpdate();
             requete.close();
             requete = connexion.prepareStatement("DELETE FROM bullet" );
-            requete.executeUpdate();
-            requete.close();
-            requete = connexion.prepareStatement("DELETE FROM items" );
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {
@@ -425,19 +470,19 @@ public class SQLManager {
         PreparedStatement requete;
         
         try {
-            requete = connexion.prepareStatement("INSERT INTO items VALUES (?,?,?,?,?,?)");
-            requete.setInt(1, item.getPlayerId());
-            requete.setInt(2, item.getId());
+            requete = connexion.prepareStatement("INSERT INTO bullet VALUES (?,?,?,?,?,?)");
+            requete.setInt(1, item.getId());
+            requete.setInt(2, item.getPlayerId());
             requete.setInt(3, item.getX());
             requete.setInt(4, item.getY());
-            requete.setInt(5, item.getType());
             int isActive;
             if(item.isActive()){
                 isActive = 1;
             } else {
                 isActive = 0;
             }
-            requete.setInt(6, isActive);
+            requete.setInt(5, isActive);
+            requete.setInt(6, item.getType());
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {

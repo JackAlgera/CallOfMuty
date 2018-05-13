@@ -1,7 +1,6 @@
 package callofmuty;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 public class BonusItem {
@@ -68,6 +67,18 @@ public class BonusItem {
         if(formerActive && !isActive){
             timeOfDeactivation = System.currentTimeMillis();
         }
+        if(isActive){
+            switch(type){
+                case HEALING:
+                    image = healingImage;
+                    break;
+                case SPEED_BOOST:
+                    image = speedBoostImage;
+                    break;
+                default :
+                    image = null;
+            }
+        }
     }
     
     public void setPosition(int[] position){
@@ -79,14 +90,6 @@ public class BonusItem {
     
     public void setType(int type){
         this.type = type;
-        switch(type){
-            case HEALING:
-                image = healingImage;
-                break;
-            case SPEED_BOOST:
-                image = speedBoostImage;
-                break;
-        }
     }
     
     public int getType(){
@@ -118,4 +121,33 @@ public class BonusItem {
             g2d.drawImage(image,game.getGameX()+(int)(x*zoomRatio),(int)(y*zoomRatio),(int)(texturesize*zoomRatio),(int)(texturesize*zoomRatio), null);
         }
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BonusItem other = (BonusItem) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        if (this.playerId != other.playerId) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }
