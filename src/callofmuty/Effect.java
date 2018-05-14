@@ -2,7 +2,7 @@ package callofmuty;
 
 public class Effect {
     
-    public final static int NO_EFFECT = 0, HEALING = 0, FASTER = 1,
+    public final static int NO_EFFECT = 0, HEALING = 6, FASTER = 1,
                     BURNING = 2, SLOWED = 3, STUNED = 4, FALL_TO_DEATH = 5;
     
     private int id;

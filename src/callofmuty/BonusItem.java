@@ -102,7 +102,7 @@ public class BonusItem {
 
     Effect getEffect() {
         Effect effect;
-        switch(id){
+        switch(type){
             case HEALING:
                 effect = new Effect(Effect.HEALING, HEALING_DURATION, HEALING_VALUE);
                 break;

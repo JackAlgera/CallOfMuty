@@ -452,6 +452,12 @@ public class Player implements Comparable<Player>{
             effects.get(i).resetDuration();
         } else {
             newEffect.resetDuration();
+            switch(newEffect.getId()){
+                case Effect.HEALING:
+                    break;
+                case Effect.FASTER:
+                    break;
+            }
             effects.add(newEffect);
         }
     }
@@ -573,7 +579,6 @@ public class Player implements Comparable<Player>{
             if (bullet.isActive()) {
                 bullet.update(dT);
                 if(bullet.getBulletType()==Bullet.MELEE){
-                    System.out.println("melee bullet");
                     if(System.currentTimeMillis()-lastMeleeAttackTimeStamp > meleeAttacksDuration){
                         bullet.setActive(false);
                     } else {
@@ -812,8 +817,10 @@ public class Player implements Comparable<Player>{
     }
 
     private void setBulletListInactive() {
-        for (Bullet bullet : bulletList){
-            bullet.setActive(false);
+        if (bulletList != null) {
+            for (Bullet bullet : bulletList) {
+                bullet.setActive(false);
+            }
         }
     }
 
@@ -823,13 +830,11 @@ public class Player implements Comparable<Player>{
             item = itemList.get(i);
             if (item.isActive()) {
                 if(Tools.playerPicksItem(this, item)){
-                    System.out.println("I took my item "+item.getId());
                     addEffect(item.getEffect());
                     item.setActive(false);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
                         if (Tools.playerPicksItem(otherPlayer, item)) {
-                            System.out.println("Player "+otherPlayer.getPlayerId()+" took my item "+item.getId());
                             item.setActive(false);
                         }
                     }
@@ -845,7 +850,6 @@ public class Player implements Comparable<Player>{
         while(index < otherPlayersItems.size()){
             item = otherPlayersItems.get(index);
             if (Tools.playerPicksItem(this, item)) {
-                System.out.println("picked player "+item.getPlayerId()+"'s item "+item.getId());
                 addEffect(item.getEffect());
                 pickedItems.add(item);
                 otherPlayersItems.remove(index);
