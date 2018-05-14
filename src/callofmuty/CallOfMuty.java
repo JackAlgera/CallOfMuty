@@ -79,11 +79,11 @@ public class CallOfMuty {
         
         // last steps
         
-        game.requestFocusInWindow();
         frame.pack();
         frame.setLocationRelativeTo(null); // appears at the centre of the screen
         game.buildInterface();
         frame.setVisible(true);
+        game.requestFocusInWindow();
         minUpdateTime = (long) 1000 / maxFPS;
 
         while (true) {

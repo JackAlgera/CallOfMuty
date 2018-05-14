@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -86,7 +87,6 @@ public class GamePanel extends JPanel{
     private ArrayList <Player> otherPlayersList;
     private int textureSize, mapWidth, mapHeight, panelWidth, panelHeight, gameState, originalWidth, originalHeight, mapIndex;
     private GameMode gameMode;
-    private ArrayList<Integer> pressedButtons, releasedButtons;
     private boolean isHost, interfaceBuilt = false,hasCustomMap = false, setStartingTile, isConnected, muteMusic, muteSounds, leftMousePressed, rightMousePressed, endShowed;
     private SQLManager sql;
     private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons, GMbuttons;
@@ -99,6 +99,7 @@ public class GamePanel extends JPanel{
     private int[] mousePosition;
     private double wantedWidthByHeightRatio, screenSizeZoomRatio;
     private JFrame frame;
+    private KeyboardManager keyboard;
     private String fileChooserPath;
     
     public GamePanel(int textureSize, int mapWidth, int mapHeight, GameTimer timer){
@@ -126,13 +127,11 @@ public class GamePanel extends JPanel{
         setPreferredSize(new Dimension(panelWidth, panelHeight));
         map = Tools.loadResourceMap(0, textureSize);
         player = new Player(0,0);
-        pressedButtons = new ArrayList<>();
-        releasedButtons = new ArrayList<>();
         otherPlayersBullets = new ArrayList<>();
         otherPlayersList = new ArrayList<>();
         otherPlayersItems = new ArrayList<>();
         this.timer = timer;
-        mapKeys();
+        keyboard = new KeyboardManager(this);
         leftMousePressed = false;
         rightMousePressed = false;
         mousePosition = new int[]{0,0};
@@ -141,6 +140,24 @@ public class GamePanel extends JPanel{
         fileChooserPath = "src/resources/maps";
         generateColorList();
         setFocusable(true);
+        
+        // using keyboardManager
+        
+        addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                keyboard.keyPressed(e);
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                keyboard.keyReleased(e);
+            }
+        });
         
         // handling mouse inputs
         addMouseMotionListener(new MouseAdapter(){
@@ -1337,59 +1354,39 @@ public class GamePanel extends JPanel{
     
     private void updatePlayerMovement(){
         // Acceleration
-        if (pressedButtons.contains(KeyEvent.VK_S) || pressedButtons.contains(KeyEvent.VK_DOWN)){
+        if (keyboard.movingDown()){
 //            player.setFacedDirection(0);
             player.setAcceleration(1, 1);
             player.setDirectionOfTravel(1, 1);
         }
-        if (pressedButtons.contains(KeyEvent.VK_Z) || pressedButtons.contains(KeyEvent.VK_UP)){
+        if (keyboard.movingUp()){
 //            player.setFacedDirection(3);
             player.setAcceleration(1, -1);
             player.setDirectionOfTravel(1, -1);
         }
-        if (pressedButtons.contains(KeyEvent.VK_Q) || pressedButtons.contains(KeyEvent.VK_LEFT)){
+        if (keyboard.movingLeft()){
             player.setFacedDirection(1);
             player.setAcceleration(0, -1);
             player.setDirectionOfTravel(0, -1);
         }
-        if (pressedButtons.contains(KeyEvent.VK_D) || pressedButtons.contains(KeyEvent.VK_RIGHT)){
+        if (keyboard.movingRight()){
             player.setFacedDirection(2);
             player.setAcceleration(0, 1);
             player.setDirectionOfTravel(0, 1);
         }
         
 //        Deceleration
-        if (releasedButtons.contains(KeyEvent.VK_S)){
+        if (keyboard.stoppedMovingDown()){
             player.reverseAcceleration(1);
-            releasedButtons.remove((Integer)KeyEvent.VK_S);
         }
-        if (releasedButtons.contains(KeyEvent.VK_Z)){
+        if (keyboard.stoppedMovingUp()){
             player.reverseAcceleration(1);
-            releasedButtons.remove((Integer)KeyEvent.VK_Z);
         }
-        if (releasedButtons.contains(KeyEvent.VK_Q)){
+        if (keyboard.stoppedMovingLeft()){
             player.reverseAcceleration(0);
-            releasedButtons.remove((Integer)KeyEvent.VK_Q);
         }
-        if (releasedButtons.contains(KeyEvent.VK_D)){
+        if (keyboard.stoppedMovingRight()){
             player.reverseAcceleration(0);
-            releasedButtons.remove((Integer)KeyEvent.VK_D);
-        }
-        if (releasedButtons.contains(KeyEvent.VK_DOWN)){
-            player.reverseAcceleration(1);
-            releasedButtons.remove((Integer)KeyEvent.VK_DOWN);
-        }
-        if (releasedButtons.contains(KeyEvent.VK_UP)){
-            player.reverseAcceleration(1);
-            releasedButtons.remove((Integer)KeyEvent.VK_UP);
-        }
-        if (releasedButtons.contains(KeyEvent.VK_LEFT)){
-            player.reverseAcceleration(0);
-            releasedButtons.remove((Integer)KeyEvent.VK_LEFT);
-        }
-        if (releasedButtons.contains(KeyEvent.VK_RIGHT)){
-            player.reverseAcceleration(0);
-            releasedButtons.remove((Integer)KeyEvent.VK_RIGHT);
         }
     }
     
@@ -1411,120 +1408,42 @@ public class GamePanel extends JPanel{
         repaint();
     }
     
-    public void mapKeys(){
-        ArrayList<String> keyStrokeList = new ArrayList<>();
-        keyStrokeList.add("S"); keyStrokeList.add("Z"); keyStrokeList.add("Q"); keyStrokeList.add("D");
-        keyStrokeList.add("DOWN"); keyStrokeList.add("UP"); keyStrokeList.add("LEFT"); keyStrokeList.add("RIGHT"); keyStrokeList.add("ESCAPE");
-        for (String key : keyStrokeList){
-            getInputMap().put(KeyStroke.getKeyStroke(key), key + "Pressed");
-            getInputMap().put(KeyStroke.getKeyStroke("released " + key), key + "Released");
-        }
-        getInputMap().put(KeyStroke.getKeyStroke("F"), "FPressed");
-        getInputMap().put(KeyStroke.getKeyStroke(' '), "spacePressed");
-        
-        
-        getActionMap().put("ZPressed", new KeyPressed(KeyEvent.VK_Z));
-        getActionMap().put("ZReleased", new KeyReleased(KeyEvent.VK_Z) );
-        getActionMap().put("SPressed", new KeyPressed(KeyEvent.VK_S));
-        getActionMap().put("SReleased", new KeyReleased(KeyEvent.VK_S) );
-        getActionMap().put("QPressed", new KeyPressed(KeyEvent.VK_Q));
-        getActionMap().put("QReleased", new KeyReleased(KeyEvent.VK_Q) );
-        getActionMap().put("DPressed", new KeyPressed(KeyEvent.VK_D));
-        getActionMap().put("DReleased", new KeyReleased(KeyEvent.VK_D) );
-        getActionMap().put("UPPressed", new KeyPressed(KeyEvent.VK_UP));
-        getActionMap().put("UPReleased", new KeyReleased(KeyEvent.VK_UP) );
-        getActionMap().put("DOWNPressed", new KeyPressed(KeyEvent.VK_DOWN));
-        getActionMap().put("DOWNReleased", new KeyReleased(KeyEvent.VK_DOWN) );
-        getActionMap().put("LEFTPressed", new KeyPressed(KeyEvent.VK_LEFT));
-        getActionMap().put("LEFTReleased", new KeyReleased(KeyEvent.VK_LEFT) );
-        getActionMap().put("RIGHTPressed", new KeyPressed(KeyEvent.VK_RIGHT));
-        getActionMap().put("RIGHTReleased", new KeyReleased(KeyEvent.VK_RIGHT) );
-        getActionMap().put("ESCAPEPressed", new EscapePressed());
-        getActionMap().put("FPressed", new Taunt());
-        getActionMap().put("spacePressed", new spaceBarPressed());
-    }
+    /*
+    ---------------------------------------------------------------------------------------------------------------
+                            Use of custom KeyboardManager class
+    ---------------------------------------------------------------------------------------------------------------
+    */
     
-       //Use of KeyBindings
-    private class KeyPressed extends AbstractAction{
-        
-        private int key;
-        
-        public KeyPressed(int key){
-            this.key = key;
-        }
-        
-        @Override
-        public void actionPerformed( ActionEvent tf ){
-            if(!pressedButtons.contains(key)){
-                pressedButtons.add(key);
-            }
-        }
-    }
-    private class KeyReleased extends AbstractAction{
-        
-        private int key;
-        
-        public KeyReleased(int key){
-            this.key = key;
-        }
-        
-        @Override
-        public void actionPerformed( ActionEvent tf ){
-            if(pressedButtons.contains(key)){
-                pressedButtons.remove((Integer)key);
-                releasedButtons.add(key);
-            }
+    public void roll(){
+        if(gameState==IN_GAME){
+            player.roll();
         }
     }
     
-    private class EscapePressed extends AbstractAction{
-        
-        @Override
-        public void actionPerformed(ActionEvent tf) {
-            if (gameState == IN_GAME || (gameState == PRE_GAME && !isHost)) {
+    public void taunt(){
+        if(gameState==IN_GAME){
+            player.taunt();
+        }
+    }
+    
+    public void quit() {
+        if (gameState == IN_GAME || (gameState == PRE_GAME && !isHost)) {
+            int confirm = JOptionPane.showOptionDialog(
+                    null, "Do you want to disconnect from the game ?",
+                    "Disconnecting", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (confirm == 0) {
+                endGame();
+            }
+        } else {
+            if (gameState == PRE_GAME && isHost) {
                 int confirm = JOptionPane.showOptionDialog(
-                        null, "Do you want to disconnect from the game ?",
-                        "Disconnecting", JOptionPane.YES_NO_OPTION,
+                        null, "Do you want to cancel this game ?",
+                        "Cancelling", JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, null, null);
                 if (confirm == 0) {
                     endGame();
                 }
-            } else {
-                if (gameState == PRE_GAME && isHost) {
-                    int confirm = JOptionPane.showOptionDialog(
-                            null, "Do you want to cancel this game ?",
-                            "Cancelling", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, null, null, null);
-                    if (confirm == 0) {
-                        endGame();
-                    }
-                }
-            }
-        }
-    }
-    
-    private class Taunt extends AbstractAction{
-        
-        public Taunt(){
-        }
-        
-        @Override
-        public void actionPerformed( ActionEvent tf ){
-            if(gameState==IN_GAME){
-                player.taunt();
-            }
-        }
-    }
-    
-    private class spaceBarPressed extends AbstractAction{
-        
-        public spaceBarPressed(){
-        }
-        
-        @Override
-        public void actionPerformed( ActionEvent tf ){
-            if(gameState==IN_GAME){
-                player.roll();
             }
         }
     }
@@ -1540,8 +1459,7 @@ public class GamePanel extends JPanel{
         this.isHost = isHost;
         sql = new SQLManager();
         int[] sqlGame = sql.getGame();
-        pressedButtons = new ArrayList<>();
-        releasedButtons = new ArrayList<>();
+        keyboard.reset();
         if (isHost) {
             // Try to create a game
             ArrayList<Player> playerList = sql.getPlayerList();
