@@ -12,16 +12,16 @@ public class Player implements Comparable<Player>{
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
     private static double rollSpeedMultiplier = 3, meleeDamage = 10;
-    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 75, rollTime = 150, timeBetweenTaunts = 1000; // in milliseconds
+    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 75, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
     private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5;
     public static int PLAYING = 1,DEAD = 2;
     
     private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId, lifeCounter;
     private Image hpBar;
-    private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY, lastMeleeAttackTimeStamp; 
+    private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY; 
     private double[] speed, acceleration;
     private int[] directionOfTravel;
-    private double health, timeSinceLastHurtSound;
+    private double health;
     private boolean isDead, muteSounds, justTeleported, isRolling, isTaunting, fellToDeath = false;
     private int skinId, numberOfSkins;
     private String name;
@@ -33,7 +33,7 @@ public class Player implements Comparable<Player>{
     private ArrayList<Player> hurtPlayers;
     private ArrayList<Effect> effects = new ArrayList<>();
     private ArrayList<BonusItem> itemList = new ArrayList<>(), pickedItems = new ArrayList<>();
-    private long currentRollTime, lastTauntTimeStamp;
+    private long lastTauntTimeStamp, lastMeleeAttackTimeStamp, timeSinceLastHurtSound, lastRollTimeStamp;
     
     private ArrayList<Bullet> bulletList, destroyedBullets;
     private Gun gun;
@@ -53,7 +53,6 @@ public class Player implements Comparable<Player>{
         justTeleported = false;
         isRolling = false;
         isTaunting = false;
-        currentRollTime = 0;
         destroyedBullets = new ArrayList<>();
         lifeCounter = 5;
         
@@ -65,6 +64,7 @@ public class Player implements Comparable<Player>{
             }
         }
         lastMeleeAttackTimeStamp = System.currentTimeMillis();
+        lastRollTimeStamp = System.currentTimeMillis();
         imageHeight = animationImages.get(0).getHeight(null)/2;
         imageWidth = animationImages.get(0).getWidth(null)/2;
         numberOfSkins = 3;
@@ -333,13 +333,11 @@ public class Player implements Comparable<Player>{
                     speed[0] = maxSpeed * Math.cos(angle);
                     speed[1] = maxSpeed * Math.sin(angle);
                 }
-            } else {
-                currentRollTime += dT;
-                if (currentRollTime > rollTime){
-                    isRolling = false;
-                    speed[0] /= rollSpeedMultiplier;
-                    speed[1] /= rollSpeedMultiplier;
-                }
+            } else if (System.currentTimeMillis()-lastRollTimeStamp > rollTime) {
+                isRolling = false;
+                speed[0] /= rollSpeedMultiplier;
+                speed[1] /= rollSpeedMultiplier;
+
             }
 
             // update & activate effects
@@ -793,8 +791,8 @@ public class Player implements Comparable<Player>{
     }
 
     public void roll() {
-        if(!isDead && !isRolling){
-            currentRollTime = 0;
+        if(!isDead && System.currentTimeMillis()-lastRollTimeStamp>timeBetweenRolls){
+            lastRollTimeStamp = 0;
             isRolling = true;
             speed[0] *=rollSpeedMultiplier;
             speed[1] *=rollSpeedMultiplier;
