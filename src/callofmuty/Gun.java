@@ -15,7 +15,7 @@ public class Gun {
             magnumImage = Tools.selectWeaponTile(Tools.WeaponTileset, 2, 1, 1),
             mitrailleuseImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 5, 2),
             legendaryWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1),
-            flamethrowerWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,2, 9, 1);
+            flamethrowerWeaponImage = Tools.selectWeaponTile(Tools.WeaponTileset,3, 7, 2);
             
     private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, bulletType;
     private Image image;
@@ -175,9 +175,9 @@ public class Gun {
                 bulletSpeed = 1.8;
                 maxRange = 200;
                 bulletSpread = 0.200;
-                xImage = 2;
-                yImage = 9;
-                tailleGun = 1;
+                xImage = 3;
+                yImage = 7;
+                tailleGun = 2;
                 break;
                 
             case NO_GUN:

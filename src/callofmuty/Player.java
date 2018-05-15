@@ -11,8 +11,8 @@ public class Player implements Comparable<Player>{
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
-    private static double rollSpeedMultiplier = 3, meleeDamage = 10;
-    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 75, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
+    private static double rollSpeedMultiplier = 3, meleeDamage = 25;
+    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 500, meleeRange = 50, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
     private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5;
     public static int PLAYING = 1,DEAD = 2;
     
@@ -577,6 +577,9 @@ public class Player implements Comparable<Player>{
             if (bullet.isActive()) {
                 bullet.update(dT);
                 if(bullet.getBulletType()==Bullet.MELEE){
+                    if (bullet.getTravelledDistance()>meleeRange){
+                        bullet.setBulletSpeed(0);
+                    }
                     if(System.currentTimeMillis()-lastMeleeAttackTimeStamp > meleeAttacksDuration){
                         bullet.setActive(false);
                     } else {
@@ -673,20 +676,20 @@ public class Player implements Comparable<Player>{
                 gunId = Gun.MAGNUM; // 10%
             } else if(gunRandom<0.92){
                 gunId = Gun.SNIPER; // 7%
-            } else if(gunRandom<0.6){
+            } else if(gunRandom<0.96){
                 gunId = Gun.FLAMETHROWER; // 4%
             } else {
                 gunId = Gun.LEGENDARY_WEAPON; // 4%
             }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-            gun.setId(Gun.LEGENDARY_WEAPON, numberOfCartridges);
+            gun.setId(gunId, numberOfCartridges);
         }
     }
     
     public void meleeAttack(double[] directionOfFire, SQLManager sql) {
         if (System.currentTimeMillis()-timeBetweenMeleeAttacks>=lastMeleeAttackTimeStamp){
             lastMeleeAttackTimeStamp = System.currentTimeMillis();
-            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 0 , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
+            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 1.0 , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
         }
     }
     

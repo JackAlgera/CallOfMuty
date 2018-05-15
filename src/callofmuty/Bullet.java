@@ -82,6 +82,10 @@ public class Bullet {
         return damage;
     }
     
+    public void setBulletSpeed(double speed){
+        this.speed = speed;
+    }
+    
     public int getBulletType(){
         return bulletType;
     }
