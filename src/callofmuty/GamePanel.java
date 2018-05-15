@@ -1415,9 +1415,9 @@ public class GamePanel extends JPanel{
     ---------------------------------------------------------------------------------------------------------------
     */
     
-    public void roll(){
+    public void dash(){
         if(gameState==IN_GAME){
-            player.roll();
+            player.dash();
         }
     }
     
@@ -1759,8 +1759,6 @@ public class GamePanel extends JPanel{
                 player.drawBullets(g2d, map.getTextureSize(), this);
 
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int) (30 * zoomRatio)));
-                g2d.setColor(Color.BLACK);
-                g2d.drawString(gameMode.getName(), (int) ((getGameWidth() - 192 * zoomRatio) / 2), (int) ((getGameHeight() - 32) * zoomRatio));
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int) (15 * zoomRatio)));
 
                 for (Player otherPlayer : otherPlayersList) {

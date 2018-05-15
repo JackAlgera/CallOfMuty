@@ -183,7 +183,6 @@ public class Gun {
             case NO_GUN:
                 ammunition = 0;       
         }
-        bulletSpeed = 0;
         stockAmmo = ammunition * numberOfCartridges;
         startingAmmo = ammunition;
         initialRateOfFire = rateOfFire;

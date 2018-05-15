@@ -544,7 +544,6 @@ public class Player implements Comparable<Player>{
     }
     
     public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage, int bulletType, int numberOfBounces, double maxRange){
-        speed = 0;
         if (!isDead) {
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;
@@ -800,9 +799,9 @@ public class Player implements Comparable<Player>{
         hurtSelf(health+1);
     }
 
-    public void roll() {
+    public void dash() {
         if(!isDead && System.currentTimeMillis()-lastRollTimeStamp>timeBetweenRolls){
-            lastRollTimeStamp = 0;
+            lastRollTimeStamp = System.currentTimeMillis();
             isRolling = true;
             speed[0] *=rollSpeedMultiplier;
             speed[1] *=rollSpeedMultiplier;
