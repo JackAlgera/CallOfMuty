@@ -47,6 +47,11 @@ public class Player implements Comparable<Player>{
         facedDirection = 2;
         this.posX=x;
         this.posY=y;
+<<<<<<< HEAD
+=======
+        this.playerWidth=30;
+        this.playerHeight=55;
+>>>>>>> 7b1d83e1931c59746685ea9ddb8fb4b452e722a7
         this.skinId = 1;
         teamId= 0;
         justTeleported = false;
@@ -65,8 +70,8 @@ public class Player implements Comparable<Player>{
         
         lastMeleeAttackTimeStamp = System.currentTimeMillis();
         lastRollTimeStamp = System.currentTimeMillis();
-        imageHeight = animationImages.get(0).getHeight(null)/2;
-        imageWidth = animationImages.get(0).getWidth(null)/2;
+        imageHeight = animationImages.get(0).getHeight(null)/2; // 32x32
+        imageWidth = animationImages.get(0).getWidth(null)/2;   // 32x32
         numberOfSkins = 3;
         playerAnimation.setRow((skinId - 1) * 4 + numberOfSkins);
         maxSpeed = 0.3; //in pixel per ms
@@ -544,6 +549,7 @@ public class Player implements Comparable<Player>{
     }
     
     public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage, int bulletType, int numberOfBounces, double maxRange){
+        speed = 0;
         if (!isDead) {
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;
@@ -597,10 +603,14 @@ public class Player implements Comparable<Player>{
                     }
                 } else if (bullet.destroyedByMap(map)) {
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
+                    Bullet animatedBullet = new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType());
+                    animatedBullet.setAnimationState(Animation.GUN);
+                    destroyedBullets.add(animatedBullet);
                 } else if(bullet.getTravelledDistance()>bullet.getMaxRange()){
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
+                    Bullet animatedBullet = new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType());
+                    animatedBullet.setAnimationState(Animation.GUN);
+                    destroyedBullets.add(animatedBullet);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
                         if (Tools.hitboxCollision(otherPlayer.getHitBox(zoomRatio), bullet.getHitBox(zoomRatio)) && !this.isFriend(otherPlayer)) {
@@ -649,7 +659,6 @@ public class Player implements Comparable<Player>{
         return test;
     }
 
-
     public void generateGun(int numberOfPlayers, long dT, GameMode gameMode) {
         boolean generateWeapon;
         switch (gameMode.getGunGestion()) {
@@ -682,7 +691,7 @@ public class Player implements Comparable<Player>{
             } else if(gunRandom<0.6){
                 gunId = Gun.FLAMETHROWER; // 4%
             } else {
-                gunId = Gun.LEGENDARY_WEAPON; // 4%
+                gunId = Gun.LEGENDARY_WEAPON; // 4%sssssss
             }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
             gun.setId(gunId, numberOfCartridges);
