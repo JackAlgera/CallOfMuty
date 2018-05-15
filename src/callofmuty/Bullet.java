@@ -218,13 +218,7 @@ public class Bullet {
         bulletId++;
     }
     
-    public void setAnimation(boolean state)
-    {
-        if(state)
-            bulletAnimation.setAnimation(1);
-        else
-            bulletAnimation.setAnimation(2);
-    }
+    
     
     public boolean endOfAnimation()
     {
@@ -266,5 +260,14 @@ public class Bullet {
 
     public boolean isActivable() {
         return(!isActive && System.currentTimeMillis()-TIME_BEFORE_REACTIVATING>=timeOfDeactivation);
+    }
+    
+    public void setAnimationState(int state)
+    {
+        bulletAnimation.setAnimation(state);
+//        if(state == Animation.STILL_IMAGE)
+//        {
+//            bulletAnimation.incrCurrentImage();
+//        }
     }
 }

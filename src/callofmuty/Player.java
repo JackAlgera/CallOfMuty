@@ -591,10 +591,14 @@ public class Player implements Comparable<Player>{
                     }
                 } else if (bullet.destroyedByMap(map)) {
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
+                    Bullet animatedBullet = new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType());
+                    animatedBullet.setAnimationState(Animation.GUN);
+                    destroyedBullets.add(animatedBullet);
                 } else if(bullet.getTravelledDistance()>bullet.getMaxRange()){
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
+                    Bullet animatedBullet = new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType());
+                    animatedBullet.setAnimationState(Animation.GUN);
+                    destroyedBullets.add(animatedBullet);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
                         if (Tools.isPlayerHit(otherPlayer, bullet) && !this.isFriend(otherPlayer)) {
@@ -643,7 +647,6 @@ public class Player implements Comparable<Player>{
         return test;
     }
 
-
     public void generateGun(int numberOfPlayers, long dT, GameMode gameMode) {
         boolean generateWeapon;
         switch (gameMode.getGunGestion()) {
@@ -676,10 +679,10 @@ public class Player implements Comparable<Player>{
             } else if(gunRandom<0.6){
                 gunId = Gun.FLAMETHROWER; // 4%
             } else {
-                gunId = Gun.LEGENDARY_WEAPON; // 4%
+                gunId = Gun.LEGENDARY_WEAPON; // 4%sssssss
             }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-            gun.setId(Gun.LEGENDARY_WEAPON, numberOfCartridges);
+            gun.setId(gunId, numberOfCartridges);
         }
     }
     
