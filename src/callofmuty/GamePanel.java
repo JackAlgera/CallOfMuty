@@ -1322,8 +1322,9 @@ public class GamePanel extends JPanel{
             player.updateItemList(otherPlayersList, otherPlayersItems,zoomRatio);
             
             // generate items
-            player.generateItem(otherPlayersList.size()+1, dT, map, sql);
-            
+            if(gameMode.getOption(2)){
+                player.generateItem(otherPlayersList.size()+1, dT, map, sql);
+            }
             // sql uploads
             sql.uploadPlayerAndBullets(player);
         } else if(TeamWasKilled && !endShowed){ // team just died : show defeat screen
@@ -1464,7 +1465,7 @@ public class GamePanel extends JPanel{
         if (isHost) {
             // Try to create a game
             ArrayList<Player> playerList = sql.getPlayerList();
-            if (playerList.size()<2) { // No game is currently on
+            if (playerList.size()<2 && sqlGame[0]!=PRE_GAME) { // No game is currently on
                 sql.clearTable(); //Clear previous game on SQL server
                 sql.createGame(map, gameMode);
                 player.reset(map, muteSounds);
