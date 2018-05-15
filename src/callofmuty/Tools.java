@@ -165,7 +165,7 @@ public class Tools {
     }
     
     public static boolean playerPicksItem(Player player, BonusItem item){
-        boolean test = item.getX() < player.getPosX() + player.getPlayerWidth()
+        boolean test = item.getX() + item.getWidth()/2 < player.getPosX() + player.getPlayerWidth()
                         && item.getX() + item.getWidth() > player.getPosX()
                         && item.getY() < player.getPosY() + player.getPlayerHeight()
                         && item.getY() + item.getHeight() > player.getPosY();

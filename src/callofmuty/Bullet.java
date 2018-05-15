@@ -52,8 +52,8 @@ public class Bullet {
         this.posY = posY;
         this.bulletType = bulletType;
         this.numberOfBounces = numberOfBounces;
-        ballWidth = 10;
-        ballHeight = 10;
+        ballWidth = 15;
+        ballHeight = 15;
         this.speed = speed;
         this.direction = direction;
         this.playerId = playerId;
@@ -103,7 +103,8 @@ public class Bullet {
     public void draw(Graphics2D g2d, int texturesize, GamePanel game){
         if (isActive) {
             double zoomRatio = game.getZoomRatio()*game.getScreenSizeZoomRatio();
-            g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),game.getGameX()+(int)(posX*zoomRatio),(int)(posY*zoomRatio),(int)(texturesize/2*zoomRatio),(int)(texturesize/2*zoomRatio), null);
+            g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),game.getGameX()+(int)((posX - ballWidth/2)*zoomRatio),(int)((posY - ballHeight/2)*zoomRatio),(int)(texturesize/2*zoomRatio),(int)(texturesize/2*zoomRatio), null);
+            g2d.drawRect(game.getGameX()+(int)(posX*zoomRatio), (int)((posY)*zoomRatio), (int)(ballWidth*zoomRatio), (int)(ballHeight *zoomRatio));
         }
     }
     

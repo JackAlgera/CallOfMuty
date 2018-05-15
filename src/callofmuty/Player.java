@@ -46,7 +46,7 @@ public class Player implements Comparable<Player>{
         facedDirection = 2;
         this.posX=x;
         this.posY=y;
-        this.playerWidth=35;
+        this.playerWidth=30;
         this.playerHeight=55;
         this.skinId = 1;
         teamId= 0;
@@ -66,8 +66,8 @@ public class Player implements Comparable<Player>{
         
         lastMeleeAttackTimeStamp = System.currentTimeMillis();
         lastRollTimeStamp = System.currentTimeMillis();
-        imageHeight = animationImages.get(0).getHeight(null)/2;
-        imageWidth = animationImages.get(0).getWidth(null)/2;
+        imageHeight = animationImages.get(0).getHeight(null)/2; // 32x32
+        imageWidth = animationImages.get(0).getWidth(null)/2;   // 32x32
         numberOfSkins = 3;
         playerAnimation.setRow((skinId - 1) * 4 + numberOfSkins);
         maxSpeed = 0.3; //in pixel per ms
@@ -257,6 +257,8 @@ public class Player implements Comparable<Player>{
             gun.draw(g, this, game);
             g.setColor(Color.RED);
             g.fillRect(game.getGameX()+(int)((posX + playerWidth / 2 - imageWidth + 12)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 6)*zoomRatio), (int) ((imageWidth * 2 - 24) * health / maxHealth*zoomRatio), (int)(2*zoomRatio));
+            g.drawRect(game.getGameX()+(int)(posX*zoomRatio), (int)((posY)*zoomRatio), (int)(playerWidth*zoomRatio), (int)(playerHeight *zoomRatio));
+
         }
     }
     
@@ -538,6 +540,7 @@ public class Player implements Comparable<Player>{
     }
     
     public void addBullet(double initPosX, double initPosY, double[] direction, double speed, SQLManager sql, double damage, int bulletType, int numberOfBounces, double maxRange){
+        speed = 0;
         if (!isDead) {
             boolean inactiveBulletFound = false;
             int bulletIndex = 0;
