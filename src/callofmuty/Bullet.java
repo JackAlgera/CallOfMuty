@@ -3,6 +3,7 @@ package callofmuty;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class Bullet {
@@ -100,12 +101,21 @@ public class Bullet {
         }
     }
     
-    public void draw(Graphics2D g2d, int texturesize, GamePanel game){
+    public void draw(Graphics2D g2d, int textureSize, GamePanel game){
         if (isActive) {
             double zoomRatio = game.getZoomRatio()*game.getScreenSizeZoomRatio();
-            g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),game.getGameX()+(int)(posX*zoomRatio),(int)(posY*zoomRatio),(int)(texturesize/2*zoomRatio),(int)(texturesize/2*zoomRatio), null);
+            Image image = animationImages.get(bulletAnimation.getCurrentImage());
+            g2d.drawImage(image,game.getGameX()+(int)((posX+(ballWidth-image.getWidth(null))/2)*zoomRatio),(int)((posY+(ballHeight-image.getHeight(null))/2)*zoomRatio),(int)(image.getWidth(null)*zoomRatio),(int)(image.getHeight(null)*zoomRatio), null);
+            // drawing hitbox
+            //Rectangle hitbox = getHitBox(zoomRatio);
+            //g2d.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
         }
     }
+    
+    public Rectangle getHitBox(double zoomRatio){
+        return new Rectangle((int)(posX*zoomRatio),(int)(posY*zoomRatio),(int)(ballWidth*zoomRatio),(int)(ballHeight*zoomRatio));
+    }
+    
     
     public boolean destroyedByMap(Map map){
         int collisionDirection = collisionDirection(map);

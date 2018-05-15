@@ -3,6 +3,7 @@ package callofmuty;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -13,10 +14,10 @@ public class Player implements Comparable<Player>{
     public static double maxHealth = 100.0;
     private static double rollSpeedMultiplier = 3, meleeDamage = 10;
     private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 75, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
-    private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5;
+    private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5, playerWidth= 35, playerHeight = 55;
     public static int PLAYING = 1,DEAD = 2;
     
-    private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId, lifeCounter;
+    private int playerId, facedDirection, playerState, teamId, lifeCounter;
     private Image hpBar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY; 
     private double[] speed, acceleration;
@@ -46,8 +47,6 @@ public class Player implements Comparable<Player>{
         facedDirection = 2;
         this.posX=x;
         this.posY=y;
-        this.playerWidth=35;
-        this.playerHeight=55;
         this.skinId = 1;
         teamId= 0;
         justTeleported = false;
@@ -257,7 +256,14 @@ public class Player implements Comparable<Player>{
             gun.draw(g, this, game);
             g.setColor(Color.RED);
             g.fillRect(game.getGameX()+(int)((posX + playerWidth / 2 - imageWidth + 12)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 6)*zoomRatio), (int) ((imageWidth * 2 - 24) * health / maxHealth*zoomRatio), (int)(2*zoomRatio));
+            // drawing hitbox
+            //Rectangle hitbox = getHitBox(zoomRatio);
+            //g.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
         }
+    }
+    
+    public Rectangle getHitBox(double zoomRatio){
+        return new Rectangle((int)(posX*zoomRatio),(int)(posY*zoomRatio),(int)(playerWidth*zoomRatio),(int)(playerHeight*zoomRatio));
     }
     
     public void drawBullets(Graphics2D g, int textureSize, GamePanel game) {
@@ -569,7 +575,7 @@ public class Player implements Comparable<Player>{
         return animationImages.get(playerAnimation.getCurrentImage());
     }
     
-    public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList){
+    public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList, double zoomRatio){
         Bullet bullet;
         Player hurtPlayer;
         for (int i = 0; i<bulletList.size(); i++) {
@@ -581,7 +587,7 @@ public class Player implements Comparable<Player>{
                         bullet.setActive(false);
                     } else {
                         for (Player otherPlayer : otherPlayersList) {
-                            if (Tools.isPlayerHit(otherPlayer, bullet) && !this.isFriend(otherPlayer)) {
+                            if (Tools.hitboxCollision(otherPlayer.getHitBox(zoomRatio), bullet.getHitBox(zoomRatio)) && !this.isFriend(otherPlayer)) {
                                 bullet.setActive(false);
                                 hurtPlayer = new Player(otherPlayer.getPlayerId());
                                 hurtPlayer.setHealth(bullet.getDamage());
@@ -597,7 +603,7 @@ public class Player implements Comparable<Player>{
                     destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
-                        if (Tools.isPlayerHit(otherPlayer, bullet) && !this.isFriend(otherPlayer)) {
+                        if (Tools.hitboxCollision(otherPlayer.getHitBox(zoomRatio), bullet.getHitBox(zoomRatio)) && !this.isFriend(otherPlayer)) {
                             bullet.setActive(false);
                             hurtPlayer = new Player(otherPlayer.getPlayerId());
                             hurtPlayer.setHealth(bullet.getDamage());
@@ -679,7 +685,7 @@ public class Player implements Comparable<Player>{
                 gunId = Gun.LEGENDARY_WEAPON; // 4%
             }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-            gun.setId(Gun.LEGENDARY_WEAPON, numberOfCartridges);
+            gun.setId(gunId, numberOfCartridges);
         }
     }
     
@@ -822,32 +828,32 @@ public class Player implements Comparable<Player>{
         }
     }
 
-    public void updateItemList(ArrayList<Player> otherPlayersList, ArrayList<BonusItem> otherPlayersItems) {
+    public void updateItemList(ArrayList<Player> otherPlayersList, ArrayList<BonusItem> otherPlayersItems, double zoomRatio) {
         BonusItem item;
         for (int i = 0; i<itemList.size(); i++) {
             item = itemList.get(i);
             if (item.isActive()) {
-                if(Tools.playerPicksItem(this, item)){
+                if(Tools.hitboxCollision(this.getHitBox(zoomRatio), item.getHitBox(zoomRatio))){
                     addEffect(item.getEffect());
                     item.setActive(false);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
-                        if (Tools.playerPicksItem(otherPlayer, item)) {
+                        if (Tools.hitboxCollision(otherPlayer.getHitBox(zoomRatio), item.getHitBox(zoomRatio))) {
                             item.setActive(false);
                         }
                     }
                 }
             }
         }
-        updateOtherItems(otherPlayersItems);
+        updateOtherItems(otherPlayersItems, zoomRatio);
     }
     
-    public void updateOtherItems(ArrayList<BonusItem> otherPlayersItems){
+    public void updateOtherItems(ArrayList<BonusItem> otherPlayersItems, double zoomRatio){
         int index = 0;
         BonusItem item;
         while(index < otherPlayersItems.size()){
             item = otherPlayersItems.get(index);
-            if (Tools.playerPicksItem(this, item)) {
+            if (Tools.hitboxCollision(this.getHitBox(zoomRatio), item.getHitBox(zoomRatio))) {
                 addEffect(item.getEffect());
                 pickedItems.add(item);
                 otherPlayersItems.remove(index);

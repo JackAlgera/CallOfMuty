@@ -1,5 +1,6 @@
 package callofmuty;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -156,20 +157,12 @@ public class Tools {
         return playerCanCross;
     }
     
-    public static boolean isPlayerHit(Player player, Bullet bullet){        
-        boolean leftTest = bullet.getPosX() < player.getPosX()+player.getPlayerWidth();
-        boolean rightTest = bullet.getPosX() + bullet.getBallWidth() > player.getPosX();
-        boolean upTest = bullet.getPosY() < player.getPosY() + player.getPlayerHeight();
-        boolean downTest = bullet.getPosY() + bullet.getBallHeight() > player.getPosY();
+    public static boolean hitboxCollision(Rectangle hitBox1, Rectangle hitBox2){        
+        boolean leftTest = hitBox1.x < hitBox2.x+hitBox2.width;
+        boolean rightTest = hitBox1.x + hitBox1.width > hitBox2.x;
+        boolean upTest = hitBox1.y < hitBox2.y + hitBox2.height;
+        boolean downTest = hitBox1.y + hitBox1.height > hitBox2.y;
         return leftTest && rightTest && upTest && downTest;
-    }
-    
-    public static boolean playerPicksItem(Player player, BonusItem item){
-        boolean test = item.getX() < player.getPosX() + player.getPlayerWidth()
-                        && item.getX() + item.getWidth() > player.getPosX()
-                        && item.getY() < player.getPosY() + player.getPlayerHeight()
-                        && item.getY() + item.getHeight() > player.getPosY();
-        return test;
     }
     
     public static void playRandomSoundFromList(ArrayList<SoundPlayer> list){

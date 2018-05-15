@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -1312,13 +1311,14 @@ public class GamePanel extends JPanel{
         // sql downloads
         sql.downloadPlayersAndBullets(player, otherPlayersList, otherPlayersBullets, otherPlayersItems, map);
         boolean TeamWasKilled = player.isTeamkilled(otherPlayersList, false); // used to check if team died
+        double zoomRatio = getZoomRatio();
         if (!player.isDead()) {
             // Update bullets
-            player.updateBulletList(dT, map, otherPlayersList);
+            player.updateBulletList(dT, map, otherPlayersList,zoomRatio);
             // gun generation
             player.generateGun(otherPlayersList.size() + 1, dT, gameMode); // has a probability to give local player a gun that decreases with number of players
             // update items
-            player.updateItemList(otherPlayersList, otherPlayersItems);
+            player.updateItemList(otherPlayersList, otherPlayersItems,zoomRatio);
             
             // generate items
             player.generateItem(otherPlayersList.size()+1, dT, map, sql);
