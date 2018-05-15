@@ -165,17 +165,6 @@ public class Tools {
         return leftTest && rightTest && upTest && downTest;
     }
     
-<<<<<<< HEAD
-=======
-    public static boolean playerPicksItem(Player player, BonusItem item){
-        boolean test = item.getX() + item.getWidth()/2 < player.getPosX() + player.getPlayerWidth()
-                        && item.getX() + item.getWidth() > player.getPosX()
-                        && item.getY() < player.getPosY() + player.getPlayerHeight()
-                        && item.getY() + item.getHeight() > player.getPosY();
-        return test;
-    }
-    
->>>>>>> 7b1d83e1931c59746685ea9ddb8fb4b452e722a7
     public static void playRandomSoundFromList(ArrayList<SoundPlayer> list){
         list.get(ThreadLocalRandom.current().nextInt(0, list.size())).play();
     }

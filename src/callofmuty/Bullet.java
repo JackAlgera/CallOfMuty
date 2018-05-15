@@ -104,16 +104,11 @@ public class Bullet {
     public void draw(Graphics2D g2d, int textureSize, GamePanel game){
         if (isActive) {
             double zoomRatio = game.getZoomRatio()*game.getScreenSizeZoomRatio();
-<<<<<<< HEAD
             Image image = animationImages.get(bulletAnimation.getCurrentImage());
             g2d.drawImage(image,game.getGameX()+(int)((posX+(ballWidth-image.getWidth(null))/2)*zoomRatio),(int)((posY+(ballHeight-image.getHeight(null))/2)*zoomRatio),(int)(image.getWidth(null)*zoomRatio),(int)(image.getHeight(null)*zoomRatio), null);
             // drawing hitbox
             //Rectangle hitbox = getHitBox(zoomRatio);
             //g2d.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-=======
-            g2d.drawImage(animationImages.get(bulletAnimation.getCurrentImage()),game.getGameX()+(int)((posX - ballWidth/2)*zoomRatio),(int)((posY - ballHeight/2)*zoomRatio),(int)(texturesize/2*zoomRatio),(int)(texturesize/2*zoomRatio), null);
-            g2d.drawRect(game.getGameX()+(int)(posX*zoomRatio), (int)((posY)*zoomRatio), (int)(ballWidth*zoomRatio), (int)(ballHeight *zoomRatio));
->>>>>>> 7b1d83e1931c59746685ea9ddb8fb4b452e722a7
         }
     }
     

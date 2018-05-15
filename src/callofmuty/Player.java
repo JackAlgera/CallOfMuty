@@ -47,11 +47,6 @@ public class Player implements Comparable<Player>{
         facedDirection = 2;
         this.posX=x;
         this.posY=y;
-<<<<<<< HEAD
-=======
-        this.playerWidth=30;
-        this.playerHeight=55;
->>>>>>> 7b1d83e1931c59746685ea9ddb8fb4b452e722a7
         this.skinId = 1;
         teamId= 0;
         justTeleported = false;

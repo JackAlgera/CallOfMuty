@@ -119,15 +119,10 @@ public class BonusItem {
     public void draw(Graphics2D g2d, int texturesize, GamePanel game){
         if (isActive) {
             double zoomRatio = game.getZoomRatio()*game.getScreenSizeZoomRatio();
-<<<<<<< HEAD
             g2d.drawImage(image,game.getGameX()+(int)((x+((double)width-texturesize)/2)*zoomRatio),(int)((y+((double)height-texturesize)/2)*zoomRatio),(int)(texturesize*zoomRatio),(int)(texturesize*zoomRatio), null);
             // drawing hitbox
             //Rectangle hitbox = getHitBox(zoomRatio);
             //g2d.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-=======
-            g2d.drawImage(image,game.getGameX()+(int)(x*zoomRatio),(int)(y*zoomRatio),(int)(texturesize*zoomRatio),(int)(texturesize*zoomRatio), null);
-            g2d.drawRect(game.getGameX()+(int)(x*zoomRatio), (int)((y)*zoomRatio), (int)(width*zoomRatio), (int)(height *zoomRatio));
->>>>>>> 7b1d83e1931c59746685ea9ddb8fb4b452e722a7
         }
     }
     
