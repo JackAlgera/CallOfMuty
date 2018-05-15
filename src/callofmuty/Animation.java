@@ -8,21 +8,37 @@ public class Animation {
     int skinId, numberOfSkins;
     
     public static final int PLAYER = 0, GUN = 1, STILL_IMAGE = 2;
-    
-    public Animation(double switchTime, int numberOfImagesX, int numberOfImagesY, int animationImageLength, int firstImage, int type){
+    private static final int GUN_SWITCH_TIME = 130, GUN_NUMBER_OF_IMAGES_X = 5, GUN_NUMBER_OF_IMAGES_Y = 4, GUN_ANIMATION_IMAGE_LENTH = 5, GUN_FIRST_IMAGE = 1;
+    private static final int PLAYER_SWITCH_TIME = 115, PLAYER_NUMBER_OF_IMAGES_X = 8, PLAYER_NUMBER_OF_IMAGES_Y = 20, PLAYER_ANIMATION_IMAGE_LENTH = 8, PLAYER_FIRST_IMAGE = 1;
+            
+    public Animation(int type){
         skinId = 1;
         numberOfSkins = 4;
         this.type = type;
         row = 1;
         this.totalTime = 0;
-        this.switchTime = switchTime;
         numberOfImagesAnimation = new int[2];
-        this.numberOfImagesAnimation[0] = numberOfImagesX;
-        this.numberOfImagesAnimation[1] = numberOfImagesY;
-        this.currentImage = firstImage;
-        this.firstImage = firstImage;
-        this.animationImageLength = animationImageLength;
-        isIdle = false;
+        isIdle = false;  
+        
+        switch(type)
+        {
+            case GUN:
+                this.switchTime = GUN_SWITCH_TIME;
+                this.numberOfImagesAnimation[0] = GUN_NUMBER_OF_IMAGES_X;
+                this.numberOfImagesAnimation[1] = GUN_NUMBER_OF_IMAGES_Y;
+                this.currentImage = GUN_FIRST_IMAGE;
+                this.firstImage = GUN_FIRST_IMAGE;
+                this.animationImageLength = GUN_ANIMATION_IMAGE_LENTH;
+                break;
+            case PLAYER:
+                this.switchTime = PLAYER_SWITCH_TIME;
+                this.numberOfImagesAnimation[0] = PLAYER_NUMBER_OF_IMAGES_X;
+                this.numberOfImagesAnimation[1] = PLAYER_NUMBER_OF_IMAGES_Y;
+                this.currentImage = PLAYER_FIRST_IMAGE;
+                this.firstImage = PLAYER_FIRST_IMAGE;
+                this.animationImageLength = PLAYER_ANIMATION_IMAGE_LENTH;
+                break;
+        }
     }
     
     public void update(double dT)

@@ -56,13 +56,14 @@ public class Player implements Comparable<Player>{
         destroyedBullets = new ArrayList<>();
         lifeCounter = 5;
         
-        this.playerAnimation = new Animation(115,8,20,8,1,Animation.PLAYER); // en ms
+        this.playerAnimation = new Animation(Animation.PLAYER); // en ms
         
         for (int i=0; i<playerAnimation.getNumberOfImagesY(); i++){
             for (int j=0; j<playerAnimation.getNumberOfImagesX(); j++){
                 animationImages.add(Tools.selectPlayerTile(Tools.PlayerTilesetAnimated, i+1, j+1));
             }
         }
+        
         lastMeleeAttackTimeStamp = System.currentTimeMillis();
         lastRollTimeStamp = System.currentTimeMillis();
         imageHeight = animationImages.get(0).getHeight(null)/2;
@@ -90,7 +91,6 @@ public class Player implements Comparable<Player>{
         bulletList = new ArrayList<>();
         gun = new Gun();
         fillSoundPlayers();
-        
     }
 
     public void fillSoundPlayers(){
@@ -679,7 +679,7 @@ public class Player implements Comparable<Player>{
                 gunId = Gun.LEGENDARY_WEAPON; // 4%
             }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
-            gun.setId(gunId, numberOfCartridges);
+            gun.setId(Gun.LEGENDARY_WEAPON, numberOfCartridges);
         }
     }
     

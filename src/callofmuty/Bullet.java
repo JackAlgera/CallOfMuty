@@ -34,9 +34,9 @@ public class Bullet {
         speed = 0;
         isActive = true;
         
-        this.bulletAnimation = new Animation(75,6,2,5,2,Animation.GUN);// in ms
-        //setAnimationRow();
-        bulletAnimation.setRow(2);
+        this.bulletAnimation = new Animation(Animation.GUN);// in ms
+        bulletAnimation.setAnimation(Animation.STILL_IMAGE);
+        setAnimationRow();
         for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++)
         {
             for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++)
@@ -63,9 +63,9 @@ public class Bullet {
         travelledDistance = 0;
         timeOfDeactivation = System.currentTimeMillis()-TIME_BEFORE_REACTIVATING;
         this.maxRange = maxRange;
-        bulletAnimation = new Animation(130,6,2,5,2,Animation.STILL_IMAGE);// in ms
-        //setAnimationRow();
-        bulletAnimation.setRow(2);
+        bulletAnimation = new Animation(Animation.GUN);
+        bulletAnimation.setAnimation(Animation.STILL_IMAGE);
+        setAnimationRow();
         
         for (int i=0; i<bulletAnimation.getNumberOfImagesY(); i++){
             for (int j=0; j<bulletAnimation.getNumberOfImagesX(); j++){
@@ -88,6 +88,7 @@ public class Bullet {
     
     public void setBulletType(int bulletType){
         this.bulletType = bulletType;
+        setAnimationRow();
     }
     
     public void update(double dT) {
@@ -257,6 +258,7 @@ public class Bullet {
                 break;
             case Bullet.MELEE:
                 bulletAnimation.setRow(4);
+                break;
             default:
                 bulletAnimation.setRow(2);
         }
