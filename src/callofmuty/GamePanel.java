@@ -75,7 +75,7 @@ public class GamePanel extends JPanel{
     
     public static final int MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5,
             IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1,
-            NUMBER_OF_MAPS = 6;
+            NUMBER_OF_MAPS = 8;
     private static final int FONTSIZE = 18, NUMBER_OF_SKINS = 5; // Font size for textFields (gets scaled with zoomFactor)
     
     private SoundPlayer menuMusicPlayer, gameMusicPlayer, clicSoundPlayer, victorySoundPlayer, defeatSoundPlayer;
