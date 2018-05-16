@@ -275,11 +275,14 @@ public class Player implements Comparable<Player>{
     }
     
     public void drawBullets(Graphics2D g, int textureSize, GamePanel game) {
-        for (Bullet bullet : bulletList) {
-            bullet.draw(g, textureSize, game);
+        for (int i=0; i<bulletList.size(); i++)
+        {
+            bulletList.get(i).draw(g, textureSize, game);
         }
-        for (Bullet bullet : destroyedBullets){
-            bullet.draw(g, textureSize, game);
+        
+        for (int i=0; i<destroyedBullets.size(); i++)
+        {
+            destroyedBullets.get(i).draw(g, textureSize, game);
         }
     }
     
