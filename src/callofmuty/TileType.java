@@ -1,6 +1,7 @@
 package callofmuty;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public class TileType {
@@ -8,6 +9,7 @@ public class TileType {
     private boolean blocksPlayers, hasSubImage, blocksBullets;
     private BufferedImage image, subImage;
     private Effect effect;
+    private Rectangle hitbox;
 
     TileType(boolean blocksPlayers, boolean blocksBullets, int column, int row, Effect effect){
         this.blocksPlayers = blocksPlayers;
@@ -26,6 +28,26 @@ public class TileType {
         this.blocksBullets = blocksBullets;
         this.effect = effect;
     }
+    
+    TileType(boolean blocksPlayers, boolean blocksBullets, int column, int row, Effect effect, Rectangle hitbox){
+        this.blocksPlayers = blocksPlayers;
+        image = Tools.selectTile(Tools.tileset, column, row);
+        hasSubImage = false;
+        subImage = null;
+        this.blocksBullets = blocksBullets;
+        this.effect = effect;
+        this.hitbox = hitbox;
+    }
+    
+    TileType(boolean blocksPlayers, boolean blocksBullets, int column, int row, int subImageColumn, int subImageRow, Effect effect, Rectangle hitbox){
+        this.blocksPlayers = blocksPlayers;
+        image = Tools.selectTile(Tools.tileset, column, row);
+        hasSubImage = true;
+        subImage = Tools.selectTile(Tools.tileset, subImageColumn, subImageRow);
+        this.blocksBullets = blocksBullets;
+        this.effect = effect;
+        this.hitbox = hitbox;
+    }
 
     public boolean blocksPlayers() {
         return blocksPlayers;
@@ -37,6 +59,10 @@ public class TileType {
 
     public BufferedImage getImage() {
        return this.image;
+    }
+    
+    public Rectangle getHitbox(){
+        return hitbox;
     }
     
     public void draw(Graphics2D g2d, int x, int y, int xTextureSize, int yTextureSize){

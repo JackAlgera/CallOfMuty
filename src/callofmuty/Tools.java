@@ -1,5 +1,6 @@
 package callofmuty;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -148,28 +149,21 @@ public class Tools {
         }
     }
     
-    public static boolean playerCanCross(double x, double y, int objectWidth, int objectHeight, Map map) {
-        boolean playerCanCross = !map.getTile(x,y).blocksPlayers() 
-                                    && !map.getTile(x + objectWidth, y).blocksPlayers() 
-                                    && !map.getTile(x, y + objectHeight).blocksPlayers() 
-                                    && !map.getTile(x + objectWidth, y + objectHeight).blocksPlayers();
-        return playerCanCross;
+    public static boolean playerCanCross(double x, double y, double width, double height, Map map) {
+        Rectangle playerHitbox = new Rectangle((int)x,(int)y,(int)width,(int)height);
+        boolean topLeftTest = !map.getTile(x,y).blocksPlayers() || !hitboxCollision(playerHitbox, map.getTileHitbox(x, y));
+        boolean topRightTest = !map.getTile(x+width,y).blocksPlayers() || !hitboxCollision(playerHitbox, map.getTileHitbox(x+width, y));
+        boolean bottomLeftTest = !map.getTile(x,y+height).blocksPlayers() || !hitboxCollision(playerHitbox, map.getTileHitbox(x, y+height));
+        boolean bottomRightTest = !map.getTile(x+width,y+height).blocksPlayers() || !hitboxCollision(playerHitbox, map.getTileHitbox(x+width, y+height));
+        return topLeftTest && topRightTest && bottomLeftTest && bottomRightTest;
     }
     
-    public static boolean isPlayerHit(Player player, Bullet bullet){        
-        boolean leftTest = bullet.getPosX() < player.getPosX()+player.getPlayerWidth();
-        boolean rightTest = bullet.getPosX() + bullet.getBallWidth() > player.getPosX();
-        boolean upTest = bullet.getPosY() < player.getPosY() + player.getPlayerHeight();
-        boolean downTest = bullet.getPosY() + bullet.getBallHeight() > player.getPosY();
+    public static boolean hitboxCollision(Rectangle hitBox1, Rectangle hitBox2){        
+        boolean leftTest = hitBox1.x < hitBox2.x+hitBox2.width;
+        boolean rightTest = hitBox1.x + hitBox1.width > hitBox2.x;
+        boolean upTest = hitBox1.y < hitBox2.y + hitBox2.height;
+        boolean downTest = hitBox1.y + hitBox1.height > hitBox2.y;
         return leftTest && rightTest && upTest && downTest;
-    }
-    
-    public static boolean playerPicksItem(Player player, BonusItem item){
-        boolean test = item.getX() < player.getPosX() + player.getPlayerWidth()
-                        && item.getX() + item.getWidth() > player.getPosX()
-                        && item.getY() < player.getPosY() + player.getPlayerHeight()
-                        && item.getY() + item.getHeight() > player.getPosY();
-        return test;
     }
     
     public static void playRandomSoundFromList(ArrayList<SoundPlayer> list){

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -1312,17 +1311,20 @@ public class GamePanel extends JPanel{
         // sql downloads
         sql.downloadPlayersAndBullets(player, otherPlayersList, otherPlayersBullets, otherPlayersItems, map);
         boolean TeamWasKilled = player.isTeamkilled(otherPlayersList, false); // used to check if team died
+        double zoomRatio = getZoomRatio();
         if (!player.isDead()) {
             // Update bullets
             player.updateBulletList(dT, map, otherPlayersList);
             // gun generation
             player.generateGun(otherPlayersList.size() + 1, dT, gameMode); // has a probability to give local player a gun that decreases with number of players
+            
             // update items
             player.updateItemList(otherPlayersList, otherPlayersItems);
             
             // generate items
-            player.generateItem(otherPlayersList.size()+1, dT, map, sql);
-            
+            if(gameMode.getOption(2)){
+                player.generateItem(otherPlayersList.size()+1, dT, map, sql);
+            }
             // sql uploads
             sql.uploadPlayerAndBullets(player);
         } else if(TeamWasKilled && !endShowed){ // team just died : show defeat screen
@@ -1414,9 +1416,9 @@ public class GamePanel extends JPanel{
     ---------------------------------------------------------------------------------------------------------------
     */
     
-    public void roll(){
+    public void dash(){
         if(gameState==IN_GAME){
-            player.roll();
+            player.dash();
         }
     }
     
@@ -1463,7 +1465,7 @@ public class GamePanel extends JPanel{
         if (isHost) {
             // Try to create a game
             ArrayList<Player> playerList = sql.getPlayerList();
-            if (playerList.size()<2) { // No game is currently on
+            if (playerList.size()<2 && sqlGame[0]!=PRE_GAME) { // No game is currently on
                 sql.clearTable(); //Clear previous game on SQL server
                 sql.createGame(map, gameMode);
                 player.reset(map, muteSounds);
@@ -1758,8 +1760,6 @@ public class GamePanel extends JPanel{
                 player.drawBullets(g2d, map.getTextureSize(), this);
 
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int) (30 * zoomRatio)));
-                g2d.setColor(Color.BLACK);
-                g2d.drawString(gameMode.getName(), (int) ((getGameWidth() - 192 * zoomRatio) / 2), (int) ((getGameHeight() - 32) * zoomRatio));
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int) (15 * zoomRatio)));
 
                 for (Player otherPlayer : otherPlayersList) {

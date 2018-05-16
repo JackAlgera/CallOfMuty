@@ -3,6 +3,7 @@ package callofmuty;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -11,12 +12,12 @@ public class Player implements Comparable<Player>{
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
-    private static double rollSpeedMultiplier = 3, meleeDamage = 25;
-    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 500, meleeRange = 50, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
-    private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5;
+    private static double rollSpeedMultiplier = 3, meleeDamage = 25, feetHeight = 0.4;
+    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 150, meleeRange = 25, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
+    private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5, playerWidth= 35, playerHeight = 55;
     public static int PLAYING = 1,DEAD = 2;
     
-    private int playerId, playerWidth, playerHeight, facedDirection, playerState, teamId, lifeCounter;
+    private int playerId, facedDirection, playerState, teamId, lifeCounter;
     private Image hpBar;
     private double maxSpeed, accelerationValue, posX, posY, wantedX, wantedY; 
     private double[] speed, acceleration;
@@ -46,8 +47,6 @@ public class Player implements Comparable<Player>{
         facedDirection = 2;
         this.posX=x;
         this.posY=y;
-        this.playerWidth=35;
-        this.playerHeight=55;
         this.skinId = 1;
         teamId= 0;
         justTeleported = false;
@@ -66,8 +65,8 @@ public class Player implements Comparable<Player>{
         
         lastMeleeAttackTimeStamp = System.currentTimeMillis();
         lastRollTimeStamp = System.currentTimeMillis();
-        imageHeight = animationImages.get(0).getHeight(null)/2;
-        imageWidth = animationImages.get(0).getWidth(null)/2;
+        imageHeight = animationImages.get(0).getHeight(null)/2; // 32x32
+        imageWidth = animationImages.get(0).getWidth(null)/2;   // 32x32
         numberOfSkins = 3;
         playerAnimation.setRow((skinId - 1) * 4 + numberOfSkins);
         maxSpeed = 0.3; //in pixel per ms
@@ -257,7 +256,22 @@ public class Player implements Comparable<Player>{
             gun.draw(g, this, game);
             g.setColor(Color.RED);
             g.fillRect(game.getGameX()+(int)((posX + playerWidth / 2 - imageWidth + 12)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 6)*zoomRatio), (int) ((imageWidth * 2 - 24) * health / maxHealth*zoomRatio), (int)(2*zoomRatio));
+            // drawing hitbox
+            /*Rectangle hitbox = getHitBox();
+            g.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+            g.setColor(Color.GREEN);
+            hitbox = getFeetHitbox();
+            g.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+            g.setColor(Color.RED);*/
         }
+    }
+    
+    public Rectangle getHitBox(){
+        return new Rectangle((int)(posX),(int)(posY),(int)(playerWidth),(int)(playerHeight));
+    }
+    
+    public Rectangle getFeetHitbox(){
+        return new Rectangle((int)(posX),(int)(posY+(1-feetHeight)*playerHeight),(int)(playerWidth),(int)(feetHeight*playerHeight));
     }
     
     public void drawBullets(Graphics2D g, int textureSize, GamePanel game) {
@@ -417,21 +431,20 @@ public class Player implements Comparable<Player>{
     }
     
     public void updateTileEffects(Map map){
-        double[] xValues = new double[]{posX+playerWidth*0.05, posX+playerWidth*0.05, posX+playerWidth*0.95, posX+playerWidth*0.95};
-        double[] yValues = new double[]{posY+playerHeight*0.65, posY+playerHeight, posY+playerHeight*0.65, posY+playerHeight};
+        Rectangle feet = getFeetHitbox();
+        double[] xValues = new double[]{feet.x, feet.x, feet.x+feet.width, feet.x+feet.height};
+        double[] yValues = new double[]{feet.y, feet.y+feet.width, feet.y, feet.y+feet.width};
         Effect effect;
         for (int i = 0; i<4; i++ ) {
             effect = map.getTile(xValues[i], yValues[i]).getEffect();
-            if (effect.getId()!=Effect.NO_EFFECT) {
+            if (effect.getId()!=Effect.NO_EFFECT && Tools.hitboxCollision(feet, map.getTileHitbox(xValues[i], yValues[i]))) {
                 addEffect(effect);
             }
         }
     }
     
     public void checkTeleports(Map map){
-        double[] xValues = new double[]{posX+playerWidth*0.05, posX+playerWidth*0.05, posX+playerWidth*0.95, posX+playerWidth*0.95};
-        double[] yValues = new double[]{posY+playerHeight*0.65, posY+playerHeight, posY+playerHeight*0.65, posY+playerHeight};
-        int[] destination = map.teleporterDestination(xValues, yValues); // returns {-1, -1} if not on a teleporter, else returns new position
+        int[] destination = map.teleporterDestination(getFeetHitbox()); // returns {-1, -1} if not on a teleporter, else returns new position
         if(justTeleported){
             justTeleported = destination[0]!=-1;
         } else if(destination[0]!=-1){
@@ -584,7 +597,7 @@ public class Player implements Comparable<Player>{
                         bullet.setActive(false);
                     } else {
                         for (Player otherPlayer : otherPlayersList) {
-                            if (Tools.isPlayerHit(otherPlayer, bullet) && !this.isFriend(otherPlayer)) {
+                            if (Tools.hitboxCollision(otherPlayer.getHitBox(), bullet.getHitBox()) && !this.isFriend(otherPlayer)) {
                                 bullet.setActive(false);
                                 hurtPlayer = new Player(otherPlayer.getPlayerId());
                                 hurtPlayer.setHealth(bullet.getDamage());
@@ -594,13 +607,17 @@ public class Player implements Comparable<Player>{
                     }
                 } else if (bullet.destroyedByMap(map)) {
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
+                    Bullet animatedBullet = new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType());
+                    animatedBullet.setAnimationState(Animation.GUN);
+                    destroyedBullets.add(animatedBullet);
                 } else if(bullet.getTravelledDistance()>bullet.getMaxRange()){
                     bullet.setActive(false);
-                    destroyedBullets.add(new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType()));
+                    Bullet animatedBullet = new Bullet(bullet.getPosX(), bullet.getPosY(), bullet.getBulletType());
+                    animatedBullet.setAnimationState(Animation.GUN);
+                    destroyedBullets.add(animatedBullet);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
-                        if (Tools.isPlayerHit(otherPlayer, bullet) && !this.isFriend(otherPlayer)) {
+                        if (Tools.hitboxCollision(otherPlayer.getHitBox(), bullet.getHitBox()) && !this.isFriend(otherPlayer)) {
                             bullet.setActive(false);
                             hurtPlayer = new Player(otherPlayer.getPlayerId());
                             hurtPlayer.setHealth(bullet.getDamage());
@@ -646,7 +663,6 @@ public class Player implements Comparable<Player>{
         return test;
     }
 
-
     public void generateGun(int numberOfPlayers, long dT, GameMode gameMode) {
         boolean generateWeapon;
         switch (gameMode.getGunGestion()) {
@@ -679,7 +695,7 @@ public class Player implements Comparable<Player>{
             } else if(gunRandom<0.96){
                 gunId = Gun.FLAMETHROWER; // 4%
             } else {
-                gunId = Gun.LEGENDARY_WEAPON; // 4%
+                gunId = Gun.LEGENDARY_WEAPON; // 4%sssssss
             }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
             gun.setId(gunId, numberOfCartridges);
@@ -689,7 +705,7 @@ public class Player implements Comparable<Player>{
     public void meleeAttack(double[] directionOfFire, SQLManager sql) {
         if (System.currentTimeMillis()-timeBetweenMeleeAttacks>=lastMeleeAttackTimeStamp){
             lastMeleeAttackTimeStamp = System.currentTimeMillis();
-            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 1.0 , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
+            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 3.0 , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
         }
     }
     
@@ -793,9 +809,9 @@ public class Player implements Comparable<Player>{
         hurtSelf(health+1);
     }
 
-    public void roll() {
+    public void dash() {
         if(!isDead && System.currentTimeMillis()-lastRollTimeStamp>timeBetweenRolls){
-            lastRollTimeStamp = 0;
+            lastRollTimeStamp = System.currentTimeMillis();
             isRolling = true;
             speed[0] *=rollSpeedMultiplier;
             speed[1] *=rollSpeedMultiplier;
@@ -830,12 +846,12 @@ public class Player implements Comparable<Player>{
         for (int i = 0; i<itemList.size(); i++) {
             item = itemList.get(i);
             if (item.isActive()) {
-                if(Tools.playerPicksItem(this, item)){
+                if(Tools.hitboxCollision(this.getHitBox(), item.getHitBox())){
                     addEffect(item.getEffect());
                     item.setActive(false);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
-                        if (Tools.playerPicksItem(otherPlayer, item)) {
+                        if (Tools.hitboxCollision(otherPlayer.getHitBox(), item.getHitBox())) {
                             item.setActive(false);
                         }
                     }
@@ -850,7 +866,7 @@ public class Player implements Comparable<Player>{
         BonusItem item;
         while(index < otherPlayersItems.size()){
             item = otherPlayersItems.get(index);
-            if (Tools.playerPicksItem(this, item)) {
+            if (Tools.hitboxCollision(this.getHitBox(), item.getHitBox())) {
                 addEffect(item.getEffect());
                 pickedItems.add(item);
                 otherPlayersItems.remove(index);

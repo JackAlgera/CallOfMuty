@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class KeyboardManager {
 
     private int[] moveUp, moveDown, moveRight, moveLeft;
-    private int roll, taunt, quit;
+    private int dash, taunt, quit;
     private GamePanel game;
     
     private ArrayList<Integer> pressedKeys, releasedKeys;
@@ -17,7 +17,7 @@ public class KeyboardManager {
         moveDown = new int[]{KeyEvent.VK_S, KeyEvent.VK_DOWN};
         moveLeft = new int[]{KeyEvent.VK_Q, KeyEvent.VK_LEFT};
         moveRight = new int[]{KeyEvent.VK_D, KeyEvent.VK_RIGHT};
-        roll = KeyEvent.VK_SPACE;
+        dash = KeyEvent.VK_SPACE;
         taunt = KeyEvent.VK_F;
         quit = KeyEvent.VK_ESCAPE;
         pressedKeys = new ArrayList<>();
@@ -113,15 +113,15 @@ public class KeyboardManager {
     }
     
     private boolean keyIsKnown(int keyCode){
-        return (keyCode==roll || keyCode==taunt || keyCode==quit || needToDetectRelease(keyCode));
+        return (keyCode==dash || keyCode==taunt || keyCode==quit || needToDetectRelease(keyCode));
     }
     
     public void keyPressed(KeyEvent e){
         int keyCode = e.getKeyCode();
         if(keyIsKnown(keyCode) && !pressedKeys.contains(keyCode)){
             pressedKeys.add(keyCode);
-            if(keyCode==roll){
-                game.roll();
+            if(keyCode==dash){
+                game.dash();
             } else if(keyCode==taunt){
                 game.taunt();
             } else if(keyCode==quit){

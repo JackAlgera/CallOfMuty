@@ -1,6 +1,7 @@
 package callofmuty;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public class BonusItem {
@@ -10,7 +11,7 @@ public class BonusItem {
     private static long TIME_BEFORE_REACTIVATING = 1000, HEALING_DURATION = 3000, SPEED_BOOST_DURATION = 3000; // in ms
     private static BufferedImage healingImage = Tools.selectTile(Tools.tileset, 2, 7), speedBoostImage = Tools.selectTile(Tools.tileset, 2, 8);
 
-    private int x, y, width = 20, height = 20, type, id, playerId;
+    private int x, y, width = 30, height = 30, type, id, playerId;
     private boolean isActive;
     private long timeOfDeactivation;
     private BufferedImage image;
@@ -118,8 +119,15 @@ public class BonusItem {
     public void draw(Graphics2D g2d, int texturesize, GamePanel game){
         if (isActive) {
             double zoomRatio = game.getZoomRatio()*game.getScreenSizeZoomRatio();
-            g2d.drawImage(image,game.getGameX()+(int)(x*zoomRatio),(int)(y*zoomRatio),(int)(texturesize*zoomRatio),(int)(texturesize*zoomRatio), null);
+            g2d.drawImage(image,game.getGameX()+(int)((x+((double)width-texturesize)/2)*zoomRatio),(int)((y+((double)height-texturesize)/2)*zoomRatio),(int)(texturesize*zoomRatio),(int)(texturesize*zoomRatio), null);
+            // drawing hitbox
+            //Rectangle hitbox = getHitBox();
+            //g2d.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
         }
+    }
+    
+    public Rectangle getHitBox(){
+        return new Rectangle((int)(x),(int)(y),(int)(width),(int)(height));
     }
 
     @Override
