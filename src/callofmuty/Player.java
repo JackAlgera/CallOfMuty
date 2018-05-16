@@ -12,7 +12,7 @@ public class Player implements Comparable<Player>{
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
-    private static double rollSpeedMultiplier = 3, meleeDamage = 10;
+    private static double rollSpeedMultiplier = 3, meleeDamage = 10, feetHeight = 0.4;
     private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 75, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
     private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5, playerWidth= 35, playerHeight = 55;
     public static int PLAYING = 1,DEAD = 2;
@@ -257,13 +257,21 @@ public class Player implements Comparable<Player>{
             g.setColor(Color.RED);
             g.fillRect(game.getGameX()+(int)((posX + playerWidth / 2 - imageWidth + 12)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 6)*zoomRatio), (int) ((imageWidth * 2 - 24) * health / maxHealth*zoomRatio), (int)(2*zoomRatio));
             // drawing hitbox
-            //Rectangle hitbox = getHitBox(zoomRatio);
-            //g.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+            /*Rectangle hitbox = getHitBox();
+            g.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+            g.setColor(Color.GREEN);
+            hitbox = getFeetHitbox();
+            g.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+            g.setColor(Color.RED);*/
         }
     }
     
-    public Rectangle getHitBox(double zoomRatio){
-        return new Rectangle((int)(posX*zoomRatio),(int)(posY*zoomRatio),(int)(playerWidth*zoomRatio),(int)(playerHeight*zoomRatio));
+    public Rectangle getHitBox(){
+        return new Rectangle((int)(posX),(int)(posY),(int)(playerWidth),(int)(playerHeight));
+    }
+    
+    public Rectangle getFeetHitbox(){
+        return new Rectangle((int)(posX),(int)(posY+(1-feetHeight)*playerHeight),(int)(playerWidth),(int)(feetHeight*playerHeight));
     }
     
     public void drawBullets(Graphics2D g, int textureSize, GamePanel game) {
@@ -423,21 +431,20 @@ public class Player implements Comparable<Player>{
     }
     
     public void updateTileEffects(Map map){
-        double[] xValues = new double[]{posX+playerWidth*0.05, posX+playerWidth*0.05, posX+playerWidth*0.95, posX+playerWidth*0.95};
-        double[] yValues = new double[]{posY+playerHeight*0.65, posY+playerHeight, posY+playerHeight*0.65, posY+playerHeight};
+        Rectangle feet = getFeetHitbox();
+        double[] xValues = new double[]{feet.x, feet.x, feet.x+feet.width, feet.x+feet.height};
+        double[] yValues = new double[]{feet.y, feet.y+feet.width, feet.y, feet.y+feet.width};
         Effect effect;
         for (int i = 0; i<4; i++ ) {
             effect = map.getTile(xValues[i], yValues[i]).getEffect();
-            if (effect.getId()!=Effect.NO_EFFECT) {
+            if (effect.getId()!=Effect.NO_EFFECT && Tools.hitboxCollision(feet, map.getTileHitbox(xValues[i], yValues[i]))) {
                 addEffect(effect);
             }
         }
     }
     
     public void checkTeleports(Map map){
-        double[] xValues = new double[]{posX+playerWidth*0.05, posX+playerWidth*0.05, posX+playerWidth*0.95, posX+playerWidth*0.95};
-        double[] yValues = new double[]{posY+playerHeight*0.65, posY+playerHeight, posY+playerHeight*0.65, posY+playerHeight};
-        int[] destination = map.teleporterDestination(xValues, yValues); // returns {-1, -1} if not on a teleporter, else returns new position
+        int[] destination = map.teleporterDestination(getFeetHitbox()); // returns {-1, -1} if not on a teleporter, else returns new position
         if(justTeleported){
             justTeleported = destination[0]!=-1;
         } else if(destination[0]!=-1){
@@ -575,7 +582,7 @@ public class Player implements Comparable<Player>{
         return animationImages.get(playerAnimation.getCurrentImage());
     }
     
-    public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList, double zoomRatio){
+    public void updateBulletList(long dT, Map map, ArrayList<Player> otherPlayersList){
         Bullet bullet;
         Player hurtPlayer;
         for (int i = 0; i<bulletList.size(); i++) {
@@ -587,7 +594,7 @@ public class Player implements Comparable<Player>{
                         bullet.setActive(false);
                     } else {
                         for (Player otherPlayer : otherPlayersList) {
-                            if (Tools.hitboxCollision(otherPlayer.getHitBox(zoomRatio), bullet.getHitBox(zoomRatio)) && !this.isFriend(otherPlayer)) {
+                            if (Tools.hitboxCollision(otherPlayer.getHitBox(), bullet.getHitBox()) && !this.isFriend(otherPlayer)) {
                                 bullet.setActive(false);
                                 hurtPlayer = new Player(otherPlayer.getPlayerId());
                                 hurtPlayer.setHealth(bullet.getDamage());
@@ -607,7 +614,7 @@ public class Player implements Comparable<Player>{
                     destroyedBullets.add(animatedBullet);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
-                        if (Tools.hitboxCollision(otherPlayer.getHitBox(zoomRatio), bullet.getHitBox(zoomRatio)) && !this.isFriend(otherPlayer)) {
+                        if (Tools.hitboxCollision(otherPlayer.getHitBox(), bullet.getHitBox()) && !this.isFriend(otherPlayer)) {
                             bullet.setActive(false);
                             hurtPlayer = new Player(otherPlayer.getPlayerId());
                             hurtPlayer.setHealth(bullet.getDamage());
@@ -831,32 +838,32 @@ public class Player implements Comparable<Player>{
         }
     }
 
-    public void updateItemList(ArrayList<Player> otherPlayersList, ArrayList<BonusItem> otherPlayersItems, double zoomRatio) {
+    public void updateItemList(ArrayList<Player> otherPlayersList, ArrayList<BonusItem> otherPlayersItems) {
         BonusItem item;
         for (int i = 0; i<itemList.size(); i++) {
             item = itemList.get(i);
             if (item.isActive()) {
-                if(Tools.hitboxCollision(this.getHitBox(zoomRatio), item.getHitBox(zoomRatio))){
+                if(Tools.hitboxCollision(this.getHitBox(), item.getHitBox())){
                     addEffect(item.getEffect());
                     item.setActive(false);
                 } else {
                     for (Player otherPlayer : otherPlayersList) {
-                        if (Tools.hitboxCollision(otherPlayer.getHitBox(zoomRatio), item.getHitBox(zoomRatio))) {
+                        if (Tools.hitboxCollision(otherPlayer.getHitBox(), item.getHitBox())) {
                             item.setActive(false);
                         }
                     }
                 }
             }
         }
-        updateOtherItems(otherPlayersItems, zoomRatio);
+        updateOtherItems(otherPlayersItems);
     }
     
-    public void updateOtherItems(ArrayList<BonusItem> otherPlayersItems, double zoomRatio){
+    public void updateOtherItems(ArrayList<BonusItem> otherPlayersItems){
         int index = 0;
         BonusItem item;
         while(index < otherPlayersItems.size()){
             item = otherPlayersItems.get(index);
-            if (Tools.hitboxCollision(this.getHitBox(zoomRatio), item.getHitBox(zoomRatio))) {
+            if (Tools.hitboxCollision(this.getHitBox(), item.getHitBox())) {
                 addEffect(item.getEffect());
                 pickedItems.add(item);
                 otherPlayersItems.remove(index);

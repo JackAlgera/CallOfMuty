@@ -107,13 +107,13 @@ public class Bullet {
             Image image = animationImages.get(bulletAnimation.getCurrentImage());
             g2d.drawImage(image,game.getGameX()+(int)((posX+(ballWidth-image.getWidth(null))/2)*zoomRatio),(int)((posY+(ballHeight-image.getHeight(null))/2)*zoomRatio),(int)(image.getWidth(null)*zoomRatio),(int)(image.getHeight(null)*zoomRatio), null);
             // drawing hitbox
-            //Rectangle hitbox = getHitBox(zoomRatio);
+            //Rectangle hitbox = getHitBox();
             //g2d.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
         }
     }
     
-    public Rectangle getHitBox(double zoomRatio){
-        return new Rectangle((int)(posX*zoomRatio),(int)(posY*zoomRatio),(int)(ballWidth*zoomRatio),(int)(ballHeight*zoomRatio));
+    public Rectangle getHitBox(){
+        return new Rectangle((int)(posX),(int)(posY),(int)(ballWidth),(int)(ballHeight));
     }
     
     

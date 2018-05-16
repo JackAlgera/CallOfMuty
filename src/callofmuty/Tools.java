@@ -149,12 +149,13 @@ public class Tools {
         }
     }
     
-    public static boolean playerCanCross(double x, double y, int objectWidth, int objectHeight, Map map) {
-        boolean playerCanCross = !map.getTile(x,y).blocksPlayers() 
-                                    && !map.getTile(x + objectWidth, y).blocksPlayers() 
-                                    && !map.getTile(x, y + objectHeight).blocksPlayers() 
-                                    && !map.getTile(x + objectWidth, y + objectHeight).blocksPlayers();
-        return playerCanCross;
+    public static boolean playerCanCross(double x, double y, double width, double height, Map map) {
+        Rectangle playerHitbox = new Rectangle((int)x,(int)y,(int)width,(int)height);
+        boolean topLeftTest = !map.getTile(x,y).blocksPlayers() || !hitboxCollision(playerHitbox, map.getTileHitbox(x, y));
+        boolean topRightTest = !map.getTile(x+width,y).blocksPlayers() || !hitboxCollision(playerHitbox, map.getTileHitbox(x+width, y));
+        boolean bottomLeftTest = !map.getTile(x,y+height).blocksPlayers() || !hitboxCollision(playerHitbox, map.getTileHitbox(x, y+height));
+        boolean bottomRightTest = !map.getTile(x+width,y+height).blocksPlayers() || !hitboxCollision(playerHitbox, map.getTileHitbox(x+width, y+height));
+        return topLeftTest && topRightTest && bottomLeftTest && bottomRightTest;
     }
     
     public static boolean hitboxCollision(Rectangle hitBox1, Rectangle hitBox2){        

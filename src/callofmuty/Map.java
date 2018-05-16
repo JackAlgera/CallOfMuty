@@ -3,6 +3,7 @@ package callofmuty;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.JOptionPane;
@@ -11,13 +12,13 @@ public class Map{
     
     private static TileType dirt = new TileType(false, false,1,1,new Effect()),
             // map borders
-            woodt= new TileType(true, true,1,12,new Effect()), woodb= new TileType(true, true,3,12,new Effect()), woodl= new TileType(true, true,2,11,1,1,new Effect()), woodr= new TileType(true, true,2,13,1,1,new Effect()), woodtl= new TileType(true, true,1,11,new Effect()), woodbl= new TileType(true, true,3,11,new Effect()), woodtr= new TileType(true, true,1,13,new Effect()), woodbr= new TileType(true, true,3,13,new Effect()),
+            woodt= new TileType(true, true,1,12,new Effect(), new Rectangle(0,0,64,64)), woodb= new TileType(true, true,3,12,new Effect(), new Rectangle(0,0,64,64)), woodl= new TileType(true, true,2,11,1,1,new Effect(), new Rectangle(0,0,60,64)), woodr= new TileType(true, true,2,13,1,1,new Effect(), new Rectangle(4,0,60,64)), woodtl= new TileType(true, true,1,11,new Effect(), new Rectangle(0,0,64,64)), woodbl= new TileType(true, true,3,11,new Effect(), new Rectangle(0,0,64,64)), woodtr= new TileType(true, true,1,13,new Effect(), new Rectangle(0,0,64,64)), woodbr= new TileType(true, true,3,13,new Effect(), new Rectangle(0,0,64,64)),
             // obstacles
-            box = new TileType(true, true,2,6,1,1,new Effect()),
+            box = new TileType(true, true,2,6,1,1,new Effect(), new Rectangle(2,2,56,60)),
             // bad effects
-            hole = new TileType(false, false,3,7,new Effect(Effect.FALL_TO_DEATH, 10000, 0)), mud = new TileType(false, false, 3,6,new Effect(Effect.SLOWED, 300, 0.75)), hotGround = new TileType(false, false, 4,6,new Effect(Effect.BURNING, 500, 10)),
+            hole = new TileType(false, false,3,7,new Effect(Effect.FALL_TO_DEATH, 10000, 0), new Rectangle(4,4,56,56)), mud = new TileType(false, false, 3,6,new Effect(Effect.SLOWED, 300, 0.75), new Rectangle(4,4,56,56)), hotGround = new TileType(false, false, 4,6,new Effect(Effect.BURNING, 500, 10), new Rectangle(4,4,56,56)),
             // other
-            teleporter = new TileType(false, false, 5,6, new Effect());
+            teleporter = new TileType(false, false, 5,6, new Effect(), new Rectangle(4,4,56,56));
     public static int TELEPORTER_ID = 13, NUMBER_OF_TILETYPES = 14;
         
     private int[][] map;
@@ -137,6 +138,31 @@ public class Map{
         return getTile(map[i][j]);
     }
     
+    public Rectangle getTileHitbox(double x, double y){
+        int i = (int)x/textureSize;
+        int j = (int)y/textureSize;
+        
+        if (i > mapWidth-1){
+            i = mapWidth-1;
+        }
+        if (i < 0){
+            i = 0;
+        }
+        if (j > mapHeight-1){
+            j = mapHeight-1;
+        }
+        if (j < 0){
+            j = 0;
+        }
+        
+        Rectangle hitbox = null;
+        Rectangle tileHitbox = getTile(i,j).getHitbox();
+        if(tileHitbox!=null){
+            hitbox = new Rectangle(i*textureSize+tileHitbox.x, j*textureSize+tileHitbox.y, tileHitbox.width, tileHitbox.height);
+        }
+        return hitbox;
+    }
+    
     public TileType getTile(int tileType){
         TileType tile;
         switch (tileType){
@@ -231,6 +257,7 @@ public class Map{
                 getTile(map[i][j]).draw(g2d, game.getGameX()+(int)(xPos*zoomRatio)+i*newXTextureSize,(int)(yPos*zoomRatio)+j*newYTextureSize, newXTextureSize, newYTextureSize);
             }
         }
+        
         if(drawStartingTile){
             g2d.setStroke(new BasicStroke(5));
             g2d.setColor(Color.lightGray);
@@ -289,15 +316,18 @@ public class Map{
     }
     
     // checks if player is on a teleporter, returns destination if he is, else returns {-1,-1}
-    public int[] teleporterDestination(double[] xValues, double[] yValues){
+    public int[] teleporterDestination(Rectangle feetHitbox){
+        int[] xValues = new int[]{feetHitbox.x, feetHitbox.x, feetHitbox.x+feetHitbox.width, feetHitbox.x+feetHitbox.height};
+        int[] yValues = new int[]{feetHitbox.y, feetHitbox.y+feetHitbox.width, feetHitbox.y, feetHitbox.y+feetHitbox.width};
         int teleporterIndex;
         boolean isOnTeleporter = false;
         int[] destination = new int[]{-1,-1};
         int valuesIndex = 0;
         int i,j;
+        Rectangle teleporterHitbox = teleporter.getHitbox();
         while(!isOnTeleporter && valuesIndex < xValues.length){
-            i = (int)(((int)xValues[valuesIndex]-xPos) * mapWidth/drawWidth);
-            j = (int)(((int)yValues[valuesIndex]-yPos) * mapHeight/drawHeight);
+            i = (int)((xValues[valuesIndex]-xPos) * mapWidth/drawWidth);
+            j = (int)((yValues[valuesIndex]-yPos) * mapHeight/drawHeight);
             if (i<0){
                 i=0;
             } else if(i>=mapWidth){
@@ -308,7 +338,7 @@ public class Map{
             } else if(j>=mapHeight){
                 j = mapHeight-1;
             }
-            isOnTeleporter = map[i][j]==TELEPORTER_ID;
+            isOnTeleporter = (map[i][j]==TELEPORTER_ID && Tools.hitboxCollision(feetHitbox, new Rectangle(i*textureSize+teleporterHitbox.x, j*textureSize+teleporterHitbox.y, teleporterHitbox.width, teleporterHitbox.height) ));
             valuesIndex++;
         }
         if(isOnTeleporter){

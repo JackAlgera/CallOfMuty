@@ -1314,12 +1314,12 @@ public class GamePanel extends JPanel{
         double zoomRatio = getZoomRatio();
         if (!player.isDead()) {
             // Update bullets
-            player.updateBulletList(dT, map, otherPlayersList,zoomRatio);
+            player.updateBulletList(dT, map, otherPlayersList);
             // gun generation
             player.generateGun(otherPlayersList.size() + 1, dT, gameMode); // has a probability to give local player a gun that decreases with number of players
             
             // update items
-            player.updateItemList(otherPlayersList, otherPlayersItems,zoomRatio);
+            player.updateItemList(otherPlayersList, otherPlayersItems);
             
             // generate items
             if(gameMode.getOption(2)){
