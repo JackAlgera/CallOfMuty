@@ -314,6 +314,7 @@ public class GamePanel extends JPanel{
         Rectangle bounds;
         JButton connectButton = new JButton();
         connectButton.setVisible(true);
+        connectButton.setFocusable(false);
         bounds = new Rectangle((getWidth()-panelWidth)/2 + (int)(0.28027*panelWidth),(int)(0.5208*panelHeight), (int)(0.1953125*panelWidth), (int)(0.1181*panelHeight));
         connectButton.setBounds(bounds);
         connectButton.setIcon(new ImageIcon(joinGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -336,6 +337,7 @@ public class GamePanel extends JPanel{
         //---------------------------------------------- Create game Button ------------------------------------------             
         
         JButton gameCreateButton = new JButton();
+        gameCreateButton.setFocusable(false);
         bounds = new Rectangle((int)(0.28027*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.3941*panelHeight), (int)(0.1953125*panelWidth), (int)(0.1181*panelHeight));
         gameCreateButton.setBounds(bounds);
         gameCreateButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -366,6 +368,7 @@ public class GamePanel extends JPanel{
         //---------------------------------------------- Exit button --------------------------------------------    
         
         JButton exitButton = new JButton();
+        exitButton.setFocusable(false);
         bounds = new Rectangle((int)(0.28027*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.6476*panelHeight), (int)(0.1953125*panelWidth), (int)(0.1181*panelHeight));
         exitButton.setBounds(bounds);
         exitButton.setIcon(new ImageIcon(exitIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -389,6 +392,7 @@ public class GamePanel extends JPanel{
         //---------------------------------------------- Game mode button --------------------------------------------   
         
         JButton gameModeButton = new JButton();
+        gameModeButton.setFocusable(false);
         bounds = new Rectangle((int)(0.28027*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2674*panelHeight), (int)(0.1953125*panelWidth), (int)(0.1181*panelHeight));
         gameModeButton.setBounds(bounds);
         gameModeButton.setIcon(new ImageIcon(gameModeIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -413,6 +417,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------- Right arrow for skin selection ------------------------------------   
         
         JButton rightSkinArrow = new JButton();
+        rightSkinArrow.setFocusable(false);
         bounds = new Rectangle((int)(0.1777*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7639*panelHeight), (int)(0.0469*panelWidth), (int)(0.0833*panelHeight));
         rightSkinArrow.setBounds(bounds);
         rightSkinArrow.setIcon(new ImageIcon(rightArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -437,6 +442,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------- Left arrow for skin selection ------------------------------------    
         
         JButton leftSkinArrow = new JButton();
+        leftSkinArrow.setFocusable(false);
         bounds = new Rectangle((int)(0.0527*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7639*panelHeight), (int)(0.0469*panelWidth), (int)(0.0833*panelHeight));
         leftSkinArrow.setBounds(bounds);
         leftSkinArrow.setIcon(new ImageIcon(leftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -466,6 +472,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------- Parameters button ------------------------------------    
         
         JButton parametersButton = new JButton("Parameters");
+        parametersButton.setFocusable(false);
         bounds = new Rectangle((int)(0.9*panelWidth)+getGameX(),(int)(0.25*panelHeight), (int)(0.05*panelWidth), (int)(0.07*panelHeight));
         parametersButton.setBounds(bounds);
         //parametersButton.setIcon(new ImageIcon(leftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -489,6 +496,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------- Up arrow for the map editor ------------------------------------  
         
         JButton MEtopSkinArrow = new JButton();
+        MEtopSkinArrow.setFocusable(false);
         bounds = new Rectangle((int)(0.0283*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.0278*panelHeight), (int)(0.0391*panelWidth), (int)(0.0972*panelHeight));
         MEtopSkinArrow.setBounds(bounds);
         MEtopSkinArrow.setIcon(new ImageIcon(topArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -513,6 +521,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------- Down arrow for the map editor ------------------------------------ 
         
         JButton MEBottomSkinArrow = new JButton();
+        MEBottomSkinArrow.setFocusable(false);
         bounds = new Rectangle((int)(0.0283*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.1354*panelHeight), (int)(0.0391*panelWidth), (int)(0.0972*panelHeight));
         MEBottomSkinArrow.setBounds(bounds);
         MEBottomSkinArrow.setIcon(new ImageIcon(bottomArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -536,6 +545,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------- Right arrow map selection ------------------------------------  
         
         JButton rightMapArrow = new JButton();
+        rightMapArrow.setFocusable(false);
         bounds = new Rectangle((int)(0.8047*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7639*panelHeight), (int)(0.0469*panelWidth), (int)(0.0833*panelHeight));
         rightMapArrow.setBounds(bounds);
         rightMapArrow.setIcon(new ImageIcon(rightArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -568,6 +578,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------- Left arrow map selection ------------------------------------   
         
         JButton leftMapArrow = new JButton();
+        leftMapArrow.setFocusable(false);
         bounds = new Rectangle((int)(0.6221*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7639*panelHeight), (int)(0.0469*panelWidth), (int)(0.0833*panelHeight));
         leftMapArrow.setBounds(bounds);
         leftMapArrow.setIcon(new ImageIcon(leftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -604,6 +615,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------------- Map editor button ------------------------------------------  
         
         JButton mapEditorButton = new JButton();
+        mapEditorButton.setFocusable(false);
         bounds = new Rectangle((int)(0.5244*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1709*panelWidth), (int)(0.0729*panelHeight)-10);
         mapEditorButton.setBounds(bounds);
         mapEditorButton.setIcon(new ImageIcon(mapEditorIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -627,6 +639,7 @@ public class GamePanel extends JPanel{
         //-------------------------------------- Save map button for the map editor ------------------------------------------  
         
         JButton saveMapButton = new JButton();
+        saveMapButton.setFocusable(false);
         bounds = new Rectangle((int)(0.0068*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.3681*panelHeight), (int)(0.0820*panelWidth), (int)(0.0729*panelHeight));
         saveMapButton.setBounds(bounds);
         saveMapButton.setIcon(new ImageIcon(saveMapIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -667,6 +680,7 @@ public class GamePanel extends JPanel{
         //-------------------------------------- Load map button for the map editor ------------------------------------------  
         
         JButton loadMapButton = new JButton();
+        loadMapButton.setFocusable(false);
         bounds = new Rectangle((int)(0.0068*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2830*panelHeight), (int)(0.0820*panelWidth), (int)(0.0729*panelHeight));
         loadMapButton.setBounds(bounds);
         loadMapButton.setIcon(new ImageIcon(loadMapIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -697,6 +711,7 @@ public class GamePanel extends JPanel{
         //-------------------------------------- Done button for the map editor ------------------------------------------  
         
         JButton doneButton = new JButton();
+        doneButton.setFocusable(false);
         bounds = new Rectangle((int)(0.0068*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.4844*panelHeight), (int)(0.0820*panelWidth), (int)(0.0729*panelHeight));
         doneButton.setBounds(bounds);
         doneButton.setIcon(new ImageIcon(doneIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -723,6 +738,7 @@ public class GamePanel extends JPanel{
         //--------------------------- Button to choose the starting positions for the map editor ----------------------------- 
         
         JButton setStartingTileButton = new JButton();
+        setStartingTileButton.setFocusable(false);
         bounds = new Rectangle((int)(0.7354*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.0417*panelHeight), (int)(0.2588*panelWidth), (int)(0.0729*panelHeight));
         setStartingTileButton.setBounds(bounds);
         setStartingTileButton.setIcon(new ImageIcon(startingTileIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -747,6 +763,7 @@ public class GamePanel extends JPanel{
         //------------------------------------- Start game button during lobby ----------------------------- 
         
         JButton startButton = new JButton();
+        startButton.setFocusable(false);
         startButton.setName("startButton");
         bounds = new Rectangle((int)(0.3516*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.4063*panelHeight), (int)(0.3223*panelWidth), (int)(0.1233*panelHeight));
         startButton.setBounds(bounds);
@@ -769,6 +786,7 @@ public class GamePanel extends JPanel{
         });
         
         JButton teamColorSelector = new JButton("Select your team");
+        teamColorSelector.setFocusable(false);
         teamColorSelector.setName("teamColorSelector");
         teamColorSelector.setBackground(teamColors.get(0));
         bounds = new Rectangle((int)(0.16*panelWidth)+getGameX(),(int)(0.2*panelHeight), (int)(0.1*panelWidth), (int)(0.05*panelHeight));
@@ -797,6 +815,7 @@ public class GamePanel extends JPanel{
         //-------------------------------------------- Mute sound button ------------------------------------------  
                 
         JButton muteSoundsButton = new JButton();
+        muteSoundsButton.setFocusable(false);
         muteSoundsButton.setName("muteSoundsButton");
         bounds = new Rectangle((int)(0.8203*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.0347*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
         muteSoundsButton.setBounds(bounds);
@@ -827,6 +846,7 @@ public class GamePanel extends JPanel{
         //--------------------------------------------- Mute music button ------------------------------------------  
         
         JButton muteMusicButton = new JButton();
+        muteMusicButton.setFocusable(false);
         muteMusicButton.setName("muteMusicButton");
         bounds = new Rectangle((int)(0.8789*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.0347*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
         muteMusicButton.setBounds(bounds);
@@ -893,6 +913,7 @@ public class GamePanel extends JPanel{
 
 //--------------------------------------------- Ending buttons : Return to menu ------------------------------------------  
         JButton mainMenuButton = new JButton();
+        mainMenuButton.setFocusable(false);
         bounds = new Rectangle((int)(getWidth()-0.1563*panelWidth)/2,(int)(0.8675*panelHeight), (int)(0.1563*panelWidth), (int)(0.0729*panelHeight));
         mainMenuButton.setBounds(bounds);
         mainMenuButton.setIcon(new ImageIcon(mainMenuIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -914,6 +935,7 @@ public class GamePanel extends JPanel{
         
 //--------------------------------------------- Ending buttons : Spectate game ------------------------------------------  
         JButton spectateGameButton = new JButton();
+        spectateGameButton.setFocusable(false);
         bounds = new Rectangle((int)(getWidth()-0.2588*panelWidth)/2,(int)(0.6944*panelHeight), (int)(0.2588*panelWidth), (int)(0.0729*panelHeight));
         spectateGameButton.setBounds(bounds);
         spectateGameButton.setIcon(new ImageIcon(spectateIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -939,6 +961,7 @@ public class GamePanel extends JPanel{
         descriptionText.setSize((int)(20*getZoomRatio()),(int) (50*getZoomRatio()));
         
         JButton defaultButton = new JButton("Default");
+        defaultButton.setFocusable(false);
         //bounds = new Rectangle((int)(0.0547*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1680*panelWidth), (int)(0.1040*panelHeight));
         bounds = new Rectangle(100, 350, doneIcon.getIconWidth(), doneIcon.getIconHeight());
         defaultButton.setBounds(bounds);
@@ -961,6 +984,7 @@ public class GamePanel extends JPanel{
         });
         
         JButton royalButton = new JButton("Royal");
+        royalButton.setFocusable(false);
         //bounds = new Rectangle((int)(0.0547*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1680*panelWidth), (int)(0.1040*panelHeight));
         bounds = new Rectangle(100, 400, doneIcon.getIconWidth(), doneIcon.getIconHeight());
         royalButton.setBounds(bounds);
@@ -983,6 +1007,7 @@ public class GamePanel extends JPanel{
         });
         
         JButton teamButton = new JButton("Team");
+        teamButton.setFocusable(false);
         //bounds = new Rectangle((int)(0.0547*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1680*panelWidth), (int)(0.1040*panelHeight));
         bounds = new Rectangle(100, 450, doneIcon.getIconWidth(), doneIcon.getIconHeight());
         teamButton.setBounds(bounds);
@@ -1021,6 +1046,7 @@ public class GamePanel extends JPanel{
 //--------------------------------------------- Options for the game mode ------------------------------------------  
     
         JTextField suggestedMapText = new JTextField("Use suggested map");
+        suggestedMapText.setFocusable(false);
         bounds = new Rectangle((int)(0.3809*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1758*panelWidth), (int)(0.0521*panelHeight));
         suggestedMapText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
@@ -1037,6 +1063,7 @@ public class GamePanel extends JPanel{
         GMbuttons.add(suggestedMapText);
 
         JButton suggestedMapButton = new JButton();
+        suggestedMapButton.setFocusable(false);
         suggestedMapButton.setName("checkButton0");
         bounds = new Rectangle((int)(bounds.x + (bounds.width-0.0391*panelWidth)/2),(int)(0.8507*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
         suggestedMapButton.setBounds(bounds);
@@ -1063,6 +1090,7 @@ public class GamePanel extends JPanel{
         });
         
         JTextField rubberBallsText = new JTextField("Bouncing bullets");
+        rubberBallsText.setFocusable(false);
         bounds = new Rectangle((int)(0.5664*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
         rubberBallsText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
@@ -1079,6 +1107,7 @@ public class GamePanel extends JPanel{
         GMbuttons.add(rubberBallsText);
 
         JButton rubberBallsButton = new JButton();
+        rubberBallsButton.setFocusable(false);
         rubberBallsButton.setName("checkButton1");
         bounds = new Rectangle((int)(bounds.x + (bounds.width-0.0391*panelWidth)/2),(int)(0.8507*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
         rubberBallsButton.setBounds(bounds);
@@ -1105,6 +1134,7 @@ public class GamePanel extends JPanel{
         });
         
         JTextField bonusItemsText = new JTextField("Bonus items");
+        bonusItemsText.setFocusable(false);
         bounds = new Rectangle((int)(0.6934*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
         bonusItemsText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
@@ -1121,6 +1151,7 @@ public class GamePanel extends JPanel{
         GMbuttons.add(bonusItemsText);
 
         JButton bonusItemsButton = new JButton();
+        bonusItemsButton.setFocusable(false);
         bonusItemsButton.setName("checkButton2");
         bounds = new Rectangle((int)(bounds.x + (bounds.width-0.0391*panelWidth)/2),(int)(0.8507*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
         bonusItemsButton.setBounds(bounds);
@@ -1147,6 +1178,7 @@ public class GamePanel extends JPanel{
         });
         
         JTextField fastModeText = new JTextField("Fast mode");
+        fastModeText.setFocusable(false);
         bounds = new Rectangle((int)(0.8203*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
         fastModeText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
@@ -1163,6 +1195,7 @@ public class GamePanel extends JPanel{
         GMbuttons.add(fastModeText);
 
         JButton fastModeButton = new JButton();
+        fastModeButton.setFocusable(false);
         fastModeButton.setName("checkButton3");
         bounds = new Rectangle((int)(bounds.x + (bounds.width-0.0391*panelWidth)/2),(int)(0.8507*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
         fastModeButton.setBounds(bounds);
@@ -1192,6 +1225,7 @@ public class GamePanel extends JPanel{
 //--------------------------------------------- Done button for the game mode ------------------------------------------  
         
         JButton GMdoneButton = new JButton();
+        GMdoneButton.setFocusable(false);
         bounds = new Rectangle((int)(0.0576*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.8889*panelHeight), (int)(0.0820*panelWidth), (int)(0.0729*panelHeight));
         GMdoneButton.setBounds(bounds);
         GMdoneButton.setIcon(new ImageIcon(doneIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1211,6 +1245,7 @@ public class GamePanel extends JPanel{
         
 // ---------------------------------------Parameter window buttons--------------------------------------------------
         JButton moveUpKeyButton = new JButton("Move up");
+        moveUpKeyButton.setFocusable(false);
         bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.30*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         moveUpKeyButton.setBounds(bounds);
         //moveUpKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1233,6 +1268,7 @@ public class GamePanel extends JPanel{
         });
         
         JButton moveDownKeyButton = new JButton("Move down");
+        moveDownKeyButton.setFocusable(false);
         bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.40*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         moveDownKeyButton.setBounds(bounds);
         //moveDownKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1255,6 +1291,7 @@ public class GamePanel extends JPanel{
         });
         
         JButton moveLeftKeyButton = new JButton("Move left");
+        moveLeftKeyButton.setFocusable(false);
         bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.50*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         moveLeftKeyButton.setBounds(bounds);
         //moveLeftKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1277,6 +1314,7 @@ public class GamePanel extends JPanel{
         });
         
         JButton moveRightKeyButton = new JButton("Move right");
+        moveRightKeyButton.setFocusable(false);
         bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.60*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         moveRightKeyButton.setBounds(bounds);
         //moveRightKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1299,6 +1337,7 @@ public class GamePanel extends JPanel{
         });
         
         JButton tauntKeyButton = new JButton("Taunt");
+        tauntKeyButton.setFocusable(false);
         bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.70*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         tauntKeyButton.setBounds(bounds);
         //tauntKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1321,6 +1360,7 @@ public class GamePanel extends JPanel{
         });
         
         JButton dashKeyButton = new JButton("Dash");
+        dashKeyButton.setFocusable(false);
         bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.80*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         dashKeyButton.setBounds(bounds);
         //dashKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1343,6 +1383,7 @@ public class GamePanel extends JPanel{
         });
         
         JButton PdoneButton = new JButton();
+        PdoneButton.setFocusable(false);
         bounds = new Rectangle((int)(0.0576*panelWidth)+getGameX(),(int)(0.8889*panelHeight), (int)(0.0820*panelWidth), (int)(0.0729*panelHeight));
         PdoneButton.setBounds(bounds);
         PdoneButton.setIcon(new ImageIcon(doneIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1356,6 +1397,7 @@ public class GamePanel extends JPanel{
         PdoneButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
+                keyboard.setState(KeyboardManager.PLAYING);
                 setState(MAIN_MENU);
             }
         });
@@ -2000,6 +2042,7 @@ public class GamePanel extends JPanel{
                     }
                     if (keyboard.getState() == i) {
                         g2d.setColor(Color.red);
+                        g2d.setStroke(new BasicStroke(5));
                         g2d.drawRect(button.getBounds().x,button.getBounds().y, button.getBounds().width, button.getBounds().height);
                         g2d.setColor(Color.BLACK);
                     }

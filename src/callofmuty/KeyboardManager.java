@@ -173,36 +173,42 @@ public class KeyboardManager {
                     setUpKey(keyCode);
                 }
                 state = PLAYING;
+                game.repaint();
                 break;
             case CHANGING_MOVE_DOWN:
                 if(keyCode!=KeyEvent.VK_ESCAPE){
                     setDownKey(keyCode);
                 }
                 state = PLAYING;
+                game.repaint();
                 break;
             case CHANGING_MOVE_LEFT:
                 if(keyCode!=KeyEvent.VK_ESCAPE){
                     setLeftKey(keyCode);
                 }
                 state = PLAYING;
+                game.repaint();
                 break;
             case CHANGING_MOVE_RIGHT:
                 if(keyCode!=KeyEvent.VK_ESCAPE){
                     setRightKey(keyCode);
                 }
                 state = PLAYING;
+                game.repaint();
                 break;
             case CHANGING_TAUNT:
                 if(keyCode!=KeyEvent.VK_ESCAPE){
                     setTauntKey(keyCode);
                 }
                 state = PLAYING;
+                game.repaint();
                 break;
             case CHANGING_DASH:
                 if(keyCode!=KeyEvent.VK_ESCAPE){
                     setDashKey(keyCode);
                 }
                 state = PLAYING;
+                game.repaint();
                 break;
         }
     }
