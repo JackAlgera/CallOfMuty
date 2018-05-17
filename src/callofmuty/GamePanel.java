@@ -73,7 +73,7 @@ public class GamePanel extends JPanel{
             checkedIcon = Tools.loadIcon("check.png"),
             uncheckedIcon = Tools.loadIcon("Uncheck.png");    
     
-    public static final int MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5,
+    public static final int MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5, PARAMETERS = 6,
             IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1,
             NUMBER_OF_MAPS = 8;
     private static final int FONTSIZE = 18, NUMBER_OF_SKINS = 5; // Font size for textFields (gets scaled with zoomFactor)
@@ -88,9 +88,9 @@ public class GamePanel extends JPanel{
     private GameMode gameMode;
     private boolean isHost, interfaceBuilt = false,hasCustomMap = false, setStartingTile, isConnected, muteMusic, muteSounds, leftMousePressed, rightMousePressed, endShowed;
     private SQLManager sql;
-    private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons, GMbuttons;
-    private ArrayList <Rectangle> MMoriginalBounds, MEoriginalBounds, PGoriginalBounds, EoriginalBounds, GMoriginalBounds;
-    private ArrayList <ImageIcon> MMicons, MEicons, PGicons, Eicons, GMicons, MMpressedIcons, MEpressedIcons;
+    private ArrayList <JComponent> MMbuttons, MEbuttons, PGbuttons, Ebuttons, GMbuttons, Pbuttons;
+    private ArrayList <Rectangle> MMoriginalBounds, MEoriginalBounds, PGoriginalBounds, EoriginalBounds, GMoriginalBounds, PoriginalBounds;
+    private ArrayList <ImageIcon> MMicons, MEicons, PGicons, Eicons, GMicons, Picons, MMpressedIcons, MEpressedIcons;
     private ArrayList<Bullet> otherPlayersBullets;
     private ArrayList<BonusItem> otherPlayersItems;
     private ArrayList<Color> teamColors;
@@ -287,16 +287,19 @@ public class GamePanel extends JPanel{
         PGbuttons = new ArrayList<>(); // Pre game
         Ebuttons = new ArrayList<>(); // Ending (Victory or Defeat)
         GMbuttons = new ArrayList<>(); //GM : Game Mode
+        Pbuttons = new ArrayList<>(); //P : Parameters
         MMoriginalBounds = new ArrayList<>(); // contains original buttons sizes (used when resizing)
         MEoriginalBounds = new ArrayList<>();
         PGoriginalBounds = new ArrayList<>();
         EoriginalBounds = new ArrayList<>();
         GMoriginalBounds = new ArrayList<>();
+        PoriginalBounds = new ArrayList<>();
         MMicons = new ArrayList<>(); // contains original icons
         MEicons = new ArrayList<>();
         PGicons = new ArrayList<>();
         Eicons = new ArrayList<>();
         GMicons = new ArrayList<>();
+        Picons = new ArrayList<>();
         MMpressedIcons = new ArrayList<>();
         MEpressedIcons = new ArrayList<>();
         /*
@@ -456,6 +459,29 @@ public class GamePanel extends JPanel{
                     skinIndex = NUMBER_OF_SKINS;
                 }
                 getPlayer().setSkin(skinIndex);
+                repaint();
+            }
+        });
+        
+        //--------------------------------------- Parameters button ------------------------------------    
+        
+        JButton parametersButton = new JButton("Parameters");
+        bounds = new Rectangle((int)(0.9*panelWidth)+getGameX(),(int)(0.25*panelHeight), (int)(0.05*panelWidth), (int)(0.07*panelHeight));
+        parametersButton.setBounds(bounds);
+        //parametersButton.setIcon(new ImageIcon(leftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        //parametersButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        MMoriginalBounds.add(bounds);
+        MMicons.add(null);
+        MMpressedIcons.add(null);
+        parametersButton.setVisible(true);
+        parametersButton.setContentAreaFilled(false);
+        parametersButton.setBorderPainted(false);
+        add(parametersButton);
+        MMbuttons.add(parametersButton);
+        
+        parametersButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setState(PARAMETERS);
                 repaint();
             }
         });
@@ -1182,6 +1208,158 @@ public class GamePanel extends JPanel{
                 setState(MAIN_MENU);
             }
         });
+        
+// ---------------------------------------Parameter window buttons--------------------------------------------------
+        JButton moveUpKeyButton = new JButton("Move up");
+        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.30*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        moveUpKeyButton.setBounds(bounds);
+        //moveUpKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        //moveUpKeyButton.setPressedIcon(pressedcreateGameIcon);
+        moveUpKeyButton.setVisible(false);
+        moveUpKeyButton.setContentAreaFilled(false);
+        moveUpKeyButton.setBorderPainted(true);
+        add(moveUpKeyButton);
+        Pbuttons.add(moveUpKeyButton);
+        PoriginalBounds.add(bounds);
+        Picons.add(null);
+        
+        moveUpKeyButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                playClicSound();
+                keyboard.setState(KeyboardManager.CHANGING_MOVE_UP);
+                repaint();
+            }
+        });
+        
+        JButton moveDownKeyButton = new JButton("Move down");
+        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.40*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        moveDownKeyButton.setBounds(bounds);
+        //moveDownKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        //moveDownKeyButton.setPressedIcon(pressedcreateGameIcon);
+        moveDownKeyButton.setVisible(false);
+        moveDownKeyButton.setContentAreaFilled(false);
+        moveDownKeyButton.setBorderPainted(true);
+        add(moveDownKeyButton);
+        Pbuttons.add(moveDownKeyButton);
+        PoriginalBounds.add(bounds);
+        Picons.add(null);
+        
+        moveDownKeyButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                playClicSound();
+                keyboard.setState(KeyboardManager.CHANGING_MOVE_DOWN);
+                repaint();
+            }
+        });
+        
+        JButton moveLeftKeyButton = new JButton("Move left");
+        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.50*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        moveLeftKeyButton.setBounds(bounds);
+        //moveLeftKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        //moveLeftKeyButton.setPressedIcon(pressedcreateGameIcon);
+        moveLeftKeyButton.setVisible(false);
+        moveLeftKeyButton.setContentAreaFilled(false);
+        moveLeftKeyButton.setBorderPainted(true);
+        add(moveLeftKeyButton);
+        Pbuttons.add(moveLeftKeyButton);
+        PoriginalBounds.add(bounds);
+        Picons.add(null);
+        
+        moveLeftKeyButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                playClicSound();
+                keyboard.setState(KeyboardManager.CHANGING_MOVE_LEFT);
+                repaint();
+            }
+        });
+        
+        JButton moveRightKeyButton = new JButton("Move right");
+        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.60*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        moveRightKeyButton.setBounds(bounds);
+        //moveRightKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        //moveRightKeyButton.setPressedIcon(pressedcreateGameIcon);
+        moveRightKeyButton.setVisible(false);
+        moveRightKeyButton.setContentAreaFilled(false);
+        moveRightKeyButton.setBorderPainted(true);
+        add(moveRightKeyButton);
+        Pbuttons.add(moveRightKeyButton);
+        PoriginalBounds.add(bounds);
+        Picons.add(null);
+        
+        moveRightKeyButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                playClicSound();
+                keyboard.setState(KeyboardManager.CHANGING_MOVE_RIGHT);
+                repaint();
+            }
+        });
+        
+        JButton tauntKeyButton = new JButton("Taunt");
+        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.70*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        tauntKeyButton.setBounds(bounds);
+        //tauntKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        //tauntKeyButton.setPressedIcon(pressedcreateGameIcon);
+        tauntKeyButton.setVisible(false);
+        tauntKeyButton.setContentAreaFilled(false);
+        tauntKeyButton.setBorderPainted(true);
+        add(tauntKeyButton);
+        Pbuttons.add(tauntKeyButton);
+        PoriginalBounds.add(bounds);
+        Picons.add(null);
+        
+        tauntKeyButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                playClicSound();
+                keyboard.setState(KeyboardManager.CHANGING_TAUNT);
+                repaint();
+            }
+        });
+        
+        JButton dashKeyButton = new JButton("Dash");
+        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.80*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        dashKeyButton.setBounds(bounds);
+        //dashKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        //dashKeyButton.setPressedIcon(pressedcreateGameIcon);
+        dashKeyButton.setVisible(false);
+        dashKeyButton.setContentAreaFilled(false);
+        dashKeyButton.setBorderPainted(true);
+        add(dashKeyButton);
+        Pbuttons.add(dashKeyButton);
+        PoriginalBounds.add(bounds);
+        Picons.add(null);
+        
+        dashKeyButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                playClicSound();
+                keyboard.setState(KeyboardManager.CHANGING_DASH);
+                repaint();
+            }
+        });
+        
+        JButton PdoneButton = new JButton();
+        bounds = new Rectangle((int)(0.0576*panelWidth)+getGameX(),(int)(0.8889*panelHeight), (int)(0.0820*panelWidth), (int)(0.0729*panelHeight));
+        PdoneButton.setBounds(bounds);
+        PdoneButton.setIcon(new ImageIcon(doneIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        PoriginalBounds.add(bounds);
+        Picons.add(doneIcon);
+        PdoneButton.setVisible(false);
+        PdoneButton.setBorderPainted(true);
+        add(PdoneButton);
+        Pbuttons.add(PdoneButton);
+        
+        PdoneButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playClicSound();
+                setState(MAIN_MENU);
+            }
+        });
+        
         interfaceBuilt = true;
     }
     
@@ -1285,6 +1463,16 @@ public class GamePanel extends JPanel{
                 if (Eicons.get(i) != null) {
                     JButton button = (JButton) component;
                     button.setIcon(new ImageIcon(Eicons.get(i).getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+                }
+            }
+            for (int i = 0; i < Pbuttons.size(); i++) {
+                bounds = PoriginalBounds.get(i);
+                bounds = new Rectangle((getWidth() - panelWidth) / 2 + (int) (bounds.x * zoomRatio), (int) (bounds.y * zoomRatio), (int) (bounds.width * zoomRatio), (int) (bounds.height * zoomRatio));
+                component = Pbuttons.get(i);
+                Pbuttons.get(i).setBounds(bounds);
+                if (Picons.get(i) != null) {
+                    JButton button = (JButton) component;
+                    button.setIcon(new ImageIcon(Picons.get(i).getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                 }
             }
         }
@@ -1623,6 +1811,7 @@ public class GamePanel extends JPanel{
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.BLACK);
         double zoomRatio = getZoomRatio();
+        g2d.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*zoomRatio)));
         int gameX = getGameX(), rightBorderX = gameX+(int)(panelWidth*(double)mapWidth/(mapWidth+IN_GAME_RIGHT_MARGIN)), rightBorderWidth = (int)(panelWidth*(double)IN_GAME_RIGHT_MARGIN/(mapWidth+IN_GAME_RIGHT_MARGIN));
         switch(gameState) {
             case PRE_GAME:
@@ -1759,9 +1948,6 @@ public class GamePanel extends JPanel{
                 player.draw(g2d, this);
                 player.drawBullets(g2d, map.getTextureSize(), this);
 
-                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (30 * zoomRatio)));
-                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (15 * zoomRatio)));
-
                 for (Player otherPlayer : otherPlayersList) {
                     otherPlayer.draw(g2d, this);
                 }
@@ -1783,6 +1969,42 @@ public class GamePanel extends JPanel{
                 g2d.drawRect(bounds.x-3, bounds.y-3, bounds.width+5, bounds.height+5);
                 break;
 
+            case PARAMETERS: // draw Menu background, with another 'panel' on top
+                g2d.drawImage(MenuBackground, gameX, 0, panelWidth, panelHeight, this);
+                playerImage = player.getImage();
+                playerZoomFactor = 3.5;
+                g2d.drawImage(playerImage, gameX+(int)(0.14*panelWidth)-(int)(playerImage.getWidth(null)*playerZoomFactor*zoomRatio/2), panelHeight/2-(int)(playerImage.getHeight(null)*zoomRatio), (int)(playerImage.getWidth(null)*playerZoomFactor*zoomRatio), (int)(playerImage.getHeight(null)*playerZoomFactor*zoomRatio), this);
+                map.draw(g2d, false, this);
+                
+                g2d.setColor(Color.ORANGE.darker().darker());
+                g2d.fillRect(getGameX()+(int)(0.2*panelWidth),(int)(0.1*panelHeight), (int)(0.6*panelWidth), (int)(0.8*panelHeight));
+                g2d.setColor(Color.BLACK);
+                double xGap = 0.2;
+                JComponent button;
+                for (int i = 1; i < Pbuttons.size(); i++) { // last button is 'done' button, doesn't have a string
+                    button = Pbuttons.get(i-1);
+                    g2d.drawString(keyboard.getText(i), button.getBounds().x + (int) (xGap * panelWidth), button.getBounds().y);
+                    switch (i) {
+                        case KeyboardManager.CHANGING_MOVE_UP:
+                            g2d.drawString("Up arrow", button.getBounds().x + (int) (2 * xGap * panelWidth), button.getBounds().y);
+                            break;
+                        case KeyboardManager.CHANGING_MOVE_DOWN:
+                            g2d.drawString("Down arrow", button.getBounds().x + (int) (2 * xGap * panelWidth), button.getBounds().y);
+                            break;
+                        case KeyboardManager.CHANGING_MOVE_LEFT:
+                            g2d.drawString("Left arrow", button.getBounds().x + (int) (2 * xGap * panelWidth), button.getBounds().y);
+                            break;
+                        case KeyboardManager.CHANGING_MOVE_RIGHT:
+                            g2d.drawString("Right arrow", button.getBounds().x + (int) (2 * xGap * panelWidth), button.getBounds().y);
+                            break;
+                    }
+                    if (keyboard.getState() == i) {
+                        g2d.setColor(Color.red);
+                        g2d.drawRect(button.getBounds().x,button.getBounds().y, button.getBounds().width, button.getBounds().height);
+                        g2d.setColor(Color.BLACK);
+                    }
+                }
+                break;
         }
     }
     
@@ -1868,6 +2090,9 @@ public class GamePanel extends JPanel{
                         gameMusicPlayer.stop();
                         menuMusicPlayer.play();
                 }
+                for(JComponent component : Pbuttons){
+                    component.setVisible(false);
+                }
                 break;
             case MAP_EDITOR:
                 for (JComponent component : MMbuttons){
@@ -1884,7 +2109,10 @@ public class GamePanel extends JPanel{
                 }
                 for (JComponent component : GMbuttons) {
                     component.setVisible(false);
-                }                
+                }
+                for(JComponent component : Pbuttons){
+                    component.setVisible(false);
+                }              
                 setStartingTile = false;
                 break;
             case PRE_GAME:
@@ -1907,7 +2135,10 @@ public class GamePanel extends JPanel{
                 }
                 for (JComponent component : GMbuttons) {
                     component.setVisible(false);
-                }                
+                } 
+                for(JComponent component : Pbuttons){
+                    component.setVisible(false);
+                }               
                 break;
             case IN_GAME:
                 for (JComponent component : MMbuttons){
@@ -1928,6 +2159,9 @@ public class GamePanel extends JPanel{
                 if (!muteMusic && formerGameState != ENDING) {
                     menuMusicPlayer.stop();
                     gameMusicPlayer.play();
+                }
+                for(JComponent component : Pbuttons){
+                    component.setVisible(false);
                 }
                 timer.update();
                 break;
@@ -1950,7 +2184,9 @@ public class GamePanel extends JPanel{
                     } else {
                         component.setVisible(true);
                     }
-                   
+                }
+                for(JComponent component : Pbuttons){
+                    component.setVisible(false);
                 }
                 break;
             case GAME_MODE:
@@ -1969,6 +2205,30 @@ public class GamePanel extends JPanel{
                 for (JComponent component : GMbuttons) {
                     component.setVisible(true);
                 }
+                for(JComponent component : Pbuttons){
+                    component.setVisible(false);
+                }
+                break;
+            case PARAMETERS:
+                for (JComponent component : MMbuttons){
+                    component.setVisible(false);
+                }
+                for (JComponent component : MEbuttons){
+                    component.setVisible(false);
+                }
+                for (JComponent component : PGbuttons){
+                    component.setVisible(false);
+                }
+                for (JComponent component : Ebuttons) {
+                    component.setVisible(false);
+                }
+                for (JComponent component : GMbuttons) {
+                    component.setVisible(false);
+                }
+                for(JComponent component : Pbuttons){
+                    component.setVisible(true);
+                }
+                break;
         }
         repaint();
     }
