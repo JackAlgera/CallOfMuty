@@ -473,7 +473,7 @@ public class GamePanel extends JPanel{
         
         JButton parametersButton = new JButton("Parameters");
         parametersButton.setFocusable(false);
-        bounds = new Rectangle((int)(0.9*panelWidth)+getGameX(),(int)(0.25*panelHeight), (int)(0.05*panelWidth), (int)(0.07*panelHeight));
+        bounds = new Rectangle((int)(0.9375*panelWidth)+getGameX(),(int)(0.0347*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
         parametersButton.setBounds(bounds);
         //parametersButton.setIcon(new ImageIcon(leftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //parametersButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -481,8 +481,8 @@ public class GamePanel extends JPanel{
         MMicons.add(null);
         MMpressedIcons.add(null);
         parametersButton.setVisible(true);
-        parametersButton.setContentAreaFilled(false);
-        parametersButton.setBorderPainted(false);
+        //parametersButton.setContentAreaFilled(false);
+        //parametersButton.setBorderPainted(false);
         add(parametersButton);
         MMbuttons.add(parametersButton);
         
@@ -817,7 +817,7 @@ public class GamePanel extends JPanel{
         JButton muteSoundsButton = new JButton();
         muteSoundsButton.setFocusable(false);
         muteSoundsButton.setName("muteSoundsButton");
-        bounds = new Rectangle((int)(0.8203*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.0347*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
+        bounds = new Rectangle((int)(0.8203*panelWidth)+getGameX(),(int)(0.0347*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
         muteSoundsButton.setBounds(bounds);
         muteSoundsButton.setIcon(new ImageIcon(SoundsIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //muteSoundsButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -848,7 +848,7 @@ public class GamePanel extends JPanel{
         JButton muteMusicButton = new JButton();
         muteMusicButton.setFocusable(false);
         muteMusicButton.setName("muteMusicButton");
-        bounds = new Rectangle((int)(0.8789*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.0347*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
+        bounds = new Rectangle((int)(0.8789*panelWidth)+getGameX(),(int)(0.0347*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
         muteMusicButton.setBounds(bounds);
         muteMusicButton.setIcon(new ImageIcon(MusicIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //muteMusicButton.setPressedIcon(new ImageIcon(pressedleftArrowIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
@@ -1246,7 +1246,7 @@ public class GamePanel extends JPanel{
 // ---------------------------------------Parameter window buttons--------------------------------------------------
         JButton moveUpKeyButton = new JButton("Move up");
         moveUpKeyButton.setFocusable(false);
-        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.30*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        bounds = new Rectangle(getGameX()+(int)(0.33*panelWidth),(int)(0.17*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         moveUpKeyButton.setBounds(bounds);
         //moveUpKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //moveUpKeyButton.setPressedIcon(pressedcreateGameIcon);
@@ -1269,7 +1269,7 @@ public class GamePanel extends JPanel{
         
         JButton moveDownKeyButton = new JButton("Move down");
         moveDownKeyButton.setFocusable(false);
-        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.40*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        bounds = new Rectangle(getGameX()+(int)(0.33*panelWidth),(int)(0.27*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         moveDownKeyButton.setBounds(bounds);
         //moveDownKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //moveDownKeyButton.setPressedIcon(pressedcreateGameIcon);
@@ -1292,7 +1292,7 @@ public class GamePanel extends JPanel{
         
         JButton moveLeftKeyButton = new JButton("Move left");
         moveLeftKeyButton.setFocusable(false);
-        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.50*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        bounds = new Rectangle(getGameX()+(int)(0.33*panelWidth),(int)(0.37*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         moveLeftKeyButton.setBounds(bounds);
         //moveLeftKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //moveLeftKeyButton.setPressedIcon(pressedcreateGameIcon);
@@ -1315,7 +1315,7 @@ public class GamePanel extends JPanel{
         
         JButton moveRightKeyButton = new JButton("Move right");
         moveRightKeyButton.setFocusable(false);
-        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.60*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        bounds = new Rectangle(getGameX()+(int)(0.33*panelWidth),(int)(0.47*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         moveRightKeyButton.setBounds(bounds);
         //moveRightKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //moveRightKeyButton.setPressedIcon(pressedcreateGameIcon);
@@ -1338,7 +1338,7 @@ public class GamePanel extends JPanel{
         
         JButton tauntKeyButton = new JButton("Taunt");
         tauntKeyButton.setFocusable(false);
-        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.70*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        bounds = new Rectangle(getGameX()+(int)(0.33*panelWidth),(int)(0.57*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         tauntKeyButton.setBounds(bounds);
         //tauntKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //tauntKeyButton.setPressedIcon(pressedcreateGameIcon);
@@ -1361,7 +1361,7 @@ public class GamePanel extends JPanel{
         
         JButton dashKeyButton = new JButton("Dash");
         dashKeyButton.setFocusable(false);
-        bounds = new Rectangle(getGameX()+(int)(0.28*panelWidth),(int)(0.80*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
+        bounds = new Rectangle(getGameX()+(int)(0.33*panelWidth),(int)(0.67*panelHeight), (int)(0.15*panelWidth), (int)(0.07*panelHeight));
         dashKeyButton.setBounds(bounds);
         //dashKeyButton.setIcon(new ImageIcon(createGameIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         //dashKeyButton.setPressedIcon(pressedcreateGameIcon);
@@ -1384,7 +1384,7 @@ public class GamePanel extends JPanel{
         
         JButton PdoneButton = new JButton();
         PdoneButton.setFocusable(false);
-        bounds = new Rectangle((int)(0.0576*panelWidth)+getGameX(),(int)(0.8889*panelHeight), (int)(0.0820*panelWidth), (int)(0.0729*panelHeight));
+        bounds = new Rectangle((int)(0.24*panelWidth)+getGameX(),(int)(0.8*panelHeight), (int)(0.0820*panelWidth), (int)(0.0729*panelHeight));
         PdoneButton.setBounds(bounds);
         PdoneButton.setIcon(new ImageIcon(doneIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         PoriginalBounds.add(bounds);
@@ -1926,7 +1926,7 @@ public class GamePanel extends JPanel{
                 }
                 
                 g2d.setColor(Color.BLACK);
-                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (15 * zoomRatio)));
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (FONTSIZE * zoomRatio)));
                 localPlayerPrinted = false;
                 xLocation = 0.1; yLocation = 0.15;
                 double lineIncrement = 0.02, playerIncrement = 0.05;
@@ -2021,23 +2021,24 @@ public class GamePanel extends JPanel{
                 g2d.setColor(Color.ORANGE.darker().darker());
                 g2d.fillRect(getGameX()+(int)(0.2*panelWidth),(int)(0.1*panelHeight), (int)(0.6*panelWidth), (int)(0.8*panelHeight));
                 g2d.setColor(Color.BLACK);
-                double xGap = 0.2;
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (1.5*FONTSIZE*zoomRatio)));
+                double xGap = 0.07;
                 JComponent button;
                 for (int i = 1; i < Pbuttons.size(); i++) { // last button is 'done' button, doesn't have a string
                     button = Pbuttons.get(i-1);
-                    g2d.drawString(keyboard.getText(i), button.getBounds().x + (int) (xGap * panelWidth), button.getBounds().y);
+                    g2d.drawString(keyboard.getText(i), button.getBounds().x+button.getBounds().width + (int) (xGap * panelWidth), button.getBounds().y+(int)(0.6*button.getBounds().height));
                     switch (i) {
                         case KeyboardManager.CHANGING_MOVE_UP:
-                            g2d.drawString("Up arrow", button.getBounds().x + (int) (2 * xGap * panelWidth), button.getBounds().y);
+                            g2d.drawString("Up arrow", button.getBounds().x+button.getBounds().width + (int) (2*xGap * panelWidth), button.getBounds().y+(int)(0.6*button.getBounds().height));
                             break;
                         case KeyboardManager.CHANGING_MOVE_DOWN:
-                            g2d.drawString("Down arrow", button.getBounds().x + (int) (2 * xGap * panelWidth), button.getBounds().y);
+                            g2d.drawString("Down arrow", button.getBounds().x+button.getBounds().width + (int) (2*xGap * panelWidth), button.getBounds().y+(int)(0.6*button.getBounds().height));
                             break;
                         case KeyboardManager.CHANGING_MOVE_LEFT:
-                            g2d.drawString("Left arrow", button.getBounds().x + (int) (2 * xGap * panelWidth), button.getBounds().y);
+                            g2d.drawString("Left arrow", button.getBounds().x+button.getBounds().width + (int) (2*xGap * panelWidth), button.getBounds().y+(int)(0.6*button.getBounds().height));
                             break;
                         case KeyboardManager.CHANGING_MOVE_RIGHT:
-                            g2d.drawString("Right arrow", button.getBounds().x + (int) (2 * xGap * panelWidth), button.getBounds().y);
+                            g2d.drawString("Right arrow", button.getBounds().x+button.getBounds().width + (int) (2*xGap * panelWidth), button.getBounds().y+(int)(0.6*button.getBounds().height));
                             break;
                     }
                     if (keyboard.getState() == i) {
