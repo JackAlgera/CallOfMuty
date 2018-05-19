@@ -710,7 +710,7 @@ public class Player implements Comparable<Player>{
     
     public void meleeAttack(double[] directionOfFire, SQLManager sql) {
         if (System.currentTimeMillis()-timeBetweenMeleeAttacks>=lastMeleeAttackTimeStamp){
-            lastMeleeAttackTimeStamp = System.currentTimeMillis();
+            lastMeleeAttackTimeStamp = System.currentTimeMillis(); 
             addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 3.0 , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
         }
     }

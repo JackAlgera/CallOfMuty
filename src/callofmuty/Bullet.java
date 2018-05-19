@@ -10,6 +10,8 @@ public class Bullet {
     
     public static final int NORMAL = 0, FIRE = 1, EGG = 2, MELEE = 3;
     private static final long TIME_BEFORE_REACTIVATING = 1000; // time before this bullet can be reactivated, ensuring other players will detect it as a new bullet and play shooting sound again
+    private static final int NORMAL_WIDTH = 15, NORMAL_HEIGHT = 15,
+                            MELEE_WIDTH = 30, MELEE_HEIGHT = 20;
     
     private double posX, posY, speed, damage, travelledDistance, maxRange;
     private int numberOfBounces, ballWidth, ballHeight, playerId, bulletId, bulletType;
@@ -53,8 +55,13 @@ public class Bullet {
         this.posY = posY;
         this.bulletType = bulletType;
         this.numberOfBounces = numberOfBounces;
-        ballWidth = 15;
-        ballHeight = 15;
+        if(bulletType != MELEE){
+            ballWidth = NORMAL_WIDTH;
+            ballHeight = NORMAL_HEIGHT;
+        } else {
+            ballWidth = MELEE_WIDTH;
+            ballHeight = MELEE_HEIGHT;
+        }
         this.speed = speed;
         this.direction = direction;
         this.playerId = playerId;
@@ -94,6 +101,13 @@ public class Bullet {
     public void setBulletType(int bulletType){
         this.bulletType = bulletType;
         setAnimationRow();
+        if(bulletType != MELEE){
+            ballWidth = NORMAL_WIDTH;
+            ballHeight = NORMAL_HEIGHT;
+        } else {
+            ballWidth = MELEE_WIDTH;
+            ballHeight = MELEE_HEIGHT;
+        }
     }
     
     public void update(double dT) {
