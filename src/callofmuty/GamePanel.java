@@ -34,7 +34,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 
 public class GamePanel extends JPanel{
     
@@ -70,7 +69,7 @@ public class GamePanel extends JPanel{
             mainMenuIcon = Tools.loadIcon("MainMenu.png"),
             spectateIcon = Tools.loadIcon("Spectate.png"),
             startingTileIcon = Tools.loadIcon("StartingTiles.png"),
-            checkedIcon = Tools.loadIcon("check.png"),
+            checkedIcon = Tools.loadIcon("Check.png"),
             uncheckedIcon = Tools.loadIcon("Uncheck.png");    
     
     public static final int MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5, PARAMETERS = 6,

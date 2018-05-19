@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 public class CallOfMuty {
     
     public static void main(String[] args) {
-
+        
         int textureSize, mapWidth, mapHeight, maxFPS;
         long dT, minUpdateTime;
 

@@ -5,10 +5,13 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -122,10 +125,10 @@ public class Tools {
     
     public static Map loadResourceMap(int i, int textureSize){
         String text = "";
-        try {//Z means: "The end of the input but for the final terminator, if any"
-            text = new java.util.Scanner(new File(Tools.class.getResource("/resources/maps/map"+i+".txt").toURI()),"UTF8").useDelimiter("\\Z").next();
-        } catch (URISyntaxException | FileNotFoundException ex) {
-            Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+        InputStream inputStream = Tools.class.getResourceAsStream("/resources/maps/map"+i+".txt");
+        java.util.Scanner scanner = new java.util.Scanner(inputStream).useDelimiter("\\A");
+        if(scanner.hasNext()){
+            text = scanner.next();
         }
         return stringToMap(text, textureSize);
     }
