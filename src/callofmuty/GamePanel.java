@@ -1910,10 +1910,19 @@ public class GamePanel extends JPanel{
             case IN_GAME:
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setColor(Color.BLACK);
+                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (0.85*FONTSIZE * zoomRatio)));
                 g2d.drawImage(InGameBackground, gameX, 0, panelWidth, panelHeight, this);
                 map.draw(g2d, false, this);
+                
+                if(gameMode.getTeam()==GameMode.TEAMS){
+                    g2d.setColor(teamColors.get(player.getTeamId()-1));
+                }
                 player.draw(g2d, this);
                 for (Player otherPlayer : otherPlayersList) {
+                    if(gameMode.getTeam()==GameMode.TEAMS){
+                        g2d.setColor(teamColors.get(otherPlayer.getTeamId()-1));
+                    }
                     otherPlayer.draw(g2d, this);
                 }
                 player.drawBullets(g2d, textureSize, this);
@@ -1925,11 +1934,10 @@ public class GamePanel extends JPanel{
                     otherPlayersItems.get(i).draw(g2d, textureSize, this);
                 }
                 
-                g2d.setColor(Color.BLACK);
                 g2d.setFont(new Font("Stencil", Font.BOLD, (int) (FONTSIZE * zoomRatio)));
                 localPlayerPrinted = false;
-                xLocation = 0.1; yLocation = 0.15;
-                double lineIncrement = 0.02, playerIncrement = 0.05;
+                xLocation = 0.1; yLocation = 0.1;
+                double lineIncrement = 0.02, playerIncrement = 0.12;
                 for (Player otherPlayer : otherPlayersList) {
                     if(!localPlayerPrinted && player.compareTo(otherPlayer)==-1){
                         localPlayerPrinted = true;
@@ -1939,8 +1947,6 @@ public class GamePanel extends JPanel{
                         g2d.drawString(player.getName(), rightBorderX + (int)(xLocation*rightBorderWidth), (int) (yLocation*panelHeight));
                         yLocation += lineIncrement;
                         g2d.drawString("HP : " + (int)player.getPlayerHealth() + "/"+(int)Player.maxHealth,  rightBorderX + (int)(xLocation*rightBorderWidth), (int) (yLocation*panelHeight));
-                        yLocation += lineIncrement;
-                        g2d.drawString("Team : " + player.getTeamId(),  rightBorderX + (int)(xLocation*rightBorderWidth), (int) (yLocation*panelHeight));
                         yLocation += playerIncrement;
                     }
                     if(gameMode.getTeam()==GameMode.TEAMS){
@@ -1949,8 +1955,6 @@ public class GamePanel extends JPanel{
                     g2d.drawString(otherPlayer.getName(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
                     yLocation += lineIncrement;
                     g2d.drawString("HP : " + (int)otherPlayer.getPlayerHealth() + "/"+(int)Player.maxHealth, rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
-                    yLocation += lineIncrement;
-                    g2d.drawString("Team : " + otherPlayer.getTeamId(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
                     yLocation += playerIncrement;
                 }
                 if (!localPlayerPrinted) {
@@ -1960,8 +1964,6 @@ public class GamePanel extends JPanel{
                     g2d.drawString(player.getName(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
                     yLocation += lineIncrement;
                     g2d.drawString("HP : " + (int)player.getPlayerHealth() + "/"+(int)Player.maxHealth, rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
-                    yLocation += lineIncrement;
-                    g2d.drawString("Team : " + player.getTeamId(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
                 }
                 break;
 
