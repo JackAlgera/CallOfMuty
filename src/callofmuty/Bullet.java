@@ -8,10 +8,11 @@ import java.util.ArrayList;
 
 public class Bullet {
     
-    public static final int NORMAL = 0, FIRE = 1, EGG = 2, MELEE = 3;
+    public static final int NORMAL = 0, FIRE = 1, EGG = 2, MELEE = 3, CHICKEN = 4;
     private static final long TIME_BEFORE_REACTIVATING = 1000; // time before this bullet can be reactivated, ensuring other players will detect it as a new bullet and play shooting sound again
     private static final int NORMAL_WIDTH = 15, NORMAL_HEIGHT = 15,
-                            MELEE_WIDTH = 30, MELEE_HEIGHT = 20;
+                            MELEE_WIDTH = 30, MELEE_HEIGHT = 20,
+                            CHICKEN_WIDTH = 30, CHICKEN_HEIGHT = 30;
     
     private double posX, posY, speed, damage, travelledDistance, maxRange;
     private int numberOfBounces, ballWidth, ballHeight, playerId, bulletId, bulletType;
@@ -55,13 +56,7 @@ public class Bullet {
         this.posY = posY;
         this.bulletType = bulletType;
         this.numberOfBounces = numberOfBounces;
-        if(bulletType != MELEE){
-            ballWidth = NORMAL_WIDTH;
-            ballHeight = NORMAL_HEIGHT;
-        } else {
-            ballWidth = MELEE_WIDTH;
-            ballHeight = MELEE_HEIGHT;
-        }
+        setDimensions();
         this.speed = speed;
         this.direction = direction;
         this.playerId = playerId;
@@ -101,13 +96,7 @@ public class Bullet {
     public void setBulletType(int bulletType){
         this.bulletType = bulletType;
         setAnimationRow();
-        if(bulletType != MELEE){
-            ballWidth = NORMAL_WIDTH;
-            ballHeight = NORMAL_HEIGHT;
-        } else {
-            ballWidth = MELEE_WIDTH;
-            ballHeight = MELEE_HEIGHT;
-        }
+        setDimensions();
     }
     
     public void update(double dT) {
@@ -275,11 +264,14 @@ public class Bullet {
 
     private void setAnimationRow() {
         switch(bulletType){
-            case Bullet.EGG:
+            case EGG:
                 bulletAnimation.setRow(3);
                 break;
-            case Bullet.MELEE:
+            case MELEE:
                 bulletAnimation.setRow(4);
+                break;
+            case CHICKEN:
+                bulletAnimation.setRow(5);
                 break;
             default:
                 bulletAnimation.setRow(2);
@@ -297,5 +289,21 @@ public class Bullet {
 //        {
 //            bulletAnimation.incrCurrentImage();
 //        }
+    }
+
+    private void setDimensions() {
+        switch (bulletType) {
+            case MELEE:
+                ballWidth = MELEE_WIDTH;
+                ballHeight = MELEE_HEIGHT;
+                break;
+            case CHICKEN:
+                ballWidth = CHICKEN_WIDTH;
+                ballHeight = CHICKEN_HEIGHT;
+                break;
+            default:
+                ballWidth = NORMAL_WIDTH;
+                ballHeight = NORMAL_HEIGHT;
+        }
     }
 }

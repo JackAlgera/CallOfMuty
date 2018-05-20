@@ -701,7 +701,7 @@ public class Player implements Comparable<Player>{
             } else if(gunRandom<0.96){
                 gunId = Gun.FLAMETHROWER; // 4%
             } else {
-                gunId = Gun.LEGENDARY_WEAPON; // 4%sssssss
+                gunId = Gun.LEGENDARY_WEAPON; // 4%
             }
             int numberOfCartridges = Math.round((float) Math.random()); // player can get 0 or 1 cartridge
             gun.setId(gunId, numberOfCartridges);
@@ -716,6 +716,7 @@ public class Player implements Comparable<Player>{
     }
     
     public void shoot(double[] wantedDirection, SQLManager sql, int numberOfBounces){
+        int nextBulletType = gun.getBulletType();
         if (gun.shoot(muteSounds)){
             double sign = Math.signum(wantedDirection[0]);
             double randomAngle = Math.random() * Math.signum(Math.random() - 0.5) * gun.getBulletSpread();
@@ -725,11 +726,11 @@ public class Player implements Comparable<Player>{
                 double[] angle = new double[]{0.0872665, 0.0872665 * 2, -0.0872665, -0.0872665 * 2, 0};
                 for (int i = 0; i<angle.length; i++){
                     realDirection = new double[]{Math.cos(randomAngle + Gamma + angle[i]) * sign, Math.sin(randomAngle + Gamma + angle[i]) * sign};
-                    addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, realDirection, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType(), numberOfBounces, gun.getMaxRange());
+                    addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, realDirection, gun.getBulletSpeed(), sql, gun.getDamage(), nextBulletType, numberOfBounces, gun.getMaxRange());
                 }
             } else {
                 realDirection = new double[]{Math.cos(randomAngle + Gamma) * sign, Math.sin(randomAngle + Gamma) * sign};
-                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, realDirection, gun.getBulletSpeed(), sql, gun.getDamage(), gun.getBulletType(), numberOfBounces, gun.getMaxRange());
+                addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, realDirection, gun.getBulletSpeed(), sql, gun.getDamage(), nextBulletType, numberOfBounces, gun.getMaxRange());
             }
             if (realDirection [0] < 0) {
                 gun.changeGunDirection(1);
@@ -917,5 +918,13 @@ public class Player implements Comparable<Player>{
             }
         }
         return counter;
+    }
+
+    public Image getGunImage() {
+        return gun.getImage();
+    }
+
+    public String getAmmoString() {
+        return gun.getAmmoString();
     }
 }

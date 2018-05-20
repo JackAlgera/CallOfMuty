@@ -20,7 +20,7 @@ public class Gun {
     private int ammunition,stockAmmo, id, startingAmmo, xImage, yImage, tailleGun, bulletType;
     private Image image;
     private double damage, rateOfFire, lastShotTimeStamp, reloadTime, bulletSpeed, initialRateOfFire, maxRange, bulletSpread;
-    private SoundPlayer gunSound, uziSound, sniperSound,shotgunSound, legendaryWeaponSound;
+    private SoundPlayer gunSound, uziSound, sniperSound,shotgunSound, legendaryWeaponSound,chickenThrowingSound;
     
     public Gun(){
         ammunition = 0;
@@ -32,6 +32,7 @@ public class Gun {
         sniperSound = new SoundPlayer("sniperSound.mp3", false);
         shotgunSound = new SoundPlayer("shotgunSound.mp3", false);
         legendaryWeaponSound = new SoundPlayer("legendaryWeaponSound.mp3", false);
+        chickenThrowingSound = new SoundPlayer("legendaryWeaponSound.mp3", false);
     }
     
     public double getDamage(){
@@ -39,7 +40,13 @@ public class Gun {
     }
     
     public int getBulletType(){
-        return bulletType;
+        int type;
+        if(id==LEGENDARY_WEAPON && stockAmmo == 0 && ammunition==1){
+            type = Bullet.CHICKEN;
+        } else {
+            type = bulletType;
+        }
+        return type;
     }
     
     public void setId(int id, int numberOfCartridges){
@@ -181,7 +188,8 @@ public class Gun {
                 break;
                 
             case NO_GUN:
-                ammunition = 0;       
+                ammunition = 0;
+                image = null;
         }
         stockAmmo = ammunition * numberOfCartridges;
         startingAmmo = ammunition;
@@ -229,6 +237,9 @@ public class Gun {
             ammunition--;
             rateOfFire=initialRateOfFire;
             lastShotTimeStamp = System.currentTimeMillis();
+            if (!muteShootingSound){
+                playShootingSound();
+            }
             if(ammunition==0){
                 if(stockAmmo !=0 ){
                     stockAmmo-=startingAmmo;
@@ -237,9 +248,6 @@ public class Gun {
                 } else {
                     setId(NO_GUN, 0);
                 }
-            }
-            if (!muteShootingSound){
-                playShootingSound();
             }
         }
         return test;
@@ -267,7 +275,11 @@ public class Gun {
                 shotgunSound.play();
                 break;
             case LEGENDARY_WEAPON:
-                legendaryWeaponSound.play();
+                if(ammunition==0 && stockAmmo==0){
+                    chickenThrowingSound.play();
+                } else {
+                    legendaryWeaponSound.play();
+                }
                 break;
             default:
                 gunSound.play();
@@ -315,6 +327,22 @@ public class Gun {
                 break;
         }
         return gunPos;
+    }
+
+    public Image getImage() {
+        Image imageToReturn = null;
+        if(id!=NO_GUN && (ammunition != 0 || stockAmmo!=0)){
+            imageToReturn = image;
+        }
+        return imageToReturn;
+    }
+
+    public String getAmmoString() {
+        String text = "";
+        if(id!=NO_GUN && (ammunition != 0 || stockAmmo!=0)){
+            text = ""+ammunition+"/"+stockAmmo;
+        }
+        return text;
     }
     
 }

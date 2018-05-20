@@ -1853,7 +1853,9 @@ public class GamePanel extends JPanel{
         g2d.setColor(Color.BLACK);
         double zoomRatio = getZoomRatio();
         g2d.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*zoomRatio)));
-        int gameX = getGameX(), rightBorderX = gameX+(int)(panelWidth*(double)mapWidth/(mapWidth+IN_GAME_RIGHT_MARGIN)), rightBorderWidth = (int)(panelWidth*(double)IN_GAME_RIGHT_MARGIN/(mapWidth+IN_GAME_RIGHT_MARGIN));
+        int gameX = getGameX();
+        int rightBorderX = gameX+(int)(panelWidth*(double)mapWidth/(mapWidth+IN_GAME_RIGHT_MARGIN)), rightBorderWidth = (int)(panelWidth*(double)IN_GAME_RIGHT_MARGIN/(mapWidth+IN_GAME_RIGHT_MARGIN));
+        int bottomBorderY = (int)(panelHeight*(double)mapHeight/(mapHeight+IN_GAME_BOT_MARGIN)), bottomBorderHeight = (int)(panelHeight*(double)IN_GAME_BOT_MARGIN/(mapHeight+IN_GAME_BOT_MARGIN));
         switch(gameState) {
             case PRE_GAME:
                 g2d.drawImage(PreGameBackground, gameX, 0, panelWidth, panelHeight, this);
@@ -1963,6 +1965,13 @@ public class GamePanel extends JPanel{
                     g2d.drawString(player.getName(), rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
                     yLocation += lineIncrement;
                     g2d.drawString("HP : " + (int)player.getPlayerHealth() + "/"+(int)Player.maxHealth, rightBorderX + (int) (xLocation * rightBorderWidth), (int) (yLocation * panelHeight));
+                }
+                Image gunImage = player.getGunImage();
+                if(gunImage != null){
+                    g2d.setColor(Color.black);
+                    g2d.setFont(new Font("Stencil", Font.BOLD, (int) (FONTSIZE*1.5 * zoomRatio)));
+                    g2d.drawString(player.getAmmoString(), (int)(0.35*panelWidth+gunImage.getWidth(null)*2*zoomRatio), bottomBorderY+(int)(0.50*bottomBorderHeight));
+                    g2d.drawImage(gunImage,(int)(0.3*panelWidth),bottomBorderY+(int)(0.05*bottomBorderHeight), (int)(gunImage.getWidth(null)*2*zoomRatio), (int)(gunImage.getHeight(null)*2*zoomRatio), null);
                 }
                 break;
 

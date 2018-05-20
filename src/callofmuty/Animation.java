@@ -8,7 +8,7 @@ public class Animation {
     int skinId, numberOfSkins;
     
     public static final int PLAYER = 0, GUN = 1, STILL_IMAGE = 2;
-    private static final int GUN_SWITCH_TIME = 100, GUN_NUMBER_OF_IMAGES_X = 5, GUN_NUMBER_OF_IMAGES_Y = 4, GUN_ANIMATION_IMAGE_LENTH = 5, GUN_FIRST_IMAGE = 1;
+    private static final int GUN_SWITCH_TIME = 100, GUN_NUMBER_OF_IMAGES_X = 5, GUN_NUMBER_OF_IMAGES_Y = 5, GUN_ANIMATION_IMAGE_LENTH = 5, GUN_FIRST_IMAGE = 1;
     private static final int PLAYER_SWITCH_TIME = 115, PLAYER_NUMBER_OF_IMAGES_X = 8, PLAYER_NUMBER_OF_IMAGES_Y = 20, PLAYER_ANIMATION_IMAGE_LENTH = 8, PLAYER_FIRST_IMAGE = 1;
             
     public Animation(int type){
