@@ -6,7 +6,7 @@ public class GameMode {
     private boolean[] Options; // 0 : Suggested map, 1 : Bouncing balls, 2 : Bonus Items, 3 : Fast mode
     private int gunGestion;
     private int Team;
-    private String description, name;
+    private String description;
     
     public static final int DEFAULT=0,ROYAL=1,TEAM_MODE=2, // game mode
                 RANDOM =0, ALWAYSON = 1, // gun generation
@@ -15,9 +15,9 @@ public class GameMode {
     private static final double FAST_MODE_MULTIPLIER = 1.7;
     private static final int NUMBER_OF_BOUNCES = 1;
     
-    private static String DEFAULT_DESCRIPTION = "Bla bla default gamemode description",
-            ROYAL_DESCRIPTION = "PAN PAN EVERYWHERE",
-            TEAM_DESCRIPTION = "PAN PAN but not on everyone";
+    private static String DEFAULT_DESCRIPTION = "Players randomly get guns.\n\nYour goal : be the last one standing !",
+            ROYAL_DESCRIPTION = "Everyone has guns, all the time.\n\nShoot everywhere, kill everyone !",
+            TEAM_DESCRIPTION = "This time, you will have teammates to help you in your cleaning task";
     
     public GameMode(){
         Options= new boolean[] {false,false,false,false};

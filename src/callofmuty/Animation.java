@@ -20,8 +20,7 @@ public class Animation {
         numberOfImagesAnimation = new int[2];
         isIdle = false;  
         
-        switch(type)
-        {
+        switch(type){
             case GUN:
                 this.switchTime = GUN_SWITCH_TIME;
                 this.numberOfImagesAnimation[0] = GUN_NUMBER_OF_IMAGES_X;

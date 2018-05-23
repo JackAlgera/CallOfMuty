@@ -12,8 +12,8 @@ public class Player implements Comparable<Player>{
     public static Image normalHealthBar = Tools.selectTile(Tools.hudTileset, 1, 2),
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
-    private static double rollSpeedMultiplier = 3, meleeDamage = 25, feetHeight = 0.4;
-    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 25, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
+    private static double rollSpeedMultiplier = 3, meleeDamage = 25, feetHeight = 0.4,meleeSpeed = 0.7;
+    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 200, meleeRange = 25, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
     private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5, playerWidth= 35, playerHeight = 55;
     public static int PLAYING = 1,DEAD = 2;
     
@@ -713,9 +713,9 @@ public class Player implements Comparable<Player>{
         if (System.currentTimeMillis()-timeBetweenMeleeAttacks>=lastMeleeAttackTimeStamp){
             lastMeleeAttackTimeStamp = System.currentTimeMillis();
             if(directionOfFire[0]>=0){
-                addBullet(getPosX() + playerWidth/2 + directionOfFire[0]*playerWidth/4, getPosY() + playerHeight/2+ directionOfFire[1]*playerHeight/4, directionOfFire, 0.4 , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
+                addBullet(getPosX() + playerWidth/2 + directionOfFire[0]*playerWidth/4, getPosY() + playerHeight/2+ directionOfFire[1]*playerHeight/4, directionOfFire, meleeSpeed , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
             } else {
-                addBullet(getPosX() + playerWidth/2 + directionOfFire[0]*playerWidth/4-Bullet.MELEE_WIDTH, getPosY() + playerHeight/2+ directionOfFire[1]*playerHeight/4, directionOfFire, 0.4 , sql, meleeDamage , Bullet.LEFT_MELEE, 0, meleeRange);
+                addBullet(getPosX() + playerWidth/2 + directionOfFire[0]*playerWidth/4-Bullet.MELEE_WIDTH, getPosY() + playerHeight/2+ directionOfFire[1]*playerHeight/4, directionOfFire, meleeSpeed , sql, meleeDamage , Bullet.LEFT_MELEE, 0, meleeRange);
             }
         }
     }
