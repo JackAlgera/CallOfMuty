@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class Bullet {
     
-    public static final int NORMAL = 0, FIRE = 1, EGG = 2, MELEE = 3, CHICKEN = 4;
+    public static final int NORMAL = 0, FIRE = 1, EGG = 2, MELEE = 3, CHICKEN = 4, LEFT_MELEE = 5;
     private static final long TIME_BEFORE_REACTIVATING = 1000; // time before this bullet can be reactivated, ensuring other players will detect it as a new bullet and play shooting sound again
-    private static final int NORMAL_WIDTH = 15, NORMAL_HEIGHT = 15,
+    public static final int NORMAL_WIDTH = 15, NORMAL_HEIGHT = 15,
                             MELEE_WIDTH = 30, MELEE_HEIGHT = 20,
                             CHICKEN_WIDTH = 30, CHICKEN_HEIGHT = 30;
     
@@ -19,7 +19,6 @@ public class Bullet {
     private double[] direction;
     private ArrayList<Image> animationImages = new ArrayList<Image>();
     private Animation bulletAnimation;
-    private Image image;
     private boolean isActive;
     private long timeOfDeactivation;
     
@@ -62,7 +61,6 @@ public class Bullet {
         this.playerId = playerId;
         this.bulletId = bulletId;
         isActive = false;
-        image = Tools.selectTile(Tools.bulletTileset, 1, 2);
         travelledDistance = 0;
         timeOfDeactivation = System.currentTimeMillis()-TIME_BEFORE_REACTIVATING;
         this.maxRange = maxRange;
@@ -273,6 +271,9 @@ public class Bullet {
             case CHICKEN:
                 bulletAnimation.setRow(5);
                 break;
+            case LEFT_MELEE:
+                bulletAnimation.setRow(6);
+                break;
             default:
                 bulletAnimation.setRow(2);
         }
@@ -282,8 +283,7 @@ public class Bullet {
         return(!isActive && System.currentTimeMillis()-TIME_BEFORE_REACTIVATING>=timeOfDeactivation);
     }
     
-    public void setAnimationState(int state)
-    {
+    public void setAnimationState(int state){
         bulletAnimation.setAnimation(state);
 //        if(state == Animation.STILL_IMAGE)
 //        {
@@ -294,6 +294,7 @@ public class Bullet {
     private void setDimensions() {
         switch (bulletType) {
             case MELEE:
+            case LEFT_MELEE:
                 ballWidth = MELEE_WIDTH;
                 ballHeight = MELEE_HEIGHT;
                 break;

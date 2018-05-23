@@ -129,7 +129,9 @@ public class SQLManager {
                                 if (bulletIndex == -1) { // bullet was not already in the list
                                     otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId, resultat.getInt("bulletType")));
                                     otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
-                                    otherPlayersList.get(playerIndex).playShootSound();
+                                    if (resultat.getInt("bulletType")!=Bullet.MELEE && resultat.getInt("bulletType")!=Bullet.LEFT_MELEE){
+                                        otherPlayersList.get(playerIndex).playShootSound();
+                                    }
                                 } else { // bullet was already in the list
                                     otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
                                     otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));
@@ -153,6 +155,9 @@ public class SQLManager {
                                 if (bulletIndex == -1) {
                                     otherBulletsList.add(new Bullet(resultat.getInt("bullet.posX"), resultat.getInt("bullet.posY"), playerId, bulletId, resultat.getInt("bulletType")));
                                     otherBulletsList.get(otherBulletsList.size() - 1).setActive(true);
+                                    if (resultat.getInt("bulletType")!=Bullet.MELEE && resultat.getInt("bulletType")!=Bullet.LEFT_MELEE){
+                                        otherPlayersList.get(otherPlayersList.indexOf(new Player(resultat.getInt("players.id")))).playShootSound();
+                                    }
                                 } else {
                                     otherBulletsList.get(bulletIndex).setPosX(resultat.getInt("bullet.posX"));
                                     otherBulletsList.get(bulletIndex).setPosY(resultat.getInt("bullet.posY"));

@@ -13,7 +13,7 @@ public class Player implements Comparable<Player>{
             lowHealthBar = Tools.selectTile(Tools.hudTileset, 1, 1);
     public static double maxHealth = 100.0;
     private static double rollSpeedMultiplier = 3, meleeDamage = 25, feetHeight = 0.4;
-    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 150, meleeRange = 25, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
+    private static long timeBetweenHurtSounds = 300, timeBetweenMeleeAttacks= 1000, meleeAttacksDuration = 250, meleeRange = 25, rollTime = 150, timeBetweenTaunts = 1000, timeBetweenRolls = 1000; // in milliseconds
     private static int initialBulletNumber = 10, initialItemNumber = 3,MAX_NUMBER_OF_ITEMS = 5, playerWidth= 35, playerHeight = 55;
     public static int PLAYING = 1,DEAD = 2;
     
@@ -260,7 +260,8 @@ public class Player implements Comparable<Player>{
             g.fillRect(game.getGameX()+(int)((posX + playerWidth / 2 - imageWidth + 12)*zoomRatio), (int)((posY + playerHeight / 2 - imageHeight - 6)*zoomRatio), (int) ((imageWidth * 2 - 24) * health / maxHealth*zoomRatio), (int)(2*zoomRatio));
             g.setColor(formerColor);
             // drawing hitbox
-            /*Rectangle hitbox = getHitBox();
+            /*
+            Rectangle hitbox = getHitBox();
             g.drawRect(game.getGameX()+hitbox.x, hitbox.y, hitbox.width, hitbox.height);
             g.setColor(Color.GREEN);
             hitbox = getFeetHitbox();
@@ -595,7 +596,7 @@ public class Player implements Comparable<Player>{
             bullet = bulletList.get(i);
             if (bullet.isActive()) {
                 bullet.update(dT);
-                if(bullet.getBulletType()==Bullet.MELEE){
+                if(bullet.getBulletType()==Bullet.MELEE || bullet.getBulletType()==Bullet.LEFT_MELEE){
                     if (bullet.getTravelledDistance()>meleeRange){
                         bullet.setBulletSpeed(0);
                     }
@@ -710,8 +711,12 @@ public class Player implements Comparable<Player>{
     
     public void meleeAttack(double[] directionOfFire, SQLManager sql) {
         if (System.currentTimeMillis()-timeBetweenMeleeAttacks>=lastMeleeAttackTimeStamp){
-            lastMeleeAttackTimeStamp = System.currentTimeMillis(); 
-            addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, directionOfFire, 3.0 , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
+            lastMeleeAttackTimeStamp = System.currentTimeMillis();
+            if(directionOfFire[0]>=0){
+                addBullet(getPosX() + playerWidth/2 + directionOfFire[0]*playerWidth/4, getPosY() + playerHeight/2+ directionOfFire[1]*playerHeight/4, directionOfFire, 0.4 , sql, meleeDamage , Bullet.MELEE, 0, meleeRange);
+            } else {
+                addBullet(getPosX() + playerWidth/2 + directionOfFire[0]*playerWidth/4-Bullet.MELEE_WIDTH, getPosY() + playerHeight/2+ directionOfFire[1]*playerHeight/4, directionOfFire, 0.4 , sql, meleeDamage , Bullet.LEFT_MELEE, 0, meleeRange);
+            }
         }
     }
     
