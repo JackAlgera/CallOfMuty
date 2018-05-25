@@ -81,7 +81,8 @@ public class GamePanel extends JPanel{
             tauntIcon = Tools.loadIcon("Taunt.png"),
             defaultModeIcon = Tools.loadIcon("Default.png"),
             royalModeIcon = Tools.loadIcon("Royal.png"),
-            teamModeIcon = Tools.loadIcon("Team.png");
+            teamModeIcon = Tools.loadIcon("Team.png"),
+            changeTeamIcon = Tools.loadIcon("ChangeTeam.png");
     
     public static final int MAIN_MENU = 0, IN_GAME = 1, MAP_EDITOR = 2, PRE_GAME = 3, ENDING = 4, GAME_MODE = 5, PARAMETERS = 6,
             IN_GAME_RIGHT_MARGIN = 2, IN_GAME_BOT_MARGIN = 1,
@@ -257,10 +258,6 @@ public class GamePanel extends JPanel{
         teamColors.add(Color.YELLOW.darker());
         teamColors.add(Color.CYAN);
         teamColors.add(Color.ORANGE);
-        teamColors.add(Color.MAGENTA);
-        teamColors.add(Color.PINK);
-        teamColors.add(Color.LIGHT_GRAY);
-        teamColors.add(Color.DARK_GRAY);
     }
     
     public void setFrame(JFrame frame){
@@ -795,14 +792,15 @@ public class GamePanel extends JPanel{
             }
         });
         
-        JButton teamColorSelector = new JButton("Select your team");
+        JButton teamColorSelector = new JButton();
         teamColorSelector.setFocusable(false);
         teamColorSelector.setName("teamColorSelector");
-        teamColorSelector.setBackground(teamColors.get(0));
-        bounds = new Rectangle((int)(0.16*panelWidth)+getGameX(),(int)(0.2*panelHeight), (int)(0.1*panelWidth), (int)(0.05*panelHeight));
+        //teamColorSelector.setBackground(teamColors.get(0));
+        bounds = new Rectangle((int)(0.05*panelWidth)+getGameX(),(int)(0.45*panelHeight), (int)(0.1502*panelWidth), (int)(0.0469*panelHeight));
         teamColorSelector.setBounds(bounds);
+        startButton.setIcon(new ImageIcon(changeTeamIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         PGoriginalBounds.add(bounds);
-        PGicons.add(null);
+        PGicons.add(changeTeamIcon);
         teamColorSelector.setVisible(false);
         add(teamColorSelector);
         PGbuttons.add(teamColorSelector);
@@ -815,7 +813,7 @@ public class GamePanel extends JPanel{
                     JOptionPane.showMessageDialog(null, "There must be at least two teams");
                 } else {
                     player.setTeamId((player.getTeamId() % availableTeams) + 1);
-                    teamColorSelector.setBackground(teamColors.get(player.getTeamId() - 1));
+                    //teamColorSelector.setBackground(teamColors.get(player.getTeamId() - 1));
                     sql.setPlayerTeamId(player);
                     repaint();
                 }
@@ -1775,7 +1773,7 @@ public class GamePanel extends JPanel{
                         player.setTeamId(2-(player.getPlayerId()%2));
                         for (JComponent button : PGbuttons){
                             if("teamColorSelector".equals(button.getName())){
-                                button.setBackground(teamColors.get(player.getTeamId() - 1));
+                                //button.setBackground(teamColors.get(player.getTeamId() - 1));
                             }
                         }
                     }
