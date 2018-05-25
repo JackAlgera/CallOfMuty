@@ -1921,7 +1921,7 @@ public class GamePanel extends JPanel{
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
                 g2d.setColor(Color.BLACK);
-                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (0.85*FONTSIZE * zoomRatio)));
+                g2d.setFont(new Font("Calibri", Font.BOLD, (int) (0.85*FONTSIZE * zoomRatio)));
                 g2d.drawImage(InGameBackground, gameX, 0, panelWidth, panelHeight, this);
                 map.draw(g2d, false, this);
                 
@@ -1944,10 +1944,10 @@ public class GamePanel extends JPanel{
                     otherPlayersItems.get(i).draw(g2d, textureSize, this);
                 }
                 
-                g2d.setFont(new Font("Stencil", Font.BOLD, (int) (FONTSIZE * zoomRatio)));
+                g2d.setFont(new Font("Calibri", Font.BOLD, (int) (FONTSIZE * zoomRatio)));
                 localPlayerPrinted = false;
-                xLocation = 0.1; yLocation = 0.1;
-                double lineIncrement = 0.02, playerIncrement = 0.12;
+                xLocation = 0.03; yLocation = 0.17;
+                double lineIncrement = 0.02, playerIncrement = 0.123;
                 for (Player otherPlayer : otherPlayersList) {
                     if(!localPlayerPrinted && player.compareTo(otherPlayer)==-1){
                         localPlayerPrinted = true;
