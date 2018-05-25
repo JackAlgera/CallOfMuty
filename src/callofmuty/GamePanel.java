@@ -792,6 +792,8 @@ public class GamePanel extends JPanel{
             }
         });
         
+        //------------------------------------- Change team color button during lobby ----------------------------- 
+        
         JButton teamColorSelector = new JButton();
         teamColorSelector.setFocusable(false);
         teamColorSelector.setName("teamColorSelector");
