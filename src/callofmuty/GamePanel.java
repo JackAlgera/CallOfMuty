@@ -1050,46 +1050,46 @@ public class GamePanel extends JPanel{
         GMbuttons.add(descriptionText);
 //--------------------------------------------- Options for the game mode ------------------------------------------  
     
-        JTextField suggestedMapText = new JTextField("Use suggested map");
-        suggestedMapText.setFocusable(false);
+        JTextField noGunsText = new JTextField("No guns");
+        noGunsText.setFocusable(false);
         bounds = new Rectangle((int)(0.3809*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1758*panelWidth), (int)(0.0521*panelHeight));
-        suggestedMapText.setBounds(bounds);
+        noGunsText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
         GMicons.add(null);
-        suggestedMapText.setEditable(false);
-        suggestedMapText.setHorizontalAlignment(JTextField.CENTER);
-        suggestedMapText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
-        suggestedMapText.setBackground(new Color(230,226,211));
-        suggestedMapText.setName("textField");
-        suggestedMapText.setForeground(Color.DARK_GRAY);
-        suggestedMapText.setBorder(null);
-        suggestedMapText.setVisible(false);
-        add(suggestedMapText);
-        GMbuttons.add(suggestedMapText);
+        noGunsText.setEditable(false);
+        noGunsText.setHorizontalAlignment(JTextField.CENTER);
+        noGunsText.setFont(new Font("Stencil", Font.BOLD, (int)(FONTSIZE*getZoomRatio())));
+        noGunsText.setBackground(new Color(230,226,211));
+        noGunsText.setName("textField");
+        noGunsText.setForeground(Color.DARK_GRAY);
+        noGunsText.setBorder(null);
+        noGunsText.setVisible(false);
+        add(noGunsText);
+        GMbuttons.add(noGunsText);
 
-        JButton suggestedMapButton = new JButton();
-        suggestedMapButton.setFocusable(false);
-        suggestedMapButton.setName("checkButton0");
+        JButton noGunsButton = new JButton();
+        noGunsButton.setFocusable(false);
+        noGunsButton.setName("checkButton0");
         bounds = new Rectangle((int)(bounds.x + (bounds.width-0.0391*panelWidth)/2),(int)(0.8507*panelHeight), (int)(0.0391*panelWidth), (int)(0.0694*panelHeight));
-        suggestedMapButton.setBounds(bounds);
-        suggestedMapButton.setIcon(new ImageIcon(uncheckedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+        noGunsButton.setBounds(bounds);
+        noGunsButton.setIcon(new ImageIcon(uncheckedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
         GMoriginalBounds.add(bounds);
         GMicons.add(null); // since it has 2 icons, they are dealt with using component's name
-        suggestedMapButton.setVisible(false);
-        suggestedMapButton.setBorderPainted(true);
-        add(suggestedMapButton);
-        GMbuttons.add(suggestedMapButton);
+        noGunsButton.setVisible(false);
+        noGunsButton.setBorderPainted(true);
+        add(noGunsButton);
+        GMbuttons.add(noGunsButton);
         
-        suggestedMapButton.addActionListener(new ActionListener() {
+        noGunsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 playClicSound();
-                Rectangle bounds = suggestedMapButton.getBounds();
+                Rectangle bounds = noGunsButton.getBounds();
                 if(gameMode.getOption(0)){
                     gameMode.setOption(0, false);
-                    suggestedMapButton.setIcon(new ImageIcon(uncheckedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+                    noGunsButton.setIcon(new ImageIcon(uncheckedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                 } else {
                     gameMode.setOption(0, true);
-                    suggestedMapButton.setIcon(new ImageIcon(checkedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
+                    noGunsButton.setIcon(new ImageIcon(checkedIcon.getImage().getScaledInstance(bounds.width, bounds.height, Image.SCALE_DEFAULT)));
                 }
             }
         });

@@ -672,6 +672,9 @@ public class Player implements Comparable<Player>{
 
     public void generateGun(int numberOfPlayers, long dT, GameMode gameMode) {
         boolean generateWeapon;
+        if(gameMode.getOption(0)){
+            generateWeapon = false;
+        } else {
         switch (gameMode.getGunGestion()) {
             case GameMode.RANDOM:
                 generateWeapon = gun.getId() == 0 && Math.random() < (double) dT / (1000 * numberOfPlayers * 4); // In average, one player gets a gun every 4 seconds
@@ -681,6 +684,7 @@ public class Player implements Comparable<Player>{
                 break;
             default:
                 generateWeapon = true;
+        }
         }
         if(generateWeapon && this.gun.getId()==0){
             double gunRandom = Math.random();

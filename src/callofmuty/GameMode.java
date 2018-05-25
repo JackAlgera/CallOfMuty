@@ -3,7 +3,7 @@ package callofmuty;
 public class GameMode {
     
     private int id;
-    private boolean[] Options; // 0 : Suggested map, 1 : Bouncing balls, 2 : Bonus Items, 3 : Fast mode
+    private boolean[] Options; // 0 : No guns, 1 : Bouncing balls, 2 : Bonus Items, 3 : Fast mode
     private int gunGestion;
     private int Team;
     private String description;
