@@ -154,4 +154,9 @@ public class Animation {
     {
         currentImage ++;
     }
+    
+    public void setIdle()
+    {
+        row = (skinId - 1) * 4 + 3;
+    }
 }

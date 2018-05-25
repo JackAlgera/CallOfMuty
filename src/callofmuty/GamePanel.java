@@ -1828,6 +1828,7 @@ public class GamePanel extends JPanel{
             sql.disconnect();
         }
         isConnected = false;
+        player.resetAnimation();
     }
     
     //-------------------------------------------------------------------------------------------------------------------------

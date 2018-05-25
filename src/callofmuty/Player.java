@@ -121,7 +121,7 @@ public class Player implements Comparable<Player>{
         setPosition(map);
         resetHurtPlayers();
         speed = new double[]{0.0,0.0};
-        playerAnimation.setIsIdle(true, 1);
+        playerAnimation.setIdle();
         acceleration = new double[]{0.0,0.0};
     }
     
@@ -937,5 +937,10 @@ public class Player implements Comparable<Player>{
 
     public String getAmmoString() {
         return gun.getAmmoString();
+    }
+    
+    public void resetAnimation()
+    {
+        playerAnimation.setIdle();
     }
 }
