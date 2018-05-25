@@ -16,7 +16,7 @@ public class SQLManager {
     bullet : idBullet (int) ; idPlayer (int) ; posX (int); posY (int); active (tinyint); bulletType(int)
     grid : x (int) ; y (int) ; tileType (int) ; startingTile (tinyint)
     players : id (int) ; name (String(50)) ; playerHp (double) ; posX (int) ; posY (int) : skinId (int) ; playerState (int), isTaunting (tinyint);
-    game : id (int);  gameState (int); rubberBalls (tinyint); activeItems(tinyint); fastMode(tinyint)
+    game : id (int);  gameState (int); noGuns (tinyint); rubberBalls (tinyint); activeItems(tinyint); fastMode(tinyint)
     
     null values return as 0
 */
@@ -372,7 +372,12 @@ public class SQLManager {
     public void createGame(Map map, GameMode gameMode){
         PreparedStatement requete;
         try {
-            int rubberBalls, activeItems, fastMode;
+            int noGuns, rubberBalls, activeItems, fastMode;
+            if(gameMode.getOption(0)){
+                noGuns = 1;
+            } else {
+                noGuns = 0;
+            }
             if(gameMode.getOption(1)){
                 rubberBalls = 1;
             } else {
@@ -388,7 +393,7 @@ public class SQLManager {
             } else {
                 fastMode = 0;
             }
-            requete = connexion.prepareStatement("INSERT INTO game VALUES (1,"+ GamePanel.PRE_GAME +","+ gameMode.getId() + ","+ rubberBalls + ","+ activeItems+ ","+ fastMode +")");
+            requete = connexion.prepareStatement("INSERT INTO game VALUES (1,"+ GamePanel.PRE_GAME +","+ gameMode.getId() + ","+ noGuns+ ","+ rubberBalls + ","+ activeItems+ ","+ fastMode +")");
             requete.executeUpdate();
             requete.close();
         } catch (SQLException ex) {
@@ -421,13 +426,14 @@ public class SQLManager {
     
     public int[] getGame(){ // alters gameMode and returns gameState
         PreparedStatement requete;
-        int gameState = -1, gameMode = -1, rubberBalls = -1, activeItems = -1, fastMode = -1;
+        int gameState = -1, gameMode = -1, noGuns =-1, rubberBalls = -1, activeItems = -1, fastMode = -1;
         try {
-            requete = connexion.prepareStatement("SELECT gameState, gameMode, rubberBalls, activeItems, fastMode FROM game");
+            requete = connexion.prepareStatement("SELECT * FROM game");
             ResultSet resultat = requete.executeQuery();
             while (resultat.next()) { 
                 gameState = resultat.getInt("gameState");
                 gameMode = resultat.getInt("gameMode");
+                noGuns = resultat.getInt("noGuns");
                 rubberBalls = resultat.getInt("rubberBalls");
                 activeItems = resultat.getInt("activeItems");
                 fastMode = resultat.getInt("fastMode");
@@ -436,7 +442,7 @@ public class SQLManager {
         } catch (SQLException ex) {
             Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return new int[]{gameState, gameMode, rubberBalls, activeItems, fastMode};
+        return new int[]{gameState, gameMode, noGuns, rubberBalls, activeItems, fastMode};
     }
      
     public void disconnect(){

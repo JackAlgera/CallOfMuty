@@ -1052,7 +1052,7 @@ public class GamePanel extends JPanel{
     
         JTextField noGunsText = new JTextField("No guns");
         noGunsText.setFocusable(false);
-        bounds = new Rectangle((int)(0.3809*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1758*panelWidth), (int)(0.0521*panelHeight));
+        bounds = new Rectangle((int)(0.3909*panelWidth)+getGameX(),(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
         noGunsText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
         GMicons.add(null);
@@ -1096,7 +1096,7 @@ public class GamePanel extends JPanel{
         
         JTextField rubberBallsText = new JTextField("Bouncing bullets");
         rubberBallsText.setFocusable(false);
-        bounds = new Rectangle((int)(0.5664*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
+        bounds = new Rectangle((int)(0.52727*panelWidth)+getGameX(),(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
         rubberBallsText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
         GMicons.add(null);
@@ -1140,7 +1140,7 @@ public class GamePanel extends JPanel{
         
         JTextField bonusItemsText = new JTextField("Bonus items");
         bonusItemsText.setFocusable(false);
-        bounds = new Rectangle((int)(0.6934*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
+        bounds = new Rectangle((int)(0.66363*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
         bonusItemsText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
         GMicons.add(null);
@@ -1184,7 +1184,7 @@ public class GamePanel extends JPanel{
         
         JTextField fastModeText = new JTextField("Fast mode");
         fastModeText.setFocusable(false);
-        bounds = new Rectangle((int)(0.8203*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
+        bounds = new Rectangle((int)(0.8*panelWidth)+getGameX(),(int)(0.7986*panelHeight), (int)(0.1172*panelWidth), (int)(0.0521*panelHeight));
         fastModeText.setBounds(bounds);
         GMoriginalBounds.add(bounds);
         GMicons.add(null);
@@ -1759,9 +1759,10 @@ public class GamePanel extends JPanel{
                     hasCustomMap = true;
                     player.reset(map, muteSounds);
                     gameMode.setId(sqlGame[1]);
-                    gameMode.setOption(1, sqlGame[2] == 1);
-                    gameMode.setOption(2, sqlGame[3] == 1);
-                    gameMode.setOption(3, sqlGame[4] == 1);
+                    gameMode.setOption(0, sqlGame[2] == 1);
+                    gameMode.setOption(1, sqlGame[3] == 1);
+                    gameMode.setOption(2, sqlGame[4] == 1);
+                    gameMode.setOption(3, sqlGame[5] == 1);
                     timer.setMultiplier(gameMode.getTimerMultiplier());
                     player.setPlayerId(1); // 0 means "null", ids start at 1            
                     while (otherPlayersList.contains(player)) {
