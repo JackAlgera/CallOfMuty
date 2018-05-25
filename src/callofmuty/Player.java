@@ -121,6 +121,8 @@ public class Player implements Comparable<Player>{
         setPosition(map);
         resetHurtPlayers();
         speed = new double[]{0.0,0.0};
+        playerAnimation.setIsIdle(true, 1);
+        acceleration = new double[]{0.0,0.0};
     }
     
     public void taunt(){
