@@ -71,7 +71,7 @@ public class GamePanel extends JPanel{
             spectateIcon = Tools.loadIcon("Spectate.png"),
             startingTileIcon = Tools.loadIcon("StartingTiles.png"),
             checkedIcon = Tools.loadIcon("Check.png"),
-            uncheckedIcon = Tools.loadIcon("Uncheck.png"),
+            uncheckedIcon = Tools.loadIcon("UnCheck.png"),
             parametersIcon = Tools.loadIcon("Parametre.png"),
             moveUpIcon = Tools.loadIcon("MoveUp.png"),
             moveDownIcon = Tools.loadIcon("MoveDown.png"),
