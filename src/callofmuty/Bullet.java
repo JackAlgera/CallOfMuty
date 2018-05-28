@@ -139,7 +139,11 @@ public class Bullet {
     public int collisionDirection(Map map){
         int bounceDirection = -1; // -1 means no bounce, 0 means horizontally, 1 means vertically
         
-        if(map.getTile(posX+ballWidth/2, posY+ballHeight/2*(1+direction[1])).blocksBullets()){ // check block above / below
+        if(posX+ballWidth > map.getxPos()+map.getDrawWidth() || posX<map.getxPos()){
+            bounceDirection = 0;
+        } else if(posY+ballHeight > map.getyPos()+map.getDrawHeight() || posY<map.getyPos()){
+            bounceDirection = 1;
+        } else if(map.getTile(posX+ballWidth/2, posY+ballHeight/2*(1+direction[1])).blocksBullets()){ // check block above / below
             bounceDirection = 1;
         } else if(map.getTile(posX+ballWidth/2*(1+direction[0]), posY+ballHeight/2).blocksBullets()){
             bounceDirection =0;
