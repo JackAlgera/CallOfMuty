@@ -568,6 +568,7 @@ public class GamePanel extends JPanel{
         
         rightMapArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 mapIndex++;
                 if(mapIndex > NUMBER_OF_MAPS || (mapIndex == NUMBER_OF_MAPS && !hasCustomMap)){
                     mapIndex = 0;
@@ -601,6 +602,7 @@ public class GamePanel extends JPanel{
         
         leftMapArrow.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                playClicSound();
                 mapIndex--;
                 if(mapIndex<0){
                     if(hasCustomMap){
