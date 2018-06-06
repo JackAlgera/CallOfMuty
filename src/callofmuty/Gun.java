@@ -226,7 +226,7 @@ public class Gun {
                 break;
             default:
                 double zoomRatio = game.getZoomRatio()*game.getScreenSizeZoomRatio();
-                g2d.drawImage(image, game.getGameX()+(int)(getGunPositionY(player)*zoomRatio), (int)((player.getPosY()+18)*zoomRatio), (int)(image.getWidth(null)*zoomRatio), (int)(image.getHeight(null)*zoomRatio), null);
+                g2d.drawImage(image, game.getGameX()+(int)(getGunPositionX(player)*zoomRatio), (int)((player.getPosY()+18)*zoomRatio), (int)(image.getWidth(null)*zoomRatio), (int)(image.getHeight(null)*zoomRatio), null);
         }
         
     }
@@ -286,47 +286,90 @@ public class Gun {
             }
     }
     
-    public int getGunPositionY(Player player)
+    public int getGunPositionX(Player player)
     {
-        int gunPos = (int)player.getPosX() - 6;
-        switch(id)
-        {
-            case PISTOL :
-                gunPos = (int)player.getPosX() + 5;
-                break;
-            case UZI :
-                gunPos = (int)player.getPosX() - 2;
-                break;
-            case SNIPER :
-                gunPos = (int)player.getPosX() - 2;
-                break;
-            case SHOTGUN :
-                gunPos = (int)player.getPosX() - 9;
-                break;
-            case AK :
-                gunPos = (int)player.getPosX() - 11;
-                break;
-            case MAGNUM :
-
-                break;
-            case MITRAILLEUSE :
-                gunPos = (int)player.getPosX() - 11;
-                break;
-        }
-        
+        int gunPosIncrease = 0;
         switch(player.getCurrentImage())
         {
             case 2:
-                gunPos += 2;
+                gunPosIncrease = 2;
                 break;
             case 3:
-                gunPos += 4;
+                gunPosIncrease = 4;
                 break;
             case 4:
-                gunPos += 2;
+                gunPosIncrease = 5;
+                break;
+            case 5:
+                gunPosIncrease = 5;
+                break;
+            case 6:
+                gunPosIncrease = 3;
+                break;
+            case 7:
+                gunPosIncrease = 1;
                 break;
         }
-        return gunPos;
+        
+        int gunPos = (int)player.getPosX() - 6;
+        if(player.getFacedDirection() == 2) //Facing right
+        {
+            switch(id)
+            {
+                case PISTOL :
+                    gunPos = (int)player.getPosX() + 3;
+                    break;
+                case UZI :
+                    gunPos = (int)player.getPosX() - 2;
+                    break;
+                case SNIPER :
+                    gunPos = (int)player.getPosX() - 2;
+                    break;
+                case SHOTGUN :
+                    gunPos = (int)player.getPosX() - 9;
+                    break;
+                case AK :
+                    gunPos = (int)player.getPosX() - 11;
+                    break;
+                case MAGNUM :
+
+                    break;
+                case MITRAILLEUSE :
+                    gunPos = (int)player.getPosX() - 11;
+                    break;
+            }
+        }
+        else
+        {
+            gunPosIncrease = -gunPosIncrease;
+            switch(id)
+            {
+                case PISTOL :
+                    gunPos = (int)player.getPosX() + 2;
+                    break;
+                case UZI :
+                    gunPos = (int)player.getPosX() + 1;
+                    break;
+                case SNIPER :
+                    gunPos = (int)player.getPosX() - 14;
+                    break;
+                case SHOTGUN :
+                    gunPos = (int)player.getPosX() - 13;
+                    break;
+                case AK :
+                    gunPos = (int)player.getPosX() - 14;
+                    break;
+                case MAGNUM :
+                    break;
+                case FLAMETHROWER :
+                    gunPos = (int)player.getPosX() - 17;
+                    break;
+                case MITRAILLEUSE :
+                    gunPos = (int)player.getPosX() - 14;
+                    break;
+            }
+        }
+        return (gunPos + gunPosIncrease);
     }
 
     public Image getImage() {
