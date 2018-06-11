@@ -946,4 +946,9 @@ public class Player implements Comparable<Player>{
     {
         playerAnimation.setIdle();
     }
+    
+    public int getFacedDirection()
+    {
+        return facedDirection;
+    }
 }
