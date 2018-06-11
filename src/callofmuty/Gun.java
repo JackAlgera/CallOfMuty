@@ -216,6 +216,10 @@ public class Gun {
         return this.ammunition;
     }
     
+    public int getStockAmmo(){
+        return this.stockAmmo;
+    }
+    
     public double getReloadTime(){
         return this.reloadTime;
     }
@@ -234,19 +238,35 @@ public class Gun {
     public boolean shoot(boolean muteShootingSound){ // if gun can shoot, shoots and returns true, else returns false
         boolean test = (ammunition>0) && System.currentTimeMillis()-rateOfFire>=lastShotTimeStamp;
         if (test){
-            ammunition--;
-            rateOfFire=initialRateOfFire;
-            lastShotTimeStamp = System.currentTimeMillis();
-            if (!muteShootingSound){
-                playShootingSound();
-            }
-            if(ammunition==0){
-                if(stockAmmo !=0 ){
-                    stockAmmo-=startingAmmo;
-                    ammunition=startingAmmo;
-                    rateOfFire+=reloadTime;
-                } else {
-                    setId(NO_GUN, 0);
+            if (id != SHOTGUN){
+                ammunition--;
+                rateOfFire=initialRateOfFire;
+                lastShotTimeStamp = System.currentTimeMillis();
+                if (!muteShootingSound){
+                    playShootingSound();
+                }
+                if(ammunition==0){
+                    if(stockAmmo !=0 ){
+                        stockAmmo-=startingAmmo;
+                        ammunition=startingAmmo;
+                        rateOfFire+=reloadTime;
+                    } else {
+                        setId(NO_GUN, 0);
+                    }
+                }
+            } else {
+                ammunition--;
+                rateOfFire=initialRateOfFire;
+                lastShotTimeStamp = System.currentTimeMillis();
+                if (!muteShootingSound){
+                    playShootingSound();
+                }
+                if(ammunition==0){
+                    if(stockAmmo !=0 ){
+                        stockAmmo-=startingAmmo;
+                        ammunition=startingAmmo;
+                        rateOfFire+=reloadTime;
+                    }
                 }
             }
         }

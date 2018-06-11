@@ -739,6 +739,9 @@ public class Player implements Comparable<Player>{
                     realDirection = new double[]{Math.cos(randomAngle + Gamma + angle[i]) * sign, Math.sin(randomAngle + Gamma + angle[i]) * sign};
                     addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, realDirection, gun.getBulletSpeed(), sql, gun.getDamage(), nextBulletType, numberOfBounces, gun.getMaxRange());
                 }
+                if (gun.getAmmunition() ==0 && gun.getStockAmmo()==0){
+                    gun.setId(0, 0);
+                }
             } else {
                 realDirection = new double[]{Math.cos(randomAngle + Gamma) * sign, Math.sin(randomAngle + Gamma) * sign};
                 addBullet(getPosX() + imageWidth / 4, getPosY() + imageHeight / 4, realDirection, gun.getBulletSpeed(), sql, gun.getDamage(), nextBulletType, numberOfBounces, gun.getMaxRange());
