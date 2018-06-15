@@ -316,7 +316,9 @@ public class GamePanel extends JPanel{
         
         ----------------------------------------------------------------------------------------------------------------
         */
-
+        
+        JTextField usernameField = new JTextField("Username"); // needs to be declared before 'connect' and 'join' buttons
+        
         //---------------------------------------------- Connect button ------------------------------------------------       
         Rectangle bounds;
         JButton connectButton = new JButton();
@@ -336,6 +338,7 @@ public class GamePanel extends JPanel{
         
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                player.setName(usernameField.getText());
                 playClicSound();
                 initialiseGame(false, false);
             }
@@ -361,6 +364,7 @@ public class GamePanel extends JPanel{
         gameCreateButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                player.setName(usernameField.getText());
                 if(e.getButton()==MouseEvent.BUTTON1){ // left mouse button
                     playClicSound();
                     initialiseGame(true, false);
@@ -889,7 +893,6 @@ public class GamePanel extends JPanel{
         
         //-------------------------------- Username input area --------------------------------- 
         
-        JTextField usernameField = new JTextField("Username");
         bounds = new Rectangle((int)(0.0547*panelWidth)+(getWidth()-panelWidth)/2,(int)(0.2431*panelHeight), (int)(0.1680*panelWidth), (int)(0.1040*panelHeight));
         usernameField.setBounds(bounds);
         MMoriginalBounds.add(bounds);
